@@ -10,6 +10,15 @@ function beginSwipe(){
 	startY = game.input.y;
 	game.input.onDown.remove(beginSwipe);
 	game.input.onUp.add(endSwipe);
+	game.input.addMoveCallback(swiping);
+}
+
+//#ivano polomani
+function swiping (){
+	var distX = startX-game.input.x;
+	var distY = startY-game.input.y;
+	if (Math.sqrt(distX*distX+distY*distY) > 100)
+		endSwipe();
 }
 
 function endSwipe(){
@@ -50,4 +59,5 @@ function endSwipe(){
 	// stop listening for the player to release finger/mouse, let's start listening for the player to click/touch
 	game.input.onDown.add(beginSwipe);
 	game.input.onUp.remove(endSwipe);
+	game.input.deleteMoveCallback(0);
 }

@@ -10,7 +10,40 @@ Puzzle.Game.prototype.preload = function () {
 	this.time.desiredFps = 30;
 	game = this.game;
 
+	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    game.scale.setScreenSize(true);
+    this.game.scale.setResizeCallback(onResized);
+	game.scale.refresh();
 };
+
+
+function onResized (f) {
+	if (f!=true && game.width==innerWidth && game.height==innerHeight) return;
+	game.width = innerWidth;
+	game.height = innerHeight;
+	game.scale.setScreenSize(true);
+	game.scale.refresh();
+	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
+	                        Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
+	if (game.boxes)
+		game.boxes.forEach (resize);
+	function resize (box) {
+		box.scale.setTo (BSIZE/50, BSIZE/50);
+
+		var xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE;
+		var yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE;
+
+		game.invert = (game.levelHeight > game.levelWidth) && (window.innerWidth > window.innerHeight) || (game.levelHeight < game.levelWidth) && (window.innerWidth < window.innerHeight);
+
+		if (game.invert) {
+			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE;
+			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE;
+		}
+
+		box.x = xx;
+		box.y = yy; 
+	}
+}
 
 Puzzle.Game.prototype.create = function () {
 	var canvas = document.createElement('canvas');
@@ -33,14 +66,23 @@ Puzzle.Game.prototype.create = function () {
 
 			}
 		}
-		Puzzle.Game.prototype.createStage(arr);
+		game.levelWidth = img.width;
+		game.levelHeight = img.height;
+		game.levelArr = arr;
+		BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(img.width, img.height),
+	                        Math.min(game.width, game.height) / Math.min(img.width, img.height)));
+		game.invert = (img.height > img.width) && (window.innerWidth > window.innerHeight) || (img.height < img.width) && (window.innerWidth < window.innerHeight);
+		Puzzle.Game.prototype.createStage();
+		onResized(true);
 	};
 	img.src = src;
 };
 
-Puzzle.Game.prototype.createStage = function (arr) {
+Puzzle.Game.prototype.createStage = function () {
+	game.actiont = 0;
 	game.world.setBounds(0, 0, 2880, 2880);
 	game.boxes = game.add.group();
+	game.actionb = false;
 
 	game.keyUP = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -52,6 +94,7 @@ Puzzle.Game.prototype.createStage = function (arr) {
 	game.keyRIGHT.onDown.add(step, this);
 
 	//var arr = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,2,0,0,1],[1,0,0,0,1],[1,0,0,1,2], [1,2,,,3],[1],[1],[1],[1], [1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
+	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
@@ -59,10 +102,13 @@ Puzzle.Game.prototype.createStage = function (arr) {
 				if(arr[y][x]==0 && !arr[y][x]) continue;
 				if (x==0 && arr[y][x]==0) console.log("w");
 				var box;
-				if(arr[y][x]==1) box = game.boxes.create (x*50, y*BSIZE, 'box_black');
-				if(arr[y][x]==2) box = game.boxes.create (x*50, y*BSIZE, 'box_blue');
-				if(arr[y][x]==3) box = game.boxes.create (x*50, y*BSIZE, 'box_gap');
+				var xx = 0, yy = 0;
+				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
+				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
+				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
 				if (arr[y][x]==3) game.boxes.setChildIndex(box, 0);
+				box.indexX = x;
+				box.indexY = y;
 			}
 		}
 	}
@@ -73,20 +119,49 @@ Puzzle.Game.prototype.createStage = function (arr) {
 
 
 Puzzle.Game.prototype.update = function() {
-
+	game.actiont--;
 };
 
 function step (key)
 {
-	game.boxes.forEach (move, this);	
+	console.log (game.actiont);
+	if (game.actiont > 0) return;
+	game.actiont += 120;
+	game.boxes.forEach (move);	
 	function move (box)
 	{
+		var tween;
 		if (box.key == "box_gap") return;
 		if (box.key == "box_black" || collide(box, key.keyCode)) return;
-		if (key == game.keyUP)    game.add.tween(box).to( { y: (-BSIZE).toString() }, 100, "Linear", true);
-		if (key == game.keyDOWN)  game.add.tween(box).to( { y: BSIZE.toString() },    100, "Linear", true);
-		if (key == game.keyLEFT)  game.add.tween(box).to( { x: (-BSIZE).toString() }, 100, "Linear", true);
-		if (key == game.keyRIGHT) game.add.tween(box).to( { x: BSIZE.toString() },    100, "Linear", true);
+		if (key == game.keyUP) {
+			if (game.invert)
+				box.indexX--;
+			else
+				box.indexY--;
+			tween = game.add.tween(box).to( { y: (-BSIZE).toString() }, 100, "Linear", true);
+		}
+		if (key == game.keyDOWN) {
+			if (game.invert)
+				box.indexX++;
+			else
+				box.indexY++;
+			tween = game.add.tween(box).to( { y: BSIZE.toString() },    100, "Linear", true);
+		}
+		if (key == game.keyLEFT) {
+			if (game.invert)
+				box.indexY--;
+			else
+				box.indexX--;
+			tween = game.add.tween(box).to( { x: (-BSIZE).toString() }, 100, "Linear", true);
+		}
+		if (key == game.keyRIGHT) {
+			if (game.invert)
+				box.indexY++;
+			else
+				box.indexX++;
+			tween = game.add.tween(box).to( { x: BSIZE.toString() },    100, "Linear", true);
+		}
+		tween.onComplete.add(function() { game.actiont = 0; });
 	}
 }
 
@@ -106,6 +181,7 @@ function collide (box, side, n)
 			if (game.boxes.getChildAt(i).key=="box_gap")
 			{
 				game.boxes.remove(box);
+				gameOver();
 				return false;
 			}
 			return true;
@@ -129,3 +205,7 @@ Puzzle.Game.prototype.render = function() {
 	//this.debug.cameraInfo(this.camera, 32, 32);
 	//game.debug.body(player);
 };
+
+function gameOver () {
+	Puzzle.game.state.start('Boot');
+}

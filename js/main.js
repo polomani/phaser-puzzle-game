@@ -32,7 +32,7 @@ if(isNaN(screenRatio))
 	}
 }
 
-Puzzle.game = new Phaser.Game(gWidth, gHeight, Phaser.CANVAS, '');
+Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
 
 Puzzle.game.state.add('Boot', Puzzle.Boot);
 Puzzle.game.state.add('Preload', Puzzle.Preload);
