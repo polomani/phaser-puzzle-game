@@ -38,5 +38,6 @@ Puzzle.game.state.add('Boot', Puzzle.Boot);
 Puzzle.game.state.add('Preload', Puzzle.Preload);
 Puzzle.game.state.add('MainMenu', Puzzle.MainMenu);
 Puzzle.game.state.add('Game', Puzzle.Game);
+Puzzle.game.state.add('Editor', Puzzle.Editor);
 
 Puzzle.game.state.start('Boot');
