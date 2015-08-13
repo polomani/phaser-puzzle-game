@@ -10,7 +10,7 @@ function beginSwipe(){
 	startY = game.input.y;
 	game.input.onDown.remove(beginSwipe);
 	game.input.onUp.add(endSwipe);
-	game.input.addMoveCallback(swiping);
+		game.input.addMoveCallback(swiping);
 }
 
 //#ivano polomani

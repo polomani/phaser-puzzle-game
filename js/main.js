@@ -1,5 +1,7 @@
 
 var Puzzle = Puzzle || {};
+var Editor = {};
+var Game = {};
 
 var width = screen.height = window.innerWidth;// = 800;
 var height = screen.width = window.innerHeight;// = 600;
@@ -41,3 +43,18 @@ Puzzle.game.state.add('Game', Puzzle.Game);
 Puzzle.game.state.add('Editor', Puzzle.Editor);
 
 Puzzle.game.state.start('Boot');
+
+$(document).ready (function () {
+	Editor.aimLVL = LEVELS.length - 1;
+
+    var html = '';
+    for (var i = 0; i < LEVELS.length; ++i) {
+    	html += '<option value="'+i+'">level '+i+'</option>';
+    }
+    $("#lSelect").html(html);
+
+	$("#lSelect").change (function() {
+		Editor.aimLVL = $( "#lSelect option:selected" ).attr("value");
+		Puzzle.game.state.restart();
+	});
+});
