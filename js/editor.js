@@ -34,6 +34,7 @@ function onResizedEditor () {
 
 function onBoxDown(sprite, pointer) {
 	o.boxes.remove (sprite);
+	saveLevel ();
 }
 
 function mouseClicked (obj) {
@@ -46,6 +47,7 @@ function mouseClicked (obj) {
 	}
 	else
 		changeCursor (o.FOUR);
+	saveLevel ();
 }
 
 function mouseMove (pointer, x, y) {
@@ -140,9 +142,6 @@ Puzzle.Editor.prototype.addMenu = function () {
 	var play_label = game.add.text(0, 20, 'Play', { font: '24px Arial', fill: '#0' });
 	play_label.inputEnabled = true;
 	play_label.events.onInputDown.add(function () {
-		var newLvl = saveLevel();
-		if (newLvl!=null)
-			LEVELS[Editor.aimLVL] = newLvl;
 		this.game.state.start('Game');
 	});
 
@@ -239,7 +238,11 @@ function levelToString (arr) {
 }
 
 function o_getMinMaxBoxesXY () {
-	var minX = o.boxes.getChildAt(0).x, minY = o.boxes.getChildAt(0).y, maxX = 0, maxY = 0;
+	var minX = 0, minY = 0, maxX = 0, maxY = 0;
+	if (o.boxes.length > 0) {
+		minX = o.boxes.getChildAt(0).x;
+		minY = o.boxes.getChildAt(0).y;
+	}
 	o.boxes.forEach (function(box) {
 		if (box == cursor) return;
 		if (box.x > maxX) maxX = box.x;
@@ -293,6 +296,7 @@ function saveLevel () {
 	str = str.substring (0, str.length-1);
 	str += "]";
 	//alert (str);
+	LEVELS[Editor.aimLVL] = levelArr;
 	return levelArr;
 }
 

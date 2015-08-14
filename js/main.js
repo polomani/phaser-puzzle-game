@@ -47,14 +47,23 @@ Puzzle.game.state.start('Boot');
 $(document).ready (function () {
 	Editor.aimLVL = LEVELS.length - 1;
 
-    var html = '';
-    for (var i = 0; i < LEVELS.length; ++i) {
-    	html += '<option value="'+i+'">level '+i+'</option>';
-    }
-    $("#lSelect").html(html);
+    updateList();
 
-	$("#lSelect").change (function() {
+	$("#lSelect").click (function() {
 		Editor.aimLVL = $( "#lSelect option:selected" ).attr("value");
+		if (Editor.aimLVL == LEVELS.length) {
+			LEVELS[Editor.aimLVL] = [[0]];
+			updateList();
+		}
 		Puzzle.game.state.restart();
 	});
+
+	function updateList () {
+		var html = '';
+		for (var i = 0; i < LEVELS.length; ++i) {
+			html += '<option value="'+i+'">level '+i+'</option>';
+		}
+		html += '<option value="'+LEVELS.length+'"> [new level] </option>';
+		$("#lSelect").html(html);
+	}
 });
