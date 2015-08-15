@@ -34,6 +34,7 @@ function onResizedEditor () {
 
 function onBoxDown(sprite, pointer) {
 	o.boxes.remove (sprite);
+	reindexBoxes();
 	saveLevel ();
 }
 
@@ -47,6 +48,7 @@ function mouseClicked (obj) {
 	}
 	else
 		changeCursor (o.FOUR);
+	reindexBoxes();
 	saveLevel ();
 }
 
@@ -325,6 +327,21 @@ Puzzle.Editor.prototype.render = function() {
 	
 };
 
+function reindexBoxes() {
+	if (o.boxes.length == 0) return;
+	var xy = o_getMinMaxBoxesXY();
+	var minX = xy.min.x, minY = xy.min.y, maxX = xy.max.x, maxY = xy.max.y;
+	minX /= o.BSIZE;
+	minY /= o.BSIZE;
+	maxX /= o.BSIZE;
+	maxY /= o.BSIZE;
+
+	o.boxes.forEach (function(box) {
+		if (box == cursor) return;
+		box.indexX = box.x/o.BSIZE - minX;
+		box.indexY = box.y/o.BSIZE - minY;
+	});
+}
 
 o_updateNet = function () {
 	o.net.ctx.clearRect(0, 0, o.net.width, o.net.height);
