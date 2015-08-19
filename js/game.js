@@ -72,7 +72,6 @@ Puzzle.Game.prototype.createStage = function () {
 	game.moving = false;
 	game.world.setBounds(0, 0, 2880, 2880);
 	game.boxes = game.add.group();
-	game.actionb = false;
 
 	game.keyUP = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -84,13 +83,10 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyRIGHT.onDown.add(step, this);
 
 	var arr = game.levelArr;
-	var string = "var arr = [";
 	for (var y = 0; y < arr.length; y++) {
-		string += "[";
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
-				string += arr[y][x] + ",";
 				if(arr[y][x]==0 && !arr[y][x]) continue;
 				var box;
 				var xx = 0, yy = 0;
@@ -102,12 +98,7 @@ Puzzle.Game.prototype.createStage = function () {
 				box.indexY = y;
 			}
 		}
-		string = string.substring (0, string.length-1);
-		string += "],";
 	}
-	string = string.substring (0, string.length-1);
-	string += "]";
-	//alert (string);
 	game.inputEnabled = true;
 	game.input.onDown.add(beginSwipe, this);
 };
