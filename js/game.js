@@ -93,6 +93,10 @@ Puzzle.Game.prototype.createStage = function () {
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
+				if (arr[y][x] instanceof Object) {
+					if (arr[y][x].value == 4) box = game.boxes.create(xx, yy, 'box_door');
+					box.frame = arr[y][x].state;
+				}
 				if (arr[y][x]==3) game.boxes.setChildIndex(box, 0);
 				box.indexX = x;
 				box.indexY = y;
@@ -116,6 +120,7 @@ function step (key)
 	{
 		var tween;
 		if (box.key == "box_gap") return;
+		if (box.key == "box_door") return;
 		if (box.key == "box_black" || collide(box, key.keyCode)) return;
 		game.moving = true;			
 		if (key == game.keyUP) {
@@ -175,8 +180,8 @@ function collide (box, side, n)
 	function _collide (_box)
 	{
 		if (_box==box) return false;
-		if ((_box.y==box.y && ((_box.x == box.x-BSIZE && side==37) ||  (_box.x == box.x+BSIZE && side==39)))
-			|| (_box.x==box.x && ((_box.y == box.y-BSIZE && side==38) || (_box.y == box.y+BSIZE && side==40))))
+		if ((_box.indexY==box.indexY && ((_box.indexX == box.indexX-1 && side==37) ||  (_box.indexX == box.indexX+1 && side==39)))
+			|| (_box.indexX == box.indexX && ((_box.indexY==box.indexY-1 && side==38) || (_box.indexY==box.indexY+1 && side==40))))
 		{
 			return collide (_box, side, n+1) || _box.key == "box_black" || _box.key == "box_gap";
 		}

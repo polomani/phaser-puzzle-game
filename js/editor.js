@@ -60,26 +60,43 @@ function mouseMove (pointer, x, y) {
 }
 
 function changeCursor (key) {
-	if (cursor)
-		o.boxes.remove (cursor);
+	if (cursor) {
+		var prevcur = cursor;
+		o.boxes.remove(cursor);
+	}
 	var x = o.camera.x + Math.floor(o.input.x / o.BSIZE)*o.BSIZE;
 	var y = o.camera.y + Math.floor(o.input.y / o.BSIZE)*o.BSIZE;
+
 	switch (key) {
 		case o.ONE :
-		cursor = o.boxes.create (x, y, 'box_black');
-		cursor.btype = 1;
-		break;
+			cursor = o.boxes.create (x, y, 'box_black');
+			cursor.btype = 1;
+			break;
 		case o.TWO :
-		cursor = o.boxes.create (x, y, 'box_blue');
-		cursor.btype = 2;
-		break;
+			cursor = o.boxes.create (x, y, 'box_blue');
+			cursor.btype = 2;
+			break;
 		case o.THREE :
-		cursor = o.boxes.create (x, y, 'box_gap');
-		cursor.btype = 3;
-		break;
+			cursor = o.boxes.create (x, y, 'box_gap');
+			cursor.btype = 3;
+			break;
 		case o.FOUR :
-		
-		break;
+			cursor = o.boxes.create (x, y, 'box_door');
+			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==4)
+				cursor.frame = (prevcur.frame+1)%2;
+			else
+				cursor.frame = 0;
+			cursor.btype = {
+				value:4,
+				state:cursor.frame
+			};
+			break;
+		case o.FIVE:
+			break;
+		case o.SIX:
+			break
+		case o.SEVEN:
+			break;
 	}
 	if (cursor) {
 		cursor.type = key;
@@ -101,6 +118,9 @@ Puzzle.Editor.prototype.create = function () {
 	o.TWO = o.input.keyboard.addKey(Phaser.Keyboard.TWO);
 	o.THREE = o.input.keyboard.addKey(Phaser.Keyboard.THREE);
 	o.FOUR = o.input.keyboard.addKey(Phaser.Keyboard.FOUR);
+	o.FIVE = o.input.keyboard.addKey(Phaser.Keyboard.FIVE);
+	o.SIX = o.input.keyboard.addKey(Phaser.Keyboard.SIX);
+	o.SEVEN = o.input.keyboard.addKey(Phaser.Keyboard.SEVEN);
 	o.keyS = o.input.keyboard.addKey(Phaser.Keyboard.S);
 	o.keyPlus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
 	o.keyMinus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_SUBTRACT);
@@ -108,6 +128,9 @@ Puzzle.Editor.prototype.create = function () {
 	o.TWO.onDown.add(changeCursor);
 	o.THREE.onDown.add(changeCursor);
 	o.FOUR.onDown.add(changeCursor);
+	o.FIVE.onDown.add(changeCursor);
+	o.SIX.onDown.add(changeCursor);
+	o.SEVEN.onDown.add(changeCursor);
 	o.keyS.onDown.add(commitLevel);
 	o.keyMinus.onDown.add(function() {o_zoom(false);});
 	o.keyPlus.onDown.add(function() {o_zoom(true);});
@@ -115,15 +138,22 @@ Puzzle.Editor.prototype.create = function () {
 	var arr = LEVELS[Editor.aimLVL];
 	for (var y = 0; y < arr.length; y++) {
 		for (var x = 0; x < arr[y].length; x++) {
-			if (arr[y]) 
+			if (arr[y])
 			{
 				if(arr[y][x]==0 && !arr[y][x]) continue;
 				var box;
 				var xx = 0, yy = 0;
-				if(arr[y][x]==1) box = o.boxes.create (xx, yy, 'box_black');
-				if(arr[y][x]==2) box = o.boxes.create (xx, yy, 'box_blue');
-				if(arr[y][x]==3) box = o.boxes.create (xx, yy, 'box_gap');
-				if (arr[y][x]==3) o.boxes.setChildIndex(box, 0);
+				if (arr[y][x] instanceof Object) {
+					if (arr[y][x].value==4) {
+						box = o.boxes.create(xx, yy, 'box_door');
+						box.frame = arr[y][x].state;
+					}
+				} else {
+					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black');
+					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue');
+					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap');
+					if (arr[y][x] == 3) o.boxes.setChildIndex(box, 0);
+				}
 				box.btype = arr[y][x];
 				box.indexX = x;
 				box.indexY = y;
@@ -228,7 +258,12 @@ function levelToString (arr) {
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
-				string += arr[y][x] + ",";
+				if(arr[y][x] instanceof Object) {
+					if (arr[y][x].value==4)
+						string += "{ value:" + arr[y][x].value + ", state:" + arr[y][x].state + " },";
+				} else {
+					string += arr[y][x] + ",";
+				}
 			}
 		}
 		string = string.substring (0, string.length-1);
