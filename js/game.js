@@ -94,10 +94,16 @@ Puzzle.Game.prototype.createStage = function () {
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
 				if (arr[y][x] instanceof Object) {
-					if (arr[y][x].value == 4) box = game.boxes.create(xx, yy, 'box_door');
-					box.frame = arr[y][x].state;
+					if (arr[y][x].value == 4) {
+						box = game.boxes.create(xx, yy, 'box_door');
+						box.frame = arr[y][x].state;
+					}
+					if (arr[y][x].value == 5) {
+						box = game.boxes.create(xx, yy, 'box_arr');
+						//box.angle = o_getAngleFromDir(arr[y][x].dir);
+					}
 				}
-				if (arr[y][x]==3) game.boxes.setChildIndex(box, 0);
+				if (arr[y][x]==3 || arr[y][x].value==5) game.boxes.setChildIndex(box, 0);
 				box.indexX = x;
 				box.indexY = y;
 			}
@@ -121,6 +127,7 @@ function step (key)
 		var tween;
 		if (box.key == "box_gap") return;
 		if (box.key == "box_door") return;
+		if (box.key == "box_arr") return;
 		if (box.key == "box_black" || collide(box, key.keyCode)) return;
 		game.moving = true;			
 		if (key == game.keyUP) {

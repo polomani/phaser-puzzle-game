@@ -54,8 +54,8 @@ function mouseClicked (obj) {
 
 function mouseMove (pointer, x, y) {
 	if (cursor) {
-		cursor.y = o.camera.y + Math.floor(y / o.BSIZE)*o.BSIZE;
-		cursor.x = o.camera.x + Math.floor(x / o.BSIZE)*o.BSIZE;
+		cursor.y = o.camera.y + Math.floor(y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
+		cursor.x = o.camera.x + Math.floor(x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 	}
 }
 
@@ -64,8 +64,8 @@ function changeCursor (key) {
 		var prevcur = cursor;
 		o.boxes.remove(cursor);
 	}
-	var x = o.camera.x + Math.floor(o.input.x / o.BSIZE)*o.BSIZE;
-	var y = o.camera.y + Math.floor(o.input.y / o.BSIZE)*o.BSIZE;
+	var x = o.camera.x + Math.floor(o.input.x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
+	var y = o.camera.y + Math.floor(o.input.y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 
 	switch (key) {
 		case o.ONE :
@@ -92,6 +92,13 @@ function changeCursor (key) {
 			};
 			break;
 		case o.FIVE:
+			cursor = o.boxes.create (x, y, 'box_arr');
+			cursor.btype = {
+				value:5
+			};
+			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==5)
+				cursor.angle = prevcur.angle + 90;
+			cursor.btype.dir = o_getDirFromAngle(cursor.angle);
 			break;
 		case o.SIX:
 			break
@@ -99,6 +106,7 @@ function changeCursor (key) {
 			break;
 	}
 	if (cursor) {
+		cursor.anchor.setTo(0.5, 0.5);
 		cursor.type = key;
 		cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
 	}
@@ -148,6 +156,10 @@ Puzzle.Editor.prototype.create = function () {
 						box = o.boxes.create(xx, yy, 'box_door');
 						box.frame = arr[y][x].state;
 					}
+					if (arr[y][x].value==5) {
+						box = game.boxes.create(xx, yy, 'box_arr');
+						box.angle = o_getAngleFromDir(arr[y][x].dir);
+					}
 				} else {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black');
 					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue');
@@ -161,6 +173,7 @@ Puzzle.Editor.prototype.create = function () {
 				box.x = x*o.BSIZE;
 				box.y = y*o.BSIZE;
 				box.inputEnabled = true;
+				box.anchor.setTo(0.5, 0.5);
 				box.events.onInputDown.add(onBoxDown);
 			}
 		}
@@ -208,8 +221,8 @@ o_zoom = function(plus) {
 
 function o_resizeBox (box, indentX, indentY) {
 	box.scale.setTo (o.BSIZE/50, o.BSIZE/50);
-	var xx = (indentX + box.indexX) * o.BSIZE;
-	var yy = (indentY + box.indexY)* o.BSIZE;
+	var xx = (indentX + box.indexX) * o.BSIZE + o.BSIZE/2;
+	var yy = (indentY + box.indexY) * o.BSIZE + o.BSIZE/2;
 	box.x = xx;
 	box.y = yy;
 }
@@ -260,7 +273,9 @@ function levelToString (arr) {
 			{
 				if(arr[y][x] instanceof Object) {
 					if (arr[y][x].value==4)
-						string += "{ value:" + arr[y][x].value + ", state:" + arr[y][x].state + " },";
+						string += "{ value:4, state:" + arr[y][x].state + " },";
+					if (arr[y][x].value==5)
+						string += "{ value:5, dir:" + arr[y][x].dir + " },";
 				} else {
 					string += arr[y][x] + ",";
 				}
@@ -393,4 +408,34 @@ o_updateNet = function () {
 		o.net.ctx.lineTo(j*o.BSIZE, o.world.height);
 	}
 	o.net.ctx.stroke();
+}
+
+function o_getDirFromAngle(angle) {
+	switch (angle) {
+		case 0:
+			return Phaser.RIGHT;
+		case 90:
+			return Phaser.DOWN;
+		case -180:
+			return Phaser.LEFT;
+		case -90:
+			return Phaser.UP;
+		default :
+			return Phaser.RIGHT;
+	}
+}
+
+function o_getAngleFromDir(dir) {
+	switch (dir) {
+		case Phaser.RIGHT:
+			return 0;
+		case Phaser.DOWN:
+			return 90;
+		case Phaser.LEFT:
+			return  -180;
+		case Phaser.UP:
+			return -90;
+		default :
+			return 0;
+	}
 }
