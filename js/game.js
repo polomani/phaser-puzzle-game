@@ -30,14 +30,14 @@ function onResized (f) {
 	function resize (box) {
 		box.scale.setTo (BSIZE/50, BSIZE/50);
 
-		var xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE;
-		var yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE;
+		var xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+		var yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
 
 		game.invert = (game.levelHeight > game.levelWidth) && (window.innerWidth > window.innerHeight) || (game.levelHeight < game.levelWidth) && (window.innerWidth < window.innerHeight);
 
 		if (game.invert) {
-			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE;
-			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE;
+			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
 		}
 
 		box.x = xx;
@@ -104,6 +104,7 @@ Puzzle.Game.prototype.createStage = function () {
 					}
 				}
 				if (arr[y][x]==3 || arr[y][x].value==5) game.boxes.setChildIndex(box, 0);
+				box.anchor.setTo(0.5, 0.5);
 				box.indexX = x;
 				box.indexY = y;
 			}
