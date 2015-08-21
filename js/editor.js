@@ -27,7 +27,7 @@ function onResizedEditor () {
 		indentY = 0;
 	o.boxes.forEach (function (box) {o_resizeBox(box, indentX, indentY);})
 
-	o_updateNet();;
+	o_updateNet();
 }
 
 function onBoxDown(sprite, pointer) {
@@ -46,7 +46,7 @@ function mouseClicked (obj) {
 		changeCursor (type);
 	}
 	else
-		changeCursor (o.FOUR);
+		changeCursor (o.SEVEN);
 	reindexBoxes();
 	saveLevel ();
 }
@@ -100,7 +100,14 @@ function changeCursor (key) {
 			o.cursor.btype.dir = o_getDirFromAngle(o.cursor.angle);
 			break;
 		case o.SIX:
-			break
+			o.cursor = o.boxes.create (x, y, 'box_port');
+			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==6)
+				o.cursor.frame = (prevcur.btype.id+1)% o.cursor.animations.frameTotal;
+			o.cursor.btype = {
+				value:6,
+				id:o.cursor.frame
+			};
+			break;
 		case o.SEVEN:
 			break;
 	}
@@ -159,6 +166,10 @@ Puzzle.Editor.prototype.create = function () {
 						box = game.boxes.create(xx, yy, 'box_arr');
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 					}
+					if (arr[y][x].value==6) {
+						box = game.boxes.create(xx, yy, 'box_port');
+						box.frame = arr[y][x].id;
+					}
 				} else {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black');
 					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue');
@@ -189,7 +200,7 @@ Puzzle.Editor.prototype.addMenu = function () {
 		this.game.state.start('Game');
 	});
 
-	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#0' });
+	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = teleport\n7 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#0' });
 
 
 }
@@ -275,6 +286,8 @@ function levelToString (arr) {
 						string += "{ value:4, state:" + arr[y][x].state + " },";
 					if (arr[y][x].value==5)
 						string += "{ value:5, dir:" + arr[y][x].dir + " },";
+					if (arr[y][x].value==6)
+						string += "{ value:6, id:" + arr[y][x].id + " },";
 				} else {
 					string += arr[y][x] + ",";
 				}

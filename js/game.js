@@ -100,10 +100,14 @@ Puzzle.Game.prototype.createStage = function () {
 					}
 					if (arr[y][x].value == 5) {
 						box = game.boxes.create(xx, yy, 'box_arr');
-						//box.angle = o_getAngleFromDir(arr[y][x].dir);
+						box.angle = o_getAngleFromDir(arr[y][x].dir);
+					}
+					if (arr[y][x].value == 6) {
+						box = game.boxes.create(xx, yy, 'box_port');
+						box.frame = arr[y][x].id;
 					}
 				}
-				if (arr[y][x]==3 || arr[y][x].value==5) game.boxes.setChildIndex(box, 0);
+				if (arr[y][x]==3 || arr[y][x].value) game.boxes.setChildIndex(box, 0);
 				box.anchor.setTo(0.5, 0.5);
 				box.indexX = x;
 				box.indexY = y;
@@ -129,6 +133,7 @@ function step (key)
 		if (box.key == "box_gap") return;
 		if (box.key == "box_door") return;
 		if (box.key == "box_arr") return;
+		if (box.key == "box_port") return;
 		if (box.key == "box_black" || collide(box, key.keyCode)) return;
 		game.moving = true;			
 		if (key == game.keyUP) {
