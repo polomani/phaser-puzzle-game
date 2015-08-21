@@ -1,8 +1,5 @@
 var Puzzle = Puzzle || {};
 Puzzle.Editor = function(){};
-var cursor;
-var COLS = 20;
-var ROWS = 30;
 var o;
 
 Puzzle.Editor.prototype.preload = function () {
@@ -10,6 +7,7 @@ Puzzle.Editor.prototype.preload = function () {
 	this.time.desiredFps = 30;
 
 	o = this.game;
+	o.cursor = null;
 	o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 	o.scale.setScreenSize(true);
 	o.scale.setResizeCallback(onResizedEditor);
@@ -39,11 +37,12 @@ function onBoxDown(sprite, pointer) {
 }
 
 function mouseClicked (obj) {
-	if (cursor) {
-		cursor.inputEnabled = true;
-		cursor.events.onInputDown.add(onBoxDown, this);
-		var type = cursor.type;
-		cursor = null;
+
+	if (o.cursor) {
+		o.cursor.inputEnabled = true;
+		o.cursor.events.onInputDown.add(onBoxDown, this);
+		var type = o.cursor.type;
+		o.cursor = null;
 		changeCursor (type);
 	}
 	else
@@ -53,62 +52,62 @@ function mouseClicked (obj) {
 }
 
 function mouseMove (pointer, x, y) {
-	if (cursor) {
-		cursor.y = o.camera.y + Math.floor(y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
-		cursor.x = o.camera.x + Math.floor(x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
+	if (o.cursor) {
+		o.cursor.y = o.camera.y + Math.floor(y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
+		o.cursor.x = o.camera.x + Math.floor(x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 	}
 }
 
 function changeCursor (key) {
-	if (cursor) {
-		var prevcur = cursor;
-		o.boxes.remove(cursor);
+	if (o.cursor) {
+		var prevcur = o.cursor;
+		o.boxes.remove(o.cursor);
 	}
 	var x = o.camera.x + Math.floor(o.input.x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 	var y = o.camera.y + Math.floor(o.input.y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 
 	switch (key) {
 		case o.ONE :
-			cursor = o.boxes.create (x, y, 'box_black');
-			cursor.btype = 1;
+			o.cursor = o.boxes.create (x, y, 'box_black');
+			o.cursor.btype = 1;
 			break;
 		case o.TWO :
-			cursor = o.boxes.create (x, y, 'box_blue');
-			cursor.btype = 2;
+			o.cursor = o.boxes.create (x, y, 'box_blue');
+			o.cursor.btype = 2;
 			break;
 		case o.THREE :
-			cursor = o.boxes.create (x, y, 'box_gap');
-			cursor.btype = 3;
+			o.cursor = o.boxes.create (x, y, 'box_gap');
+			o.cursor.btype = 3;
 			break;
 		case o.FOUR :
-			cursor = o.boxes.create (x, y, 'box_door');
+			o.cursor = o.boxes.create (x, y, 'box_door');
 			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==4)
-				cursor.frame = (prevcur.frame+1)%2;
+				o.cursor.frame = (prevcur.frame+1)%2;
 			else
-				cursor.frame = 0;
-			cursor.btype = {
+				o.cursor.frame = 0;
+			o.cursor.btype = {
 				value:4,
-				state:cursor.frame
+				state:o.cursor.frame
 			};
 			break;
 		case o.FIVE:
-			cursor = o.boxes.create (x, y, 'box_arr');
-			cursor.btype = {
+			o.cursor = o.boxes.create (x, y, 'box_arr');
+			o.cursor.btype = {
 				value:5
 			};
 			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==5)
-				cursor.angle = prevcur.angle + 90;
-			cursor.btype.dir = o_getDirFromAngle(cursor.angle);
+				o.cursor.angle = prevcur.angle + 90;
+			o.cursor.btype.dir = o_getDirFromAngle(o.cursor.angle);
 			break;
 		case o.SIX:
 			break
 		case o.SEVEN:
 			break;
 	}
-	if (cursor) {
-		cursor.anchor.setTo(0.5, 0.5);
-		cursor.type = key;
-		cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+	if (o.cursor) {
+		o.cursor.anchor.setTo(0.5, 0.5);
+		o.cursor.type = key;
+		o.cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
 	}
 }
 
@@ -190,7 +189,7 @@ Puzzle.Editor.prototype.addMenu = function () {
 		this.game.state.start('Game');
 	});
 
-	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#0' });
+	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#0' });
 
 
 }
@@ -213,9 +212,9 @@ o_zoom = function(plus) {
 	if (indentY < 0)
 		indentY = 0;
 	o.boxes.forEach (function (box) {o_resizeBox(box,indentX, indentY);})
-	if (cursor) {
+	if (o.cursor) {
 
-		cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+		o.cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
 	}
 }
 
@@ -296,7 +295,7 @@ function o_getMinMaxBoxesXY () {
 		minY = o.boxes.getChildAt(0).y;
 	}
 	o.boxes.forEach (function(box) {
-		if (box == cursor) return;
+		if (box == o.cursor) return;
 		if (box.x > maxX) maxX = box.x;
 		if (box.y > maxY) maxY = box.y;
 		if (box.x < minX) minX = box.x;
@@ -333,7 +332,7 @@ function saveLevel () {
 		}
 	}
 	o.boxes.forEach (function(box) {
-		if (box == cursor) return;
+		if (box == o.cursor) return;
 		levelArr [box.y/o.BSIZE - minY][box.x/o.BSIZE - minX] = box.btype;
 	});
 	var str = "[";
@@ -387,7 +386,7 @@ function reindexBoxes() {
 	maxY /= o.BSIZE;
 
 	o.boxes.forEach (function(box) {
-		if (box == cursor) return;
+		if (box == o.cursor) return;
 		box.indexX = box.x/o.BSIZE - minX;
 		box.indexY = box.y/o.BSIZE - minY;
 	});
