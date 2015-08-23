@@ -10,6 +10,8 @@ Puzzle.Preload.prototype = {
 		this.load.spritesheet('box_door', 'assets/images/box_door.png', 50, 50);
 		this.load.image('box_arr', 'assets/images/box_arr.png');
 		this.load.spritesheet('box_port', 'assets/images/box_port.png', 50, 50);
+		this.load.image('box_red', 'assets/images/box_red.png');
+		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 50, 50);
 	},
 	create: function() {
 		this.state.start('MainMenu');

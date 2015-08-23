@@ -13,6 +13,7 @@ Puzzle.Editor.prototype.preload = function () {
 	o.scale.setResizeCallback(onResizedEditor);
 	o.scale.refresh();
 	o.inputEnabled = true;
+	o.path = {};
 };
 
 
@@ -31,7 +32,15 @@ function onResizedEditor () {
 }
 
 function onBoxDown(sprite, pointer) {
-	o.boxes.remove (sprite);
+	if (sprite.key=="box_red")
+		deletePathBoxes(sprite);
+	if (!o.path.edit) {
+		if (sprite.key=="box_red_dir") {
+			deleteNextPathBoxes(sprite);
+			sprite.init.btype.path = getPathBoxes(sprite.init);
+		}
+		o.boxes.remove(sprite);
+	}
 	reindexBoxes();
 	saveLevel ();
 }
@@ -42,17 +51,47 @@ function mouseClicked (obj) {
 		o.cursor.inputEnabled = true;
 		o.cursor.events.onInputDown.add(onBoxDown, this);
 		var type = o.cursor.type;
+		if (type==o.SEVEN)
+			o.path.edit = true;
+		if (o.path.edit)
+			o.path.last = o.cursor;
 		o.cursor = null;
 		changeCursor (type);
 	}
 	else
-		changeCursor (o.SEVEN);
+		changeCursor (o.EIGHT);
 	reindexBoxes();
 	saveLevel ();
 }
 
 function mouseMove (pointer, x, y) {
 	if (o.cursor) {
+		if (o.path.edit) {
+			if (Math.abs (y - o.path.last.y) < Math.abs (x - o.path.last.x)) {
+				o.cursor.y = o.path.last.y;
+				var dir = 1;
+				if (x <= o.path.last.x) dir = -1;
+				o.cursor.x = o.path.last.x + o.BSIZE*dir;
+				if (dir == 1) {
+					o.cursor.dir = Phaser.RIGHT;
+				} else {
+					o.cursor.dir = Phaser.LEFT;
+				}
+			} else {
+				var dir = 1;
+				if (y <= o.path.last.y) dir = -1;
+				o.cursor.y = o.path.last.y + o.BSIZE*dir;
+				o.cursor.x = o.path.last.x;
+				if (dir == 1) {
+					o.cursor.dir = Phaser.DOWN;
+				} else {
+					o.cursor.dir = Phaser.UP;
+				}
+			}
+			o.cursor.angle = o_getAngleFromDir(o.cursor.dir);
+			o.path.last.frame = getPrevPathBoxFrame(o.path.last, o.cursor);
+			return;
+		}
 		o.cursor.y = o.camera.y + Math.floor(y / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 		o.cursor.x = o.camera.x + Math.floor(x / o.BSIZE)*o.BSIZE + o.BSIZE/2;
 	}
@@ -109,7 +148,28 @@ function changeCursor (key) {
 			};
 			break;
 		case o.SEVEN:
+			if (o.path.edit) {
+				o.cursor = o.boxes.create(x, y, 'box_red_dir');
+				o.cursor.init = o.path.curbox;
+				if (o.path.last)
+					o.path.last.next = o.cursor;
+				o.path.curbox.btype.path = getPathBoxes(o.path.curbox);
+			} else {
+				o.cursor = o.boxes.create(x, y, 'box_red');
+				o.path.curbox = o.cursor;
+				o.cursor.btype = {
+					value:7
+				};
+			}
 			break;
+		case o.EIGHT:
+			break;
+	}
+	if (key!=o.SEVEN) {
+		if (o.path.edit && o.path.last)
+			o.path.last.frame = 0;
+		o.path.edit = false;
+		o.path.last = null;
 	}
 	if (o.cursor) {
 		o.cursor.anchor.setTo(0.5, 0.5);
@@ -135,6 +195,7 @@ Puzzle.Editor.prototype.create = function () {
 	o.FIVE = o.input.keyboard.addKey(Phaser.Keyboard.FIVE);
 	o.SIX = o.input.keyboard.addKey(Phaser.Keyboard.SIX);
 	o.SEVEN = o.input.keyboard.addKey(Phaser.Keyboard.SEVEN);
+	o.EIGHT = o.input.keyboard.addKey(Phaser.Keyboard.EIGHT);
 	o.keyS = o.input.keyboard.addKey(Phaser.Keyboard.S);
 	o.keyPlus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
 	o.keyMinus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_SUBTRACT);
@@ -145,6 +206,7 @@ Puzzle.Editor.prototype.create = function () {
 	o.FIVE.onDown.add(changeCursor);
 	o.SIX.onDown.add(changeCursor);
 	o.SEVEN.onDown.add(changeCursor);
+	o.EIGHT.onDown.add(changeCursor);
 	o.keyS.onDown.add(commitLevel);
 	o.keyMinus.onDown.add(function() {o_zoom(false);});
 	o.keyPlus.onDown.add(function() {o_zoom(true);});
@@ -170,11 +232,13 @@ Puzzle.Editor.prototype.create = function () {
 						box = game.boxes.create(xx, yy, 'box_port');
 						box.frame = arr[y][x].id;
 					}
+					if (arr[y][x].value==7) {
+						box = game.boxes.create(xx, yy, 'box_red');
+					}
 				} else {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black');
 					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue');
 					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap');
-					if (arr[y][x] == 3) o.boxes.setChildIndex(box, 0);
 				}
 				box.btype = arr[y][x];
 				box.indexX = x;
@@ -185,6 +249,8 @@ Puzzle.Editor.prototype.create = function () {
 				box.inputEnabled = true;
 				box.anchor.setTo(0.5, 0.5);
 				box.events.onInputDown.add(onBoxDown);
+				if(box.key=='box_red')
+					createPathForBox(box);
 			}
 		}
 	}
@@ -197,6 +263,7 @@ Puzzle.Editor.prototype.addMenu = function () {
 	var play_label = game.add.text(0, 20, 'Play', { font: '24px Arial', fill: '#0' });
 	play_label.inputEnabled = true;
 	play_label.events.onInputDown.add(function () {
+		changeCursor (o.EIGHT);
 		this.game.state.start('Game');
 	});
 
@@ -245,23 +312,23 @@ function commitLevel() {
 		pass:"korleone",
 		level:string
 	};
-    //alert(string);
-    $.ajax({
-    	url: 'http://dreamlike.cc/puzzle_editor/',
-    	data: $.param(data),
-    	type: 'POST',
-    	dataType: 'text',
-    	beforeSend: function (xhr) {
-    		xhr.setRequestHeader("Accept", "text/html");
-    		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    	},
-    	success: function (data) {
-    		alert(JSON.stringify (data));
-    	},
-    	error: function (e) {
-    		console.log('Error: ' + e);
-    	}
-    });
+	//alert(string);
+	$.ajax({
+		url: 'http://dreamlike.cc/puzzle_editor/',
+		data: $.param(data),
+		type: 'POST',
+		dataType: 'text',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Accept", "text/html");
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		},
+		success: function (data) {
+			alert(JSON.stringify (data));
+		},
+		error: function (e) {
+			console.log('Error: ' + e);
+		}
+	});
 }
 
 function levelsToString () {
@@ -279,7 +346,7 @@ function levelToString (arr) {
 	for (var y = 0; y < arr.length; y++) {
 		string += "[";
 		for (var x = 0; x < arr[y].length; x++) {
-			if (arr[y]) 
+			if (arr[y])
 			{
 				if(arr[y][x] instanceof Object) {
 					if (arr[y][x].value==4)
@@ -288,6 +355,8 @@ function levelToString (arr) {
 						string += "{ value:5, dir:" + arr[y][x].dir + " },";
 					if (arr[y][x].value==6)
 						string += "{ value:6, id:" + arr[y][x].id + " },";
+					if (arr[y][x].value==7)
+						string += "{ value:7, path:'" + arr[y][x].path +  "' },";
 				} else {
 					string += arr[y][x] + ",";
 				}
@@ -309,6 +378,7 @@ function o_getMinMaxBoxesXY () {
 	}
 	o.boxes.forEach (function(box) {
 		if (box == o.cursor) return;
+		if (box.key=="box_red_dir") return;
 		if (box.x > maxX) maxX = box.x;
 		if (box.y > maxY) maxY = box.y;
 		if (box.x < minX) minX = box.x;
@@ -341,11 +411,12 @@ function saveLevel () {
 	for (var i = 0; i < sizeY; ++i) {
 		levelArr[i] = new Array (sizeX);
 		for (var j = 0; j < sizeX; ++j) {
-			 levelArr[i][j] = 0;
+			levelArr[i][j] = 0;
 		}
 	}
 	o.boxes.forEach (function(box) {
 		if (box == o.cursor) return;
+		if (box.key=="box_red_dir") return;
 		levelArr [box.y/o.BSIZE - minY][box.x/o.BSIZE - minX] = box.btype;
 	});
 	var str = "[";
@@ -386,7 +457,7 @@ Puzzle.Editor.prototype.update = function() {
 };
 
 Puzzle.Editor.prototype.render = function() {
-	
+
 };
 
 function reindexBoxes() {
@@ -449,5 +520,105 @@ function o_getAngleFromDir(dir) {
 			return -90;
 		default :
 			return 0;
+	}
+}
+
+function createPathForBox(box) {
+	var str = box.btype.path;
+	box.init = box;
+	while (str.length>0) {
+		var ch = str.charAt(0);
+		str = str.substring(1);
+		var newbox = game.boxes.create(0, 0, 'box_red_dir');
+		newbox.init = box.init;
+		newbox.anchor.setTo(0.5, 0.5);
+		newbox.indexX = box.indexX;
+		newbox.indexY = box.indexY;
+		newbox.dir = parseInt(ch);
+		newbox.angle = o_getAngleFromDir(newbox.dir);
+		newbox.inputEnabled = true;
+		newbox.events.onInputDown.add(onBoxDown, this);
+		switch (newbox.dir) {
+			case Phaser.LEFT:
+				newbox.indexX--;
+				break;
+			case Phaser.RIGHT:
+				newbox.indexX++;
+				break;
+			case Phaser.UP:
+				newbox.indexY--;
+				break;
+			case Phaser.DOWN:
+				newbox.indexY++;
+				break;
+		}
+		box.next = newbox;
+		box.frame = getPrevPathBoxFrame(box, newbox);
+		box = newbox;
+	}
+}
+
+function getPrevPathBoxFrame(prev, cur) {
+	if (cur.dir==prev.dir|| prev.key=="box_red") return 1;
+	else if (prev.dir==Phaser.RIGHT) {
+		if (cur.dir == Phaser.DOWN)
+			return 3;
+		if (cur.dir == Phaser.UP)
+			return 2;
+	} else if (prev.dir==Phaser.LEFT) {
+		if (cur.dir == Phaser.DOWN)
+			return 2;
+		if (cur.dir == Phaser.UP)
+			return 3;
+	} else if (prev.dir==Phaser.UP) {
+		if (cur.dir == Phaser.RIGHT)
+			return 3;
+		if (cur.dir == Phaser.LEFT)
+			return 2;
+	}  else if (prev.dir==Phaser.DOWN) {
+		if (cur.dir == Phaser.RIGHT)
+			return 2;
+		if (cur.dir == Phaser.LEFT)
+			return 3;
+	}
+}
+
+
+function getPathBoxes(box) {
+	var res = '';
+	while (box) {
+		if (box.dir)
+			res += '' + box.dir;
+		box = box.next;
+	}
+	return res;
+}
+
+function deletePathBoxes(_box) {
+	var arr = new Array();
+	o.boxes.forEach (function (box) {
+		if (box.init==_box)
+			arr.push (box);
+	});
+	while (arr.length>0) {
+		o.boxes.remove (arr.shift());
+	}
+
+}
+
+function deleteNextPathBoxes(_box) {
+	var box = _box.init;
+	while (box) {
+		if (box.next==_box) {
+			box.frame = 0;
+			box.next = null;
+			break;
+		}
+		box = box.next;
+	}
+	while (_box) {
+		var box = _box;
+		_box = _box.next;
+		o.boxes.remove(box);
 	}
 }

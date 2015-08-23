@@ -106,8 +106,11 @@ Puzzle.Game.prototype.createStage = function () {
 						box = game.boxes.create(xx, yy, 'box_port');
 						box.frame = arr[y][x].id;
 					}
+					if (arr[y][x].value == 7) {
+						box = game.boxes.create(xx, yy, 'box_red');
+					}
 				}
-				if (arr[y][x]==3 || arr[y][x].value) game.boxes.setChildIndex(box, 0);
+				if (arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
 				box.anchor.setTo(0.5, 0.5);
 				box.indexX = x;
 				box.indexY = y;
