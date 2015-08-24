@@ -32,8 +32,17 @@ function onResizedEditor () {
 }
 
 function onBoxDown(sprite, pointer) {
-	if (sprite.key=="box_red")
-		deletePathBoxes(sprite);
+	if (sprite.key=="box_red") {
+		if (o.cursor && o.cursor.key=="box_red") {
+			o.path.edit = true;
+			o.path.curbox = sprite;
+			o.path.last = getLastPathBox(sprite);
+			changeCursor(o.SEVEN);
+			return;
+		} else {
+			deletePathBoxes(sprite);
+		}
+	}
 	if (!o.path.edit) {
 		if (sprite.key=="box_red_dir") {
 			deleteNextPathBoxes(sprite);
@@ -46,8 +55,8 @@ function onBoxDown(sprite, pointer) {
 }
 
 function mouseClicked (obj) {
-
 	if (o.cursor) {
+		if (isRedBoxUnderCursor() && o.cursor.key=="box_red") return;
 		o.cursor.inputEnabled = true;
 		o.cursor.events.onInputDown.add(onBoxDown, this);
 		var type = o.cursor.type;
@@ -169,7 +178,12 @@ function changeCursor (key) {
 		if (o.path.edit && o.path.last)
 			o.path.last.frame = 0;
 		o.path.edit = false;
-		o.path.last = null;
+		if (o.path.last)
+		{
+			o.path.last.next = null;
+			o.path.last = null;
+		}
+		o.path.curbox = null;
 	}
 	if (o.cursor) {
 		o.cursor.anchor.setTo(0.5, 0.5);
@@ -629,4 +643,20 @@ function deleteNextPathBoxes(_box) {
 		_box = _box.next;
 		o.boxes.remove(box);
 	}
+}
+
+function getLastPathBox(box) {
+	while (box.next) {
+		box = box.next;
+	}
+	return box;
+}
+
+function isRedBoxUnderCursor() {
+	var res = false;
+	o.boxes.forEach (function(box) {
+		if (box.key=="box_red" && Phaser.Rectangle.containsPoint(box.getBounds(), o.cursor.position) && box!=o.cursor)
+			res = true;
+	});
+	return res;
 }
