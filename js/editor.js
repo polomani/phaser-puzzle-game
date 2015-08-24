@@ -565,21 +565,29 @@ function getPrevPathBoxFrame(prev, cur) {
 			return 3;
 		if (cur.dir == Phaser.UP)
 			return 2;
+		if (cur.dir == Phaser.LEFT)
+			return 0;
 	} else if (prev.dir==Phaser.LEFT) {
 		if (cur.dir == Phaser.DOWN)
 			return 2;
 		if (cur.dir == Phaser.UP)
 			return 3;
+		if (cur.dir == Phaser.RIGHT)
+			return 0;
 	} else if (prev.dir==Phaser.UP) {
 		if (cur.dir == Phaser.RIGHT)
 			return 3;
 		if (cur.dir == Phaser.LEFT)
 			return 2;
+		if (cur.dir == Phaser.DOWN)
+			return 0;
 	}  else if (prev.dir==Phaser.DOWN) {
 		if (cur.dir == Phaser.RIGHT)
 			return 2;
 		if (cur.dir == Phaser.LEFT)
 			return 3;
+		if (cur.dir == Phaser.UP)
+			return 0;
 	}
 }
 
