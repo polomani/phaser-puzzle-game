@@ -28,7 +28,7 @@ function onResized (f) {
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
-		box.scale.setTo (BSIZE/50, BSIZE/50);
+		box.scale.setTo (BSIZE/100, BSIZE/100);
 
 		var xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
 		var yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
@@ -71,6 +71,8 @@ Puzzle.Game.prototype.addMenu = function () {
 Puzzle.Game.prototype.createStage = function () {
 	game.moving = false;
 	game.world.setBounds(0, 0, 2880, 2880);
+	var tile = game.add.tileSprite(0, 0, game.width, game.height, 'box_space');
+	//tile.tileScale.set(BSIZE/100, BSIZE/100);
 	game.boxes = game.add.group();
 
 	game.keyUP = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -82,17 +84,25 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
 
+	game.matrix = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
+		game.matrix[y]=[];
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
 				if(arr[y][x]==0 && !arr[y][x]) continue;
 				var box;
+				game.matrix[y][x] = {
+					type:arr[y][x],
+					box:box
+				};
 				var xx = 0, yy = 0;
+				//if(arr[y][x]==0) box = game.boxes.create (xx, yy, 'box_space');
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
+				box.angle = (Math.round(Math.random()*3))*90;
 				if (arr[y][x] instanceof Object) {
 					if (arr[y][x].value == 4) {
 						box = game.boxes.create(xx, yy, 'box_door');
@@ -110,7 +120,7 @@ Puzzle.Game.prototype.createStage = function () {
 						box = game.boxes.create(xx, yy, 'box_red');
 					}
 				}
-				if (arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
+				if (arr[y][x]==0 || arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
 				box.anchor.setTo(0.5, 0.5);
 				box.indexX = x;
 				box.indexY = y;
@@ -119,6 +129,181 @@ Puzzle.Game.prototype.createStage = function () {
 	}
 	game.inputEnabled = true;
 	game.input.onDown.add(beginSwipe, this);
+
+	game.matrix.move=function(x, y, side){
+		var temp = game.matrix[y][x];
+		game.matrix[y][x] = undefined;
+		switch (side) {
+			case "left":
+				game.matrix[y][--x] = temp;
+			break;
+			case "right":
+				game.matrix[y][++x] = temp;
+			break;
+			case "up":
+				game.matrix[--y][x] = temp;
+			break;
+			case "down":
+				game.matrix[++y][x] = temp;
+			break;
+		}
+
+		var xx,yy;
+		if (!game.invert) {
+			xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+			yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
+		} else {
+			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
+			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+		}
+
+
+		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
+		
+		tween.onComplete.add(function() { game.moving = false; });
+	};
+
+	game.matrix.next = function (side, x, y, line) {
+		if (x == undefined) {
+			switch (side) {
+				case "left":
+					x = game.matrix[0].length-1;
+					y = 0;
+				break;
+				case "right":
+					x = 0;
+					y = 0;
+				break;
+				case "up":
+					x = 0;
+					y = game.matrix.length-1;
+				break;
+				case "down":
+					x = 0;
+					y = 0;
+				break;
+			}
+		}
+		switch (side) {
+			case "left":
+				--x;
+				if (x < 0) {
+					if (line) {
+						return false;
+					}
+					++y;
+					x = game.matrix[0].length-1;
+				}
+				if (y >= game.matrix.length)
+					return false;
+			break;
+			case "right":
+				++x;
+				if (x >= game.matrix[0].length) {
+					if (line) {
+						return false;
+					}
+					++y;
+					x = 0;
+				}
+				if (y >= game.matrix.length)
+					return false;
+			break;
+			case "up":
+				--y;
+				if (y < 0) {
+					if (line) {
+						return false;
+					}
+					++x;
+					y = game.matrix.length-1;
+				}
+				if (x >= game.matrix[0].length)
+					return false;
+			break;
+			case "down":
+				++y;
+				if (y >= game.matrix.length) {
+					if (line) {
+						return false;
+					}
+					++x;
+					y = 0;
+				}
+				if (x >= game.matrix[0].length)
+					return false;
+			break;
+		}
+		
+		return {
+			x:x,
+			y:y,
+			box: game.matrix[y][x]
+		};
+	};
+
+	game.matrix.isBlocked = function (side, x, y) {
+		var elem;
+		var isBlocked = false;
+		while ((elem = this.next(side, x, y))) {
+			if (!elem.box)
+				break;
+			if (elem.box.type==1) {
+				isBlocked = true;
+				break;
+			}
+		}
+		return isBlocked;
+	}
+
+	game.matrix.moveAll=function(side){
+		var elem = {};
+		var opposite = opp (side);
+		var prev = true;
+		while ((elem = this.next(opposite, elem.x, elem.y))) {
+			if (elem.box && elem.box.type==2) {
+				if (!prev) {
+					this.move(elem.x, elem.y, side);
+					//elem = this.next(opposite, elem.x, elem.y);
+				}
+			} else {
+				prev = elem && elem.box;
+			}
+		}
+/*
+		for (var y = 0; y < arr.length; y++) {
+			var s = "";
+			for (var x = 0; x < arr[y].length; x++) {
+				if (game.matrix[y][x]) 
+					s+=game.matrix[y][x].type + ' ';
+				else
+					s+='  ';
+			}
+			console.log(s);
+		}
+		console.log(""); */
+	}
+
+	game.matrix.left=function(){
+		this.moveAll("left");
+	};
+
+	game.matrix.right=function(){
+		this.moveAll("right");
+	};
+
+	game.matrix.up=function(){
+		this.moveAll("up");
+	};
+
+	game.matrix.down=function(){
+		this.moveAll("down");
+	};
+
+	//game.matrix.down();
+	//game.matrix.up();
+	//game.matrix.right();
+	//game.matrix.left();
 };
 
 
@@ -128,45 +313,80 @@ Puzzle.Game.prototype.update = function() {
 
 function step (key)
 {
+
+	if (key == game.keyUP) {
+			if (game.invert)
+				game.matrix.left();
+			else
+				game.matrix.up();
+		}
+		if (key == game.keyDOWN) {
+			if (game.invert)
+				game.matrix.right();
+			else
+				game.matrix.down();
+		}
+		if (key == game.keyLEFT) {
+			if (game.invert)
+				game.matrix.up();
+			else
+				game.matrix.left();
+		}
+		if (key == game.keyRIGHT) {
+			if (game.invert)
+				game.matrix.down();
+			else
+				game.matrix.right();
+		}
+		return;
 	if (game.moving) return;
 	game.boxes.forEach (move);	
 	function move (box)
 	{
 		var tween;
+		if (box.key == "box_space") return;
 		if (box.key == "box_gap") return;
 		if (box.key == "box_door") return;
 		if (box.key == "box_arr") return;
 		if (box.key == "box_port") return;
 		if (box.key == "box_black" || collide(box, key.keyCode)) return;
-		game.moving = true;			
+		game.moving = true;	
 		if (key == game.keyUP) {
 			if (game.invert)
 				box.indexX--;
 			else
 				box.indexY--;
-			tween = game.add.tween(box).to( { y: (-BSIZE).toString() }, 100, "Linear", true);
 		}
 		if (key == game.keyDOWN) {
 			if (game.invert)
 				box.indexX++;
 			else
 				box.indexY++;
-			tween = game.add.tween(box).to( { y: BSIZE.toString() },    100, "Linear", true);
 		}
 		if (key == game.keyLEFT) {
 			if (game.invert)
 				box.indexY--;
 			else
 				box.indexX--;
-			tween = game.add.tween(box).to( { x: (-BSIZE).toString() }, 100, "Linear", true);
 		}
 		if (key == game.keyRIGHT) {
 			if (game.invert)
 				box.indexY++;
 			else
 				box.indexX++;
-			tween = game.add.tween(box).to( { x: BSIZE.toString() },    100, "Linear", true);
 		}
+		
+		var xx,yy;
+		if (!game.invert) {
+			xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+			yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;	
+		} else {
+			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+		}
+
+		tween = game.add.tween(box).to( { x: xx, y: yy }, 100, "Linear", true);
+		
 		tween.onComplete.add(function() { game.moving = false; });
 	}
 }
@@ -196,6 +416,7 @@ function collide (box, side, n)
 	function _collide (_box)
 	{
 		if (_box==box) return false;
+		if (!game.invert)
 		if ((_box.indexY==box.indexY && ((_box.indexX == box.indexX-1 && side==37) ||  (_box.indexX == box.indexX+1 && side==39)))
 			|| (_box.indexX == box.indexX && ((_box.indexY==box.indexY-1 && side==38) || (_box.indexY==box.indexY+1 && side==40))))
 		{
@@ -212,4 +433,17 @@ Puzzle.Game.prototype.render = function() {
 
 function gameOver () {
 	Puzzle.game.state.start('Boot');
+}
+
+function opp(side) {
+	switch (side) {
+		case "left":
+			return "right";
+		case "right":
+			return "left";
+		case "up":
+			return "down";
+		case "down":
+			return "up";
+	}
 }

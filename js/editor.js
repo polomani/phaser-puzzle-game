@@ -188,7 +188,7 @@ function changeCursor (key) {
 	if (o.cursor) {
 		o.cursor.anchor.setTo(0.5, 0.5);
 		o.cursor.type = key;
-		o.cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+		o.cursor.scale.setTo (o.BSIZE/100, o.BSIZE/100);
 	}
 }
 
@@ -257,7 +257,7 @@ Puzzle.Editor.prototype.create = function () {
 				box.btype = arr[y][x];
 				box.indexX = x;
 				box.indexY = y;
-				box.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+				box.scale.setTo (o.BSIZE/100, o.BSIZE/100);
 				box.x = x*o.BSIZE;
 				box.y = y*o.BSIZE;
 				box.inputEnabled = true;
@@ -305,13 +305,12 @@ o_zoom = function(plus) {
 		indentY = 0;
 	o.boxes.forEach (function (box) {o_resizeBox(box,indentX, indentY);})
 	if (o.cursor) {
-
-		o.cursor.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+		o.cursor.scale.setTo (o.BSIZE/100, o.BSIZE/100);
 	}
 }
 
 function o_resizeBox (box, indentX, indentY) {
-	box.scale.setTo (o.BSIZE/50, o.BSIZE/50);
+	box.scale.setTo (o.BSIZE/100, o.BSIZE/100);
 	var xx = (indentX + box.indexX) * o.BSIZE + o.BSIZE/2;
 	var yy = (indentY + box.indexY) * o.BSIZE + o.BSIZE/2;
 	box.x = xx;
