@@ -85,18 +85,18 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyRIGHT.onDown.add(step, this);
 
 	game.matrix = [];
+	game.blueBoxes = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
-				if(arr[y][x]==0 && !arr[y][x]) continue;
+				if(arr[y][x]==0 && !arr[y][x]) {
+					game.matrix[y][x] = undefined;
+					continue;
+				}
 				var box;
-				game.matrix[y][x] = {
-					type:arr[y][x],
-					box:box
-				};
 				var xx = 0, yy = 0;
 				//if(arr[y][x]==0) box = game.boxes.create (xx, yy, 'box_space');
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
@@ -124,6 +124,14 @@ Puzzle.Game.prototype.createStage = function () {
 				box.anchor.setTo(0.5, 0.5);
 				box.indexX = x;
 				box.indexY = y;
+				game.matrix[y][x] = {
+					x:x,
+					y:y,
+					type:arr[y][x],
+					box:box
+				};
+				if (box.key=="box_blue") 
+					game.blueBoxes.push (game.matrix[y][x]);
 			}
 		}
 	}
@@ -157,7 +165,8 @@ Puzzle.Game.prototype.createStage = function () {
 			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 		}
 
-
+		game.matrix[y][x].y=y;
+		game.matrix[y][x].x=x;
 		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
 		
 		tween.onComplete.add(function() { game.moving = false; });
@@ -243,21 +252,28 @@ Puzzle.Game.prototype.createStage = function () {
 	};
 
 	game.matrix.isBlocked = function (side, x, y) {
-		var elem;
+		var elem = {x:x, y:y};
 		var isBlocked = false;
-		while ((elem = this.next(side, x, y))) {
-			if (!elem.box)
-				break;
-			if (elem.box.type==1) {
-				isBlocked = true;
+		while ((elem = this.next(side, elem.x, elem.y, true))) {
+			if(!elem || !elem.box || elem.box.type==3) {
 				break;
 			}
+			isBlocked = true;
+			break;
 		}
 		return isBlocked;
 	}
 
 	game.matrix.moveAll=function(side){
-		var elem = {};
+		game.blueBoxes.sort(game.matrix.sortFunction(side));
+
+		for (var i = 0; i < game.blueBoxes.length; ++i) {
+			if (!this.isBlocked(side, game.blueBoxes[i].x, game.blueBoxes[i].y)) {
+				this.move(game.blueBoxes[i].x, game.blueBoxes[i].y, side);
+			}
+		}
+		
+		/*var elem = {};
 		var opposite = opp (side);
 		var prev = true;
 		while ((elem = this.next(opposite, elem.x, elem.y))) {
@@ -265,23 +281,61 @@ Puzzle.Game.prototype.createStage = function () {
 				if (!prev) {
 					this.move(elem.x, elem.y, side);
 					//elem = this.next(opposite, elem.x, elem.y);
+					prev = false;
 				}
 			} else {
 				prev = elem && elem.box;
 			}
+		}*/
+
+		// for (var y = 0; y < arr.length; y++) {
+		// 	var s = "";
+		// 	for (var x = 0; x < arr[y].length; x++) {
+		// 		if (game.matrix[y][x]) 
+		// 			s+=game.matrix[y][x].type + ' ';
+		// 		else
+		// 			s+='  ';
+		// 	}
+		// 	console.log(s);
+		//}
+		console.log(""); 
+	}
+
+	game.matrix.sortFunction = function (side) {
+		switch (side) {
+			case "left":
+				return game.matrix.sortFunctionLeft;
+			case "right":
+				return game.matrix.sortFunctionRight;
+			case "up":
+				return game.matrix.sortFunctionUp;
+			case "down":
+				return game.matrix.sortFunctionDown;
 		}
-/*
-		for (var y = 0; y < arr.length; y++) {
-			var s = "";
-			for (var x = 0; x < arr[y].length; x++) {
-				if (game.matrix[y][x]) 
-					s+=game.matrix[y][x].type + ' ';
-				else
-					s+='  ';
-			}
-			console.log(s);
-		}
-		console.log(""); */
+	}
+	game.matrix.sortFunctionUp=function(a, b) {
+		var c = a.x-b.x;
+		if (c==0)
+			c =  a.y-b.y;
+		return c;
+	}
+	game.matrix.sortFunctionDown=function(a, b) {
+		var c = a.x-b.x;
+		if (c==0)
+			c = b.y-a.y;
+		return c;
+	}
+	game.matrix.sortFunctionLeft=function(a, b) {
+		var c = a.y-b.y;
+		if (c==0)
+			c = a.x-b.x;
+		return c;
+	}
+	game.matrix.sortFunctionRight=function(a, b) {
+		var c = a.y-b.y;
+		if (c==0)
+			c = b.x-a.x;
+		return c;
 	}
 
 	game.matrix.left=function(){
@@ -304,6 +358,7 @@ Puzzle.Game.prototype.createStage = function () {
 	//game.matrix.up();
 	//game.matrix.right();
 	//game.matrix.left();
+	//console.log();
 };
 
 
