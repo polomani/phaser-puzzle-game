@@ -244,18 +244,14 @@ Puzzle.Game.prototype.createStage = function () {
 			break;
 		}
 		
-		return {
-			x:x,
-			y:y,
-			box: game.matrix[y][x]
-		};
+		return game.matrix[y][x];
 	};
 
 	game.matrix.isBlocked = function (side, x, y) {
 		var elem = {x:x, y:y};
 		var isBlocked = false;
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || !elem.box || elem.box.type==3) {
+			if(!elem || !elem.box || elem.type==3) {
 				break;
 			}
 			isBlocked = true;
@@ -266,27 +262,25 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.matrix.moveAll=function(side){
 		game.blueBoxes.sort(game.matrix.sortFunction(side));
-
+		var deleted = false;
 		for (var i = 0; i < game.blueBoxes.length; ++i) {
-			if (!this.isBlocked(side, game.blueBoxes[i].x, game.blueBoxes[i].y)) {
-				this.move(game.blueBoxes[i].x, game.blueBoxes[i].y, side);
+			var cur = game.blueBoxes[i];
+			if (!this.isBlocked(side, cur.x, cur.y)) {
+				this.move(cur.x, cur.y, side);
+			} else {
+				var next = this.next(side, cur.x, cur.y);
+				var nextnext = this.next(side, next.x, next.y);
+				if (next.type==2 && nextnext && nextnext.type==1) {					
+					game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
+					game.matrix[next.y][next.x] = undefined;
+					game.boxes.remove(next.box);
+					this.move(cur.x, cur.y, side);
+					deleted=true;
+				}
 			}
 		}
-		
-		/*var elem = {};
-		var opposite = opp (side);
-		var prev = true;
-		while ((elem = this.next(opposite, elem.x, elem.y))) {
-			if (elem.box && elem.box.type==2) {
-				if (!prev) {
-					this.move(elem.x, elem.y, side);
-					//elem = this.next(opposite, elem.x, elem.y);
-					prev = false;
-				}
-			} else {
-				prev = elem && elem.box;
-			}
-		}*/
+		if (deleted)
+			game.blueBoxes.splice(game.blueBoxes.indexOf("deleted"), 1);
 
 		// for (var y = 0; y < arr.length; y++) {
 		// 	var s = "";
@@ -394,92 +388,11 @@ function step (key)
 				game.matrix.right();
 		}
 		return;
+	/*
 	if (game.moving) return;
-	game.boxes.forEach (move);	
-	function move (box)
-	{
-		var tween;
-		if (box.key == "box_space") return;
-		if (box.key == "box_gap") return;
-		if (box.key == "box_door") return;
-		if (box.key == "box_arr") return;
-		if (box.key == "box_port") return;
-		if (box.key == "box_black" || collide(box, key.keyCode)) return;
-		game.moving = true;	
-		if (key == game.keyUP) {
-			if (game.invert)
-				box.indexX--;
-			else
-				box.indexY--;
-		}
-		if (key == game.keyDOWN) {
-			if (game.invert)
-				box.indexX++;
-			else
-				box.indexY++;
-		}
-		if (key == game.keyLEFT) {
-			if (game.invert)
-				box.indexY--;
-			else
-				box.indexX--;
-		}
-		if (key == game.keyRIGHT) {
-			if (game.invert)
-				box.indexY++;
-			else
-				box.indexX++;
-		}
 		
-		var xx,yy;
-		if (!game.invert) {
-			xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
-			yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;	
-		} else {
-			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
-			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
-		}
-
-		tween = game.add.tween(box).to( { x: xx, y: yy }, 100, "Linear", true);
-		
-		tween.onComplete.add(function() { game.moving = false; });
-	}
-}
-
-function collide (box, side, n)
-{
-	n = n || 0;
-	for (var i = 0; i < game.boxes.children.length; i++)
-	{
-		if (box.key!="box_blue") continue;
-		if (_collide(game.boxes.getChildAt(i)))	
-		{
-			if (n > 0)
-			{
-				game.boxes.remove(box);
-				return false;
-			}
-			if (game.boxes.getChildAt(i).key=="box_gap")
-			{
-				game.boxes.remove(box);
-				gameOver();
-				return false;
-			}
-			return true;
-		}
-	}
-	function _collide (_box)
-	{
-		if (_box==box) return false;
-		if (!game.invert)
-		if ((_box.indexY==box.indexY && ((_box.indexX == box.indexX-1 && side==37) ||  (_box.indexX == box.indexX+1 && side==39)))
-			|| (_box.indexX == box.indexX && ((_box.indexY==box.indexY-1 && side==38) || (_box.indexY==box.indexY+1 && side==40))))
-		{
-			return collide (_box, side, n+1) || _box.key == "box_black" || _box.key == "box_gap";
-		}
-		
-	}
-	return false;
+	tween.onComplete.add(function() { game.moving = false; });
+	*/
 }
 
 Puzzle.Game.prototype.render = function() {
