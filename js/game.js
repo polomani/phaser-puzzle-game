@@ -138,7 +138,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.inputEnabled = true;
 	game.input.onDown.add(beginSwipe, this);
 
-	game.matrix.move=function(x, y, side){
+	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
 		game.matrix[y][x] = undefined;
 		switch (side) {
@@ -168,8 +168,8 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
 		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
-		
-		tween.onComplete.add(function() { game.moving = false; });
+		tween.onComplete.add(function() { game.moving = false; game.checkGameOver(); });
+		game.moving = true;
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -265,10 +265,12 @@ Puzzle.Game.prototype.createStage = function () {
 		var deleted = false;
 		for (var i = 0; i < game.blueBoxes.length; ++i) {
 			var cur = game.blueBoxes[i];
+			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
 				this.move(cur.x, cur.y, side);
+				if (next && next.type==3)
+					game.gameOverFlag = true;
 			} else {
-				var next = this.next(side, cur.x, cur.y);
 				var nextnext = this.next(side, next.x, next.y);
 				if (next.type==2 && nextnext && nextnext.type==1) {					
 					game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
@@ -348,6 +350,11 @@ Puzzle.Game.prototype.createStage = function () {
 		this.moveAll("down");
 	};
 
+	game.checkGameOver = function () {
+	if (game.gameOverFlag)
+		Puzzle.game.state.start('Boot');
+	}
+
 	//game.matrix.down();
 	//game.matrix.up();
 	//game.matrix.right();
@@ -355,14 +362,12 @@ Puzzle.Game.prototype.createStage = function () {
 	//console.log();
 };
 
-
-Puzzle.Game.prototype.update = function() {
-	
-};
+Puzzle.Game.prototype.update = function() {};
 
 function step (key)
 {
-
+	if (game.moving) 
+		return;
 	if (key == game.keyUP) {
 			if (game.invert)
 				game.matrix.left();
@@ -388,20 +393,11 @@ function step (key)
 				game.matrix.right();
 		}
 		return;
-	/*
-	if (game.moving) return;
-		
-	tween.onComplete.add(function() { game.moving = false; });
-	*/
 }
 
 Puzzle.Game.prototype.render = function() {
 	this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
 };
-
-function gameOver () {
-	Puzzle.game.state.start('Boot');
-}
 
 function opp(side) {
 	switch (side) {
