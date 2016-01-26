@@ -86,6 +86,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.matrix = [];
 	game.blueBoxes = [];
+	game.doors = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
@@ -132,6 +133,8 @@ Puzzle.Game.prototype.createStage = function () {
 				};
 				if (box.key=="box_blue") 
 					game.blueBoxes.push (game.matrix[y][x]);
+				else if (box.key=="box_door")
+					game.doors.push (game.matrix[y][x]);
 			}
 		}
 	}
@@ -140,21 +143,28 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
-		game.matrix[y][x] = undefined;
+		if (game.matrix[y][x].prev) {
+			game.matrix[y][x] = game.matrix[y][x].prev;
+		} else {
+			game.matrix[y][x] = undefined;
+		}
 		switch (side) {
 			case "left":
-				game.matrix[y][--x] = temp;
+				--x;
 			break;
 			case "right":
-				game.matrix[y][++x] = temp;
+				++x;
 			break;
 			case "up":
-				game.matrix[--y][x] = temp;
+				--y;
 			break;
 			case "down":
-				game.matrix[++y][x] = temp;
+				++y;
 			break;
 		}
+		var prev = (game.matrix[y][x] && game.matrix[y][x].box) ? game.matrix[y][x] : false;
+		game.matrix[y][x] = temp;
+		game.matrix[y][x].prev = prev;
 
 		var xx,yy;
 		if (!game.invert) {
@@ -251,7 +261,7 @@ Puzzle.Game.prototype.createStage = function () {
 		var elem = {x:x, y:y};
 		var isBlocked = false;
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || !elem.box || elem.type==3) {
+			if(!elem || !elem.box || elem.type==3 || (elem.type.value==4 && elem.box.frame==0)) {
 				break;
 			}
 			isBlocked = true;
@@ -355,6 +365,12 @@ Puzzle.Game.prototype.createStage = function () {
 		Puzzle.game.state.start('Boot');
 	}
 
+	game.updateDoors = function () {
+		game.doors.forEach(function(box){
+			box.box.frame=(box.box.frame+1)%2;
+		});
+	}
+
 	//game.matrix.down();
 	//game.matrix.up();
 	//game.matrix.right();
@@ -368,6 +384,7 @@ function step (key)
 {
 	if (game.moving) 
 		return;
+	game.updateDoors();
 	if (key == game.keyUP) {
 			if (game.invert)
 				game.matrix.left();

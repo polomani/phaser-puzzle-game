@@ -45,7 +45,8 @@ Puzzle.game.state.add('Editor', Puzzle.Editor);
 Puzzle.game.state.start('Boot');
 
 $(document).ready (function () {
-	Editor.aimLVL = LEVELS.length - 1;
+	//Editor.aimLVL = LEVELS.length - 1;
+	Editor.aimLVL = 0;
 
     updateList();
 
