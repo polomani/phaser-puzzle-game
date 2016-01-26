@@ -143,11 +143,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
-		if (game.matrix[y][x].prev) {
-			game.matrix[y][x] = game.matrix[y][x].prev;
-		} else {
-			game.matrix[y][x] = undefined;
-		}
+		game.matrix.del(x, y);
 		switch (side) {
 			case "left":
 				--x;
@@ -261,12 +257,16 @@ Puzzle.Game.prototype.createStage = function () {
 		var elem = {x:x, y:y};
 		var isBlocked = false;
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || !elem.box || elem.type==3 || (elem.type.value==4 && elem.box.frame==0)) {
+			if(!elem || !elem.box || elem.type==3 || 
+				(elem.type.value==4 && elem.box.frame==0) ||
+				(elem.type.value==5 && game.canGoOnDirection(elem.box.angle, side))) {
 				break;
 			}
 			isBlocked = true;
 			break;
 		}
+		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type &&  game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.angle, side))
+			isBlocked = true;
 		return isBlocked;
 	}
 
@@ -281,13 +281,14 @@ Puzzle.Game.prototype.createStage = function () {
 				if (next && next.type==3)
 					game.gameOverFlag = true;
 			} else {
-				var nextnext = this.next(side, next.x, next.y);
-				if (next.type==2 && nextnext && nextnext.type==1) {					
-					game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
-					game.matrix[next.y][next.x] = undefined;
-					game.boxes.remove(next.box);
-					this.move(cur.x, cur.y, side);
-					deleted=true;
+				if (next) {
+					if (this.isBlocked(side, next.x, next.y)) {				
+						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
+						game.matrix.del(next.x, next.y);
+						game.boxes.remove(next.box);
+						this.move(cur.x, cur.y, side);
+						deleted=true;
+					}
 				}
 			}
 		}
@@ -304,7 +305,6 @@ Puzzle.Game.prototype.createStage = function () {
 		// 	}
 		// 	console.log(s);
 		//}
-		console.log(""); 
 	}
 
 	game.matrix.sortFunction = function (side) {
@@ -344,6 +344,14 @@ Puzzle.Game.prototype.createStage = function () {
 		return c;
 	}
 
+	game.matrix.del=function(x, y){
+		if (game.matrix[y][x].prev) {
+			game.matrix[y][x] = game.matrix[y][x].prev;
+		} else {
+			game.matrix[y][x] = undefined;
+		}
+	};
+
 	game.matrix.left=function(){
 		this.moveAll("left");
 	};
@@ -369,6 +377,18 @@ Puzzle.Game.prototype.createStage = function () {
 		game.doors.forEach(function(box){
 			box.box.frame=(box.box.frame+1)%2;
 		});
+	}
+
+	game.canGoFromDirection = function (angle, dir) {
+		if (getDirFromAngle (angle)==dir)
+			return true;
+		return false;
+	}
+
+	game.canGoOnDirection = function (angle, dir) {
+		if (opp(getDirFromAngle (angle))==dir)
+			return false;
+		return true;
 	}
 
 	//game.matrix.down();
@@ -425,6 +445,19 @@ function opp(side) {
 		case "up":
 			return "down";
 		case "down":
+			return "up";
+	}
+}
+
+function getDirFromAngle(angle) {
+	switch (angle) {
+		case 0:
+			return "right";
+		case 90:
+			return "down";
+		case -180:
+			return "left";
+		case -90:
 			return "up";
 	}
 }
