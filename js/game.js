@@ -71,7 +71,7 @@ Puzzle.Game.prototype.addMenu = function () {
 Puzzle.Game.prototype.createStage = function () {
 	game.moving = false;
 	game.world.setBounds(0, 0, 2880, 2880);
-	var tile = game.add.tileSprite(0, 0, game.width, game.height, 'box_space');
+	//var tile = game.add.tileSprite(0, 0, game.width, game.height, 'box_space');
 	//tile.tileScale.set(BSIZE/100, BSIZE/100);
 	game.boxes = game.add.group();
 

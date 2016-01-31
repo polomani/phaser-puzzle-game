@@ -8,7 +8,7 @@ Puzzle.Boot.prototype = {
     
   },
   create: function() {
-    this.game.stage.backgroundColor = '#d3c9a7';
+    this.game.stage.backgroundColor = '#1d002d';
 
     //scaling options
 	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
