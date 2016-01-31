@@ -87,6 +87,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.matrix = [];
 	game.blueBoxes = [];
 	game.doors = [];
+	game.ports = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
@@ -135,6 +136,8 @@ Puzzle.Game.prototype.createStage = function () {
 					game.blueBoxes.push (game.matrix[y][x]);
 				else if (box.key=="box_door")
 					game.doors.push (game.matrix[y][x]);
+				else if (box.key=="box_port")
+					game.ports.push (game.matrix[y][x]);
 			}
 		}
 	}
@@ -162,20 +165,12 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x] = temp;
 		game.matrix[y][x].prev = prev;
 
-		var xx,yy;
-		if (!game.invert) {
-			xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
-			yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
-		} else {
-			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
-			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
-		}
+		if (game.matrix[y][x].box.teleported)
+			game.matrix[y][x].box.teleported = false;
 
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
-		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
-		tween.onComplete.add(function() { game.moving = false; game.checkGameOver(); });
-		game.moving = true;
+		setBoxPosition(game.matrix[y][x]);
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -257,9 +252,10 @@ Puzzle.Game.prototype.createStage = function () {
 		var elem = {x:x, y:y};
 		var isBlocked = false;
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || !elem.box || elem.type==3 || 
+			if(!elem || !elem.box || elem.type==3 ||
 				(elem.type.value==4 && elem.box.frame==0) ||
-				(elem.type.value==5 && game.canGoOnDirection(elem.box.angle, side))) {
+				(elem.type.value==5 && game.canGoOnDirection(elem.box.angle, side)) ||
+				 elem.type.value==6) {
 				break;
 			}
 			isBlocked = true;
@@ -391,6 +387,31 @@ Puzzle.Game.prototype.createStage = function () {
 		return true;
 	}
 
+	game.checkTeleport = function (x, y) {
+		if (game.matrix[y][x].prev && game.matrix[y][x].prev.type.value==6) {
+			if (!game.matrix[y][x].box.teleported) {
+				game.matrix[y][x].box.teleported = true;
+				var elem = this.findTeleport(x, y);
+				var tempSecondTeleport = game.matrix[elem.y][elem.x];
+				game.matrix[elem.y][elem.x] = game.matrix[y][x];
+				game.matrix[y][x] = game.matrix[y][x].prev;
+				game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
+				game.matrix[elem.y][elem.x].x = elem.x;
+				game.matrix[elem.y][elem.x].y = elem.y;
+				setBoxPosition (game.matrix[elem.y][elem.x]);
+			} 
+		}
+	}
+
+	game.findTeleport = function (x, y) {
+		var box = game.matrix[y][x].prev;
+		var res;
+		game.ports.forEach (function(elem){
+			if (box.type.id==elem.type.id && box!=elem)
+				res =  elem;
+		});
+		return res;
+	}
 	//game.matrix.down();
 	//game.matrix.up();
 	//game.matrix.right();
@@ -460,4 +481,21 @@ function getDirFromAngle(angle) {
 		case -90:
 			return "up";
 	}
+}
+
+function setBoxPosition (elem) {
+	var x = elem.x;
+	var y = elem.y;
+	var xx,yy;
+	if (!game.invert) {
+		xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+		yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
+	} else {
+		xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
+		yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+	}
+	var qwe = game.matrix[y][x].box;
+	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
+	tween.onComplete.add(function() { game.moving = false; game.checkTeleport(x, y); game.checkGameOver(); });
+	game.moving = true;
 }
