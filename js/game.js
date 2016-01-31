@@ -277,7 +277,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (next && next.type==3)
 					game.gameOverFlag = true;
 			} else {
-				if (next) {
+				if (next && next.type==2) {
 					if (this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
@@ -365,8 +365,10 @@ Puzzle.Game.prototype.createStage = function () {
 	};
 
 	game.checkGameOver = function () {
-	if (game.gameOverFlag)
-		Puzzle.game.state.start('Boot');
+		if (game.gameOverFlag) {
+			Puzzle.game.state.start('Boot');
+			game.gameOverFlag = false;
+		}
 	}
 
 	game.updateDoors = function () {
