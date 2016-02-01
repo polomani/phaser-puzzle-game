@@ -8,6 +8,7 @@ var game;
 Puzzle.Game.prototype.preload = function () {
 	this.time.advancedTiming = true;
 	this.time.desiredFps = 30;
+	this.game.renderer.renderSession.roundPixels = true;
 	game = this.game;
 
 	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
@@ -391,16 +392,18 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.checkTeleport = function (x, y) {
 		if (game.matrix[y][x].prev && game.matrix[y][x].prev.type.value==6) {
-			if (!game.matrix[y][x].box.teleported) {
-				game.matrix[y][x].box.teleported = true;
+			if (!game.matrix[y][x].box.teleported) {	
 				var elem = this.findTeleport(x, y);
-				var tempSecondTeleport = game.matrix[elem.y][elem.x];
-				game.matrix[elem.y][elem.x] = game.matrix[y][x];
-				game.matrix[y][x] = game.matrix[y][x].prev;
-				game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
-				game.matrix[elem.y][elem.x].x = elem.x;
-				game.matrix[elem.y][elem.x].y = elem.y;
-				setBoxPosition (game.matrix[elem.y][elem.x]);
+				if (elem) {
+					game.matrix[y][x].box.teleported = true;
+					var tempSecondTeleport = game.matrix[elem.y][elem.x];
+					game.matrix[elem.y][elem.x] = game.matrix[y][x];
+					game.matrix[y][x] = game.matrix[y][x].prev;
+					game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
+					game.matrix[elem.y][elem.x].x = elem.x;
+					game.matrix[elem.y][elem.x].y = elem.y;
+					setBoxPosition (game.matrix[elem.y][elem.x]);
+				}
 			} 
 		}
 	}
@@ -410,7 +413,8 @@ Puzzle.Game.prototype.createStage = function () {
 		var res;
 		game.ports.forEach (function(elem){
 			if (box.type.id==elem.type.id && box!=elem)
-				res =  elem;
+				if(game.matrix[elem.y][elem.x]==elem)
+					res =  elem;
 		});
 		return res;
 	}
