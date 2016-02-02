@@ -262,8 +262,10 @@ Puzzle.Game.prototype.createStage = function () {
 			isBlocked = true;
 			break;
 		}
-		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type &&  game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.angle, side))
-			isBlocked = true;
+		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type)
+			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.angle, side))
+				isBlocked = true;
+			
 		return isBlocked;
 	}
 
@@ -285,11 +287,12 @@ Puzzle.Game.prototype.createStage = function () {
 						game.boxes.remove(next.box);
 						this.move(cur.x, cur.y, side);
 						deleted=true;
+
 					}
 				}
 			}
 		}
-		if (deleted)
+		while (deleted && game.blueBoxes.indexOf("deleted")!=-1)
 			game.blueBoxes.splice(game.blueBoxes.indexOf("deleted"), 1);
 
 		// for (var y = 0; y < arr.length; y++) {
