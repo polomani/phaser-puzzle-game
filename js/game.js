@@ -89,6 +89,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.blueBoxes = [];
 	game.doors = [];
 	game.ports = [];
+	game.robots = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
@@ -105,7 +106,6 @@ Puzzle.Game.prototype.createStage = function () {
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
-				box.angle = (Math.round(Math.random()*3))*90;
 				if (arr[y][x] instanceof Object) {
 					if (arr[y][x].value == 4) {
 						box = game.boxes.create(xx, yy, 'box_door');
@@ -139,6 +139,8 @@ Puzzle.Game.prototype.createStage = function () {
 					game.doors.push (game.matrix[y][x]);
 				else if (box.key=="box_port")
 					game.ports.push (game.matrix[y][x]);
+				else if (box.key=="box_red")
+					game.robots.push (game.matrix[y][x]);
 			}
 		}
 	}
@@ -149,16 +151,16 @@ Puzzle.Game.prototype.createStage = function () {
 		var temp = game.matrix[y][x];
 		game.matrix.del(x, y);
 		switch (side) {
-			case "left":
+			case Phaser.LEFT:
 				--x;
 			break;
-			case "right":
+			case Phaser.RIGHT:
 				++x;
 			break;
-			case "up":
+			case Phaser.UP:
 				--y;
 			break;
-			case "down":
+			case Phaser.DOWN:
 				++y;
 			break;
 		}
@@ -177,26 +179,26 @@ Puzzle.Game.prototype.createStage = function () {
 	game.matrix.next = function (side, x, y, line) {
 		if (x == undefined) {
 			switch (side) {
-				case "left":
+				case Phaser.LEFT:
 					x = game.matrix[0].length-1;
 					y = 0;
 				break;
-				case "right":
+				case Phaser.RIGHT:
 					x = 0;
 					y = 0;
 				break;
-				case "up":
+				case Phaser.UP:
 					x = 0;
 					y = game.matrix.length-1;
 				break;
-				case "down":
+				case Phaser.DOWN:
 					x = 0;
 					y = 0;
 				break;
 			}
 		}
 		switch (side) {
-			case "left":
+			case Phaser.LEFT:
 				--x;
 				if (x < 0) {
 					if (line) {
@@ -208,7 +210,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (y >= game.matrix.length)
 					return false;
 			break;
-			case "right":
+			case Phaser.RIGHT:
 				++x;
 				if (x >= game.matrix[0].length) {
 					if (line) {
@@ -220,7 +222,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (y >= game.matrix.length)
 					return false;
 			break;
-			case "up":
+			case Phaser.UP:
 				--y;
 				if (y < 0) {
 					if (line) {
@@ -232,7 +234,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (x >= game.matrix[0].length)
 					return false;
 			break;
-			case "down":
+			case Phaser.DOWN:
 				++y;
 				if (y >= game.matrix.length) {
 					if (line) {
@@ -265,7 +267,7 @@ Puzzle.Game.prototype.createStage = function () {
 		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type)
 			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.angle, side))
 				isBlocked = true;
-			
+
 		return isBlocked;
 	}
 
@@ -309,13 +311,13 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.matrix.sortFunction = function (side) {
 		switch (side) {
-			case "left":
+			case Phaser.LEFT:
 				return game.matrix.sortFunctionLeft;
-			case "right":
+			case Phaser.RIGHT:
 				return game.matrix.sortFunctionRight;
-			case "up":
+			case Phaser.UP:
 				return game.matrix.sortFunctionUp;
-			case "down":
+			case Phaser.DOWN:
 				return game.matrix.sortFunctionDown;
 		}
 	}
@@ -353,19 +355,19 @@ Puzzle.Game.prototype.createStage = function () {
 	};
 
 	game.matrix.left=function(){
-		this.moveAll("left");
+		this.moveAll(Phaser.LEFT);
 	};
 
 	game.matrix.right=function(){
-		this.moveAll("right");
+		this.moveAll(Phaser.RIGHT);
 	};
 
 	game.matrix.up=function(){
-		this.moveAll("up");
+		this.moveAll(Phaser.UP);
 	};
 
 	game.matrix.down=function(){
-		this.moveAll("down");
+		this.moveAll(Phaser.DOWN);
 	};
 
 	game.checkGameOver = function () {
@@ -421,6 +423,12 @@ Puzzle.Game.prototype.createStage = function () {
 		});
 		return res;
 	}
+
+	game.moveRobots = function () {
+		game.robots.forEach (function(elem){
+			
+		});
+	}
 	//game.matrix.down();
 	//game.matrix.up();
 	//game.matrix.right();
@@ -468,27 +476,27 @@ Puzzle.Game.prototype.render = function() {
 
 function opp(side) {
 	switch (side) {
-		case "left":
-			return "right";
-		case "right":
-			return "left";
-		case "up":
-			return "down";
-		case "down":
-			return "up";
+		case Phaser.LEFT:
+			return Phaser.RIGHT;
+		case Phaser.RIGHT:
+			return Phaser.LEFT;
+		case Phaser.UP:
+			return Phaser.DOWN;
+		case Phaser.DOWN:
+			return Phaser.UP;
 	}
 }
 
 function getDirFromAngle(angle) {
 	switch (angle) {
 		case 0:
-			return "right";
+			return Phaser.RIGHT;
 		case 90:
-			return "down";
+			return Phaser.DOWN;
 		case -180:
-			return "left";
+			return Phaser.LEFT;
 		case -90:
-			return "up";
+			return Phaser.UP;
 	}
 }
 

@@ -12,7 +12,7 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_arr', 'assets/images/box_arr.png');
 		this.load.spritesheet('box_port', 'assets/images/box_port.png', 100, 100);
 		this.load.image('box_red', 'assets/images/box_red.png');
-		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 50, 50);
+		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 	},
 	create: function() {
 		this.state.start('MainMenu');
