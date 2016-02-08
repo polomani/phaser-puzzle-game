@@ -32,14 +32,14 @@ function onResizedEditor () {
 }
 
 function onBoxDown(sprite, pointer) {
-	if (sprite.key=="box_red") {
+	if (sprite.key=="box_red" || sprite.key=="box_red_dir") {
 		if (o.cursor && o.cursor.key=="box_red") {
 			o.path.edit = true;
-			o.path.curbox = sprite;
+			o.path.curbox = sprite.init || sprite;
 			o.path.last = getLastPathBox(sprite);
 			changeCursor(o.SEVEN);
 			return;
-		} else {
+		} else if (!o.path.edit) {
 			deletePathBoxes(sprite);
 		}
 	}
