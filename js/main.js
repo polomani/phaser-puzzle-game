@@ -50,7 +50,7 @@ $(document).ready (function () {
 
     updateList();
 
-	$("#lSelect").click (function() {
+	$("#lSelect").on ("change", function() {
 		Editor.aimLVL = $( "#lSelect option:selected" ).attr("value");
 		if (Editor.aimLVL == LEVELS.length) {
 			LEVELS[Editor.aimLVL] = [[0]];
