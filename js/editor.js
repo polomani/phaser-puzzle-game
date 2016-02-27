@@ -43,7 +43,7 @@ function onBoxDown(sprite, pointer) {
 			deletePathBoxes(sprite);
 		}
 	}
-	if (!o.path.edit) {
+	if (!o.path.edit && !o.cursor) {
 		if (sprite.key=="box_red_dir") {
 			deleteNextPathBoxes(sprite);
 			sprite.init.btype.path = getPathBoxes(sprite.init);
@@ -213,6 +213,7 @@ Puzzle.Editor.prototype.create = function () {
 	o.keyS = o.input.keyboard.addKey(Phaser.Keyboard.S);
 	o.keyPlus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
 	o.keyMinus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_SUBTRACT);
+	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	o.ONE.onDown.add(changeCursor);
 	o.TWO.onDown.add(changeCursor);
 	o.THREE.onDown.add(changeCursor);
@@ -224,6 +225,9 @@ Puzzle.Editor.prototype.create = function () {
 	o.keyS.onDown.add(commitLevel);
 	o.keyMinus.onDown.add(function() {o_zoom(false);});
 	o.keyPlus.onDown.add(function() {o_zoom(true);});
+	game.keyF1.onDown.add(function () {
+		this.game.state.start('Game');
+	});
 
 	var arr = LEVELS[Editor.aimLVL];
 	for (var y = 0; y < arr.length; y++) {
@@ -274,14 +278,14 @@ Puzzle.Editor.prototype.create = function () {
 };
 
 Puzzle.Editor.prototype.addMenu = function () {
-	var play_label = game.add.text(0, 20, 'Play', { font: '24px Arial', fill: '#0' });
+	var play_label = game.add.text(0, 20, 'F1 - Play', { font: '24px Arial', fill: '#FFFFFF' });
 	play_label.inputEnabled = true;
 	play_label.events.onInputDown.add(function () {
 		changeCursor (o.EIGHT);
 		this.game.state.start('Game');
 	});
 
-	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = teleport\n7 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#0' });
+	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = teleport\n7 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#FFFFFF' });
 
 
 }

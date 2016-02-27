@@ -34,11 +34,13 @@ if(isNaN(screenRatio))
 	}
 }
 
-Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
+//Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
+Puzzle.game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.CANVAS, '');
 
 Puzzle.game.state.add('Boot', Puzzle.Boot);
 Puzzle.game.state.add('Preload', Puzzle.Preload);
 Puzzle.game.state.add('MainMenu', Puzzle.MainMenu);
+Puzzle.game.state.add('LevelsMenu', Puzzle.LevelsMenu);
 Puzzle.game.state.add('Game', Puzzle.Game);
 Puzzle.game.state.add('Editor', Puzzle.Editor);
 
@@ -62,7 +64,7 @@ $(document).ready (function () {
 	function updateList () {
 		var html = '';
 		for (var i = 0; i < LEVELS.length; ++i) {
-			html += '<option value="'+i+'">level '+i+'</option>';
+			html += '<option value="'+i+'">level '+(i+1)+'</option>';
 		}
 		html += '<option value="'+LEVELS.length+'"> [new level] </option>';
 		$("#lSelect").html(html);

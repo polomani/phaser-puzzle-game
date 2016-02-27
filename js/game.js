@@ -11,6 +11,8 @@ Puzzle.Game.prototype.preload = function () {
 	this.game.renderer.renderSession.roundPixels = true;
 	game = this.game;
 
+	//show_all for desktop and no_border for mobile
+	// (someone uses)
 	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 	game.scale.setScreenSize(true);
 	game.scale.setResizeCallback(onResized);
@@ -26,6 +28,7 @@ function onResized (f) {
 	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
+	BSIZE = Math.min (100, BSIZE);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
@@ -61,7 +64,7 @@ Puzzle.Game.prototype.create = function () {
 };
 
 Puzzle.Game.prototype.addMenu = function () {
-	var editor_label = game.add.text(0 , 20, 'Editor', { font: '24px Arial', fill: '#0' });
+	var editor_label = game.add.text(0 , 20, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
 	editor_label.inputEnabled = true;
 	editor_label.events.onInputDown.add(function () {
 		this.game.state.start('Editor');
@@ -80,10 +83,14 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	game.keyUP.onDown.add(step, this);
 	game.keyDOWN.onDown.add(step, this);
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
+	game.keyF1.onDown.add(function () {
+		this.game.state.start('Editor');
+	});
 
 	game.matrix = [];
 	game.blueBoxes = [];
@@ -429,9 +436,12 @@ Puzzle.Game.prototype.createStage = function () {
 				elem.path = elem.type.path;
 				elem.nocycle = true;
 			}
-			game.matrix.move(elem.x, elem.y, parseInt(elem.path.charAt(0)));
-			elem.path = elem.path.substring(1);
-		});
+			var side = parseInt(elem.path.charAt(0));
+			if (!game.matrix.isBlocked(side, elem.x, elem.y)) {
+				game.matrix.move(elem.x, elem.y, side);
+				elem.path = elem.path.substring(1);
+			}
+		});	
 	}
 	//game.matrix.down();
 	//game.matrix.up();
@@ -447,7 +457,6 @@ function step (key)
 	if (game.moving) 
 		return;
 	game.updateDoors();
-	game.moveRobots();
 	if (key == game.keyUP) {
 			if (game.invert)
 				game.matrix.left();
@@ -472,7 +481,7 @@ function step (key)
 			else
 				game.matrix.right();
 		}
-		return;
+	game.moveRobots();
 }
 
 Puzzle.Game.prototype.render = function() {

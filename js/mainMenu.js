@@ -9,7 +9,7 @@ Puzzle.MainMenu.prototype = {
     var t = this.game.add.text(gWidth/2, gHeight/2, text, style);
     t.anchor.set(0.5);
 
-    this.game.state.start('Game');
+    this.game.state.start('LevelsMenu');
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
