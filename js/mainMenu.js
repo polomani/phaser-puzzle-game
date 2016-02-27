@@ -9,11 +9,11 @@ Puzzle.MainMenu.prototype = {
     var t = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, style);
     t.anchor.set(0.5);
 
-    this.game.state.start('LevelsMenu');
+    Puzzle.game.state.start('LevelsMenu');
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('Game');
+      this.game.state.start('LevelsMenu');
     }
   }
 };

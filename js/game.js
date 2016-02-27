@@ -4,7 +4,6 @@ var Puzzle = Puzzle || {};
 Puzzle.Game = function(){};
 var game;
 
-
 Puzzle.Game.prototype.preload = function () {
 	this.time.advancedTiming = true;
 	this.time.desiredFps = 30;
@@ -14,13 +13,25 @@ Puzzle.Game.prototype.preload = function () {
 	//show_all for desktop and no_border for mobile
 	// (someone uses)
 	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-	game.scale.setScreenSize(true);
-	game.scale.setResizeCallback(onResized);
+	game.scale.setResizeCallback(onGameResized);
 	game.scale.refresh();
 };
 
+Puzzle.Game.prototype.create = function () {
+	game.levelWidth = LEVELS[Editor.aimLVL][0].length;
+	game.levelHeight = LEVELS[Editor.aimLVL].length;
+	game.levelArr = LEVELS[Editor.aimLVL];
+	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
+		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
-function onResized (f) {
+	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
+	Puzzle.Game.prototype.createStage();
+	onGameResized(true);
+
+	this.addMenu();
+};
+
+onGameResized =  function (f) {
 	if (f!=true && game.width==innerWidth && game.height==innerHeight) return;
 	game.width = innerWidth;
 	game.height = innerHeight;
@@ -48,20 +59,6 @@ function onResized (f) {
 		box.y = yy; 
 	}
 }
-
-Puzzle.Game.prototype.create = function () {
-	game.levelWidth = LEVELS[Editor.aimLVL][0].length;
-	game.levelHeight = LEVELS[Editor.aimLVL].length;
-	game.levelArr = LEVELS[Editor.aimLVL];
-	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
-		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-
-	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
-	Puzzle.Game.prototype.createStage();
-	onResized(true);
-
-	this.addMenu();
-};
 
 Puzzle.Game.prototype.addMenu = function () {
 	var editor_label = game.add.text(0 , 20, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
@@ -378,8 +375,8 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.checkGameOver = function () {
 		if (game.gameOverFlag) {
-			Puzzle.game.state.start('Boot');
 			game.gameOverFlag = false;
+			Puzzle.game.state.start('Boot');
 		}
 	}
 

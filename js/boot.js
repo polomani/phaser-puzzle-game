@@ -22,9 +22,6 @@ Puzzle.Boot.prototype = {
 
 	//screen size will be set automatically
 	this.scale.setScreenSize(true);
-
-	//physics system for movement
-	//this.game.physics.startSystem(Phaser.Physics.ARCADE);
     
     this.state.start('Preload');
   }
