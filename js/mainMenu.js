@@ -6,7 +6,7 @@ Puzzle.MainMenu.prototype = {
 
     var text = "Tap to begin";
     var style = { font: "30px Arial", fill: "#000", align: "center" };
-    var t = this.game.add.text(gWidth/2, gHeight/2, text, style);
+    var t = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, style);
     t.anchor.set(0.5);
 
     this.game.state.start('LevelsMenu');

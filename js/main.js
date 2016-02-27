@@ -3,37 +3,6 @@ var Puzzle = Puzzle || {};
 var Editor = {};
 var Game = {};
 
-var width = screen.height = window.innerWidth;// = 800;
-var height = screen.width = window.innerHeight;// = 600;
-var screenRatio;
-var gWidth;
-var gHeight;
-if(width>height){
-	gWidth = width;
-	gHeight = height;
-	screenRatio = (height / width);
-}
-else {
-	gWidth = height;
-	gHeight = width;
-	screenRatio = (width / height);
-}
-if(isNaN(screenRatio))
-{
-	if(window.innerHeight > window.innerWidth)
-	{
-		gWidth = window.innerHeight;
-		gHeight = window.innerWidth;
-		screenRatio = (window.innerWidth / window.innerHeight); 
-	}
-	else
-	{ 
-		gWidth = window.innerWidth;
-		gHeight = window.innerHeight;
-		screenRatio = (window.innerHeight / window.innerWidth);
-	}
-}
-
 //Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
 Puzzle.game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.CANVAS, '');
 
