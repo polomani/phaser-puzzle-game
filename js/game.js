@@ -34,14 +34,14 @@ function onResized (f) {
 	function resize (box) {
 		box.scale.setTo (BSIZE/100, BSIZE/100);
 
-		var xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
-		var yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+		var xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+		var yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
 
-		game.invert = (game.levelHeight > game.levelWidth) && (window.innerWidth > window.innerHeight) || (game.levelHeight < game.levelWidth) && (window.innerWidth < window.innerHeight);
+		game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 
 		if (game.invert) {
-			xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
-			yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+			xx =  Math.floor ((game.width - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+			yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
 		}
 
 		box.x = xx;
@@ -56,7 +56,7 @@ Puzzle.Game.prototype.create = function () {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
-	game.invert = (game.levelHeight > game.levelWidth) && (window.innerWidth > window.innerHeight) || (game.levelHeight < game.levelWidth) && (window.innerWidth < window.innerHeight);
+	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 	Puzzle.Game.prototype.createStage();
 	onResized(true);
 
@@ -519,11 +519,11 @@ function setBoxPosition (elem) {
 	var y = elem.y;
 	var xx,yy;
 	if (!game.invert) {
-		xx = Math.floor ((window.innerWidth - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
-		yy = Math.floor ((window.innerHeight - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
+		xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+		yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
 	} else {
-		xx =  Math.floor ((window.innerWidth - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
-		yy =  Math.floor ((window.innerHeight - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+		xx =  Math.floor ((game.width - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
+		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 	}
 	var qwe = game.matrix[y][x].box;
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
