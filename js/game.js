@@ -33,8 +33,8 @@ Puzzle.Game.prototype.create = function () {
 
 onGameResized =  function (f) {
 	if (f!=true && game.width==innerWidth && game.height==innerHeight) return;
-	game.width = innerWidth;
-	game.height = innerHeight;
+	game.width = window.innerWidth * window.devicePixelRatio;
+	game.height = window.innerHeight * window.devicePixelRatio;
 	game.scale.setScreenSize(true);
 	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),

@@ -36,6 +36,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
 
 Puzzle.LevelsMenu.onResized = function () {
   var o = Puzzle.LevelsMenu.o;
+  o.width = window.innerWidth * window.devicePixelRatio;
+  o.height = window.innerHeight * window.devicePixelRatio;
 
   var rows = 5;
   var cols = 3;
@@ -45,10 +47,10 @@ Puzzle.LevelsMenu.onResized = function () {
     cols = 5;
   }
 
-  var indentY = o.world.centerY - rows*110/2 + 100;
-  var indentX = o.world.centerX - Math.floor(cols/2)*110;
+  var indentY = o.height/2 - rows*110/2 + 100;
+  var indentX = o.width/2 - Math.floor(cols/2)*110;
 
-  o.selLevelText.x = o.world.centerX;
+  o.selLevelText.x = o.width/2;
   o.selLevelText.y = indentY - 90;
 
   o.lvls.forEach (function(lvl){
