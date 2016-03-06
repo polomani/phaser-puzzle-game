@@ -329,7 +329,7 @@ function commitLevel() {
 		pass:"korleone",
 		level:string
 	};
-	//alert(string);
+	console.log(string);
 	$.ajax({
 		url: 'http://dreamlike.cc/puzzle_editor/',
 		data: $.param(data),
@@ -346,6 +346,10 @@ function commitLevel() {
 			console.log('Error: ' + e);
 		}
 	});
+	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels");
+	var firebaseData = {};
+	firebaseData[new Date().toUTCString().slice(5, 25)] = string;
+	firebase.update(firebaseData);
 }
 
 function levelsToString () {

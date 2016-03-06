@@ -25,6 +25,7 @@ Puzzle.Game.prototype.create = function () {
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
 	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
+	game.solution = "";
 	Puzzle.Game.prototype.createStage();
 	onGameResized(true);
 
@@ -282,6 +283,7 @@ Puzzle.Game.prototype.createStage = function () {
 	}
 
 	game.matrix.moveAll=function(side){
+		game.solution += side;
 		game.blueBoxes.sort(game.matrix.sortFunction(side));
 		var deleted = false;
 		for (var i = 0; i < game.blueBoxes.length; ++i) {
@@ -464,6 +466,7 @@ Puzzle.Game.prototype.createStage = function () {
 		if (game.blueBoxes.length==1 && !game.gameOverMenu) {
 			game.gameOverFlag = true;
 			game.gameOverMenu = game.openWinMenu();
+			saveSolutionToFirebase();
 		} else if (game.gameOverFlag && !game.gameOverMenu) {
 			game.gameOverMenu = game.openGameOverMenu();
 		}
@@ -615,4 +618,15 @@ function setBoxPosition (elem) {
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
 	tween.onComplete.add(function() { game.moving = false; game.checkTeleport(x, y); game.checkGameOver(); });
 	game.moving = true;
+}
+
+function saveSolutionToFirebase() {
+	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Editor.aimLVL+1);
+	var data = {};
+	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
+	game.solution = game.solution.replace (new RegExp(Phaser.DOWN, 'g'), "d-");
+	game.solution = game.solution.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
+	game.solution = game.solution.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
+	data[game.solution] = new Date().toUTCString().slice(5, 25);
+	firebase.update(data);
 }
