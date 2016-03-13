@@ -12,7 +12,10 @@ Puzzle.Game.prototype.preload = function () {
 	//show_all for desktop and no_border for mobile
 	// (someone uses)
 	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-	game.scale.setResizeCallback(onGameResized);
+	game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
+	game.scale.enterFullScreen.add(function () {onGameResized(true);});
+    game.scale.leaveFullScreen.add(function () {onGameResized();});
+	game.scale.setResizeCallback(function () {onGameResized();});
 	game.scale.refresh();
 };
 
@@ -27,20 +30,33 @@ Puzzle.Game.prototype.create = function () {
 	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 	game.solution = "";
 	Puzzle.Game.prototype.createStage();
-	onGameResized(true);
+	onGameResized();
 
 	this.addMenu();
 };
 
-onGameResized =  function (f) {
-	if (f!=true && game.width==innerWidth && game.height==innerHeight) return;
-	game.width = window.innerWidth * window.devicePixelRatio;
-	game.height = window.innerHeight * window.devicePixelRatio;
+onGameResized =  function (full) {
+	if (!full) {
+		if (game.scale.prevWidth==innerWidth*window.devicePixelRatio && game.scale.prevHeight==innerHeight*window.devicePixelRatio) {
+			return;
+		}
+		game.width = window.innerWidth * window.devicePixelRatio;
+		game.height = window.innerHeight * window.devicePixelRatio;
+	} else {
+		if (game.scale.prevWidth==(window.screen.availWidth || window.screen.width) && game.scale.prevHeight==(window.screen.availHeight || window.screen.height)) {
+			return;
+		}
+		game.width = window.screen.availWidth || window.screen.width;
+		game.height = window.screen.availHeight || window.screen.height;
+	}
+	game.scale.prevWidth = game.width;
+	game.scale.prevHeight = game.height;
+	game.debug.resize = 5;
 	game.scale.setScreenSize(true);
 	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min (100, BSIZE);
+	BSIZE = Math.min (70, BSIZE);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
@@ -73,6 +89,12 @@ Puzzle.Game.prototype.addMenu = function () {
 	editor_label.inputEnabled = true;
 	editor_label.events.onInputDown.add(function () {
 		this.game.state.start('Editor');
+	});
+
+	var full = game.add.text(0 , 80, 'Fullscreen', { font: '24px Arial', fill: '#FFFFFF' });
+	full.inputEnabled = true;
+	full.events.onInputDown.add(function () {
+		gofull();
 	});
 }
 
@@ -184,6 +206,8 @@ Puzzle.Game.prototype.createStage = function () {
 
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
+		game.matrix[y][x].box.indexX = x;
+		game.matrix[y][x].box.indexY = y;
 		setBoxPosition(game.matrix[y][x]);
 	};
 
@@ -574,7 +598,10 @@ function step (key)
 }
 
 Puzzle.Game.prototype.render = function() {
-	this.game.debug.text(this.time.fps || '--', 2, 14, "#00ff00");
+	this.game.debug.text(this.time.fps + " " + game.debug.resize, 2, 14, "#00ff00");
+	game.debug.resize -= 1;
+	if (game.debug.resize < 0)
+		game.debug.resize = 0;
 };
 
 function opp(side) {
@@ -614,19 +641,29 @@ function setBoxPosition (elem) {
 		xx =  Math.floor ((game.width - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
 		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 	}
-	var qwe = game.matrix[y][x].box;
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
 	tween.onComplete.add(function() { game.moving = false; game.checkTeleport(x, y); game.checkGameOver(); });
 	game.moving = true;
 }
 
 function saveSolutionToFirebase() {
-	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Editor.aimLVL+1);
+	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Editor.aimLVL)+1);
 	var data = {};
 	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
 	game.solution = game.solution.replace (new RegExp(Phaser.DOWN, 'g'), "d-");
 	game.solution = game.solution.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
 	game.solution = game.solution.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
-	data[game.solution] = new Date().toUTCString().slice(5, 25);
+	data[game.solution] = new Date().toUTCString().slice(5, 25) + " =" + game.solution.length/2;
 	firebase.update(data);
+}
+
+function gofull() {
+    if (game.scale.isFullScreen)
+    {
+        game.scale.stopFullScreen();
+    }
+    else
+    {
+        game.scale.startFullScreen(false);
+    }
 }
