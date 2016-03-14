@@ -70,7 +70,7 @@ onGameResized =  function (full) {
 		game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 
 		if (game.invert) {
-			xx =  Math.floor ((game.width - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+			xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - box.indexY*BSIZE - BSIZE/2;
 			yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
 		}
 
@@ -506,13 +506,13 @@ function step (key)
 		}
 		if (key == game.keyLEFT) {
 			if (game.invert)
-				game.matrix.up();
+				game.matrix.down();
 			else
 				game.matrix.left();
 		}
 		if (key == game.keyRIGHT) {
 			if (game.invert)
-				game.matrix.down();
+				game.matrix.up();
 			else
 				game.matrix.right();
 		}
@@ -560,7 +560,7 @@ function setBoxPosition (elem) {
 		xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 		yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
 	} else {
-		xx =  Math.floor ((game.width - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;
+		xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - y*BSIZE - BSIZE/2;
 		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 	}
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
