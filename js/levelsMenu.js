@@ -35,9 +35,12 @@ Puzzle.LevelsMenu.prototype.create = function () {
 }
 
 Puzzle.LevelsMenu.onResized = function () {
+  console.log("resize");
   var o = Puzzle.LevelsMenu.o;
   o.width = window.innerWidth * window.devicePixelRatio;
   o.height = window.innerHeight * window.devicePixelRatio;
+  o.scale.setScreenSize(true);
+  o.scale.refresh();
 
   var rows = 5;
   var cols = 3;
@@ -47,15 +50,20 @@ Puzzle.LevelsMenu.onResized = function () {
     cols = 5;
   }
 
-  var indentY = o.height/2 - rows*110/2 + 100;
-  var indentX = o.width/2 - Math.floor(cols/2)*110;
+  var BSIZE = Math.min(100, Math.min(o.width, o.height)/6);
 
+  var indentY = o.height/2 - rows*(BSIZE+10)/2 + 100;
+  var indentX = o.width/2 - Math.floor(cols/2)*(BSIZE+10);
+
+  o.selLevelText.scale.setTo (BSIZE/100, BSIZE/100);
   o.selLevelText.x = o.width/2;
-  o.selLevelText.y = indentY - 90;
+  o.selLevelText.y = indentY - o.selLevelText.height*2;
 
   o.lvls.forEach (function(lvl){
-      lvl.image.x = indentX + ((lvl.number-1)%cols)*110;
-      lvl.image.y = indentY + Math.floor((lvl.number-1)/cols)*100;
+      lvl.image.x = indentX + ((lvl.number-1)%cols)*(BSIZE+10);
+      lvl.image.y = indentY + Math.floor((lvl.number-1)/cols)*BSIZE;
+      lvl.image.scale.setTo (BSIZE/100, BSIZE/100);
+      lvl.text.scale.setTo (BSIZE/100, BSIZE/100);
       lvl.text.x = lvl.image.x;
       lvl.text.y = lvl.image.y;
   });

@@ -8,6 +8,7 @@ Puzzle.Game.prototype.preload = function () {
 	this.time.advancedTiming = true;
 	this.time.desiredFps = 30;
 	this.game.renderer.renderSession.roundPixels = true;
+	this.game.stage.smoothed = false;
 	game = this.game;
 	//show_all for desktop and no_border for mobile
 	// (someone uses)
@@ -27,6 +28,7 @@ Puzzle.Game.prototype.create = function () {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
+	game.scale.prevWidth = game.scale.prevHeight = false;
 	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 	game.solution = "";
 	Puzzle.Game.prototype.createStage();
@@ -56,7 +58,7 @@ onGameResized =  function (full) {
 	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min (70, BSIZE);
+	BSIZE = Math.min (50, BSIZE);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
@@ -75,6 +77,7 @@ onGameResized =  function (full) {
 		box.x = xx;
 		box.y = yy; 
 	}
+	Popup.resize();
 }
 
 Puzzle.Game.prototype.addMenu = function () {
@@ -405,94 +408,13 @@ Puzzle.Game.prototype.createStage = function () {
 		this.moveAll(Phaser.DOWN);
 	};
 
-	game.closeMenu = function (newState) {
-		var win = game.gameOverMenu;
-		var tween = game.add.tween(win).to( { alpha:0, y: game.height }, 300, Phaser.Easing.Exponential.Out, true);
-  		tween.onComplete.add(function() { win.destroy(); game.state.start(newState); game.gameOverMenu = false;});
-	}
-
-	game.openGameOverMenu = function () {
-		var win = game.add.group();
-		win.create (0, 0, 'window');
-		var text = game.add.text(0,0,'Sorry, but not this time.', { font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
-		var replay = game.add.text(0,0,'Replay', { font: '30px Arial', fill: '#0' });
-		var levels = game.add.text(0,0,'Levels', { font: '30px Arial', fill: '#0' });
-		var menu = game.add.text(0,0,'Menu', { font: '30px Arial', fill: '#0' });
-		replay.anchor.set (0.5, 0);
-		text.anchor.set (0.5, 0.5);
-		text.x = win.width/2;
-		text.y = win.height/2;
-		levels.y = replay.y = menu.y = win.height - replay.height;
-		replay.x = win.width/2;
-		menu.x = win.width - menu.width;
-		win.add(text);
-		win.add(replay);
-		win.add(menu);
-		win.add(levels);
-    	win.x = game.width/2-win.width/2;
-    	win.y = game.height/2-win.height/2;
-    	var tween = game.add.tween(win).from( { alpha:0, y: -win.height }, 500, Phaser.Easing.Exponential.In, true);
-
-	    replay.inputEnabled = true;
-	    replay.events.onInputDown.add(function (){game.closeMenu("Game");});
-
-	    levels.inputEnabled = true;
-	    levels.events.onInputDown.add(function (){game.closeMenu("LevelsMenu");});
-
-	    menu.inputEnabled = true;
-	    menu.events.onInputDown.add(function (){game.closeMenu("MainMenu");});
-
-	    return win;
-	}
-
-	game.openWinMenu = function () {
-		var win = game.add.group();
-		win.create (0, 0, 'window');
-		var text = game.add.text(0,0,"Well done!\n  [✭[✭]✭]", {font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
-  		text.text.align = 'center';
-		var replay = game.add.text(0,0,'Replay', { font: '30px Arial', fill: '#0' });
-		var contin = game.add.text(0,0,'Continue', { font: '30px Arial', fill: '#0' });
-		var levels = game.add.text(0,0,'Levels', { font: '30px Arial', fill: '#0' });
-		var menu = game.add.text(0,0,'Menu', { font: '30px Arial', fill: '#0' });
-		text.anchor.set (0.5, 0.5);
-		text.x = win.width/2;
-		text.y = win.height/2;
-		levels.y = replay.y = menu.y = contin.y = win.height - replay.height;
-		replay.x = levels.width + 10;
-		contin.x = replay.x + replay.width + 10;
-		menu.x = win.width - menu.width;
-		win.add(text);
-		win.add(replay);
-		win.add(menu);
-		win.add(levels);
-		win.add(contin);
-    	win.x = game.width/2-win.width/2;
-    	win.y = game.height/2-win.height/2;
-    	var tween = game.add.tween(win).from( { alpha:0, y: -win.height }, 500, Phaser.Easing.Exponential.In, true);
-
-    	contin.inputEnabled = true;
-	    contin.events.onInputDown.add(function (){Editor.aimLVL++; game.closeMenu("Game");});
-
-    	replay.inputEnabled = true;
-	    replay.events.onInputDown.add(function (){game.closeMenu("Game");});
-
-	    levels.inputEnabled = true;
-	    levels.events.onInputDown.add(function (){game.closeMenu("LevelsMenu");});
-
-	    menu.inputEnabled = true;
-	    menu.events.onInputDown.add(function (){game.closeMenu("MainMenu");});
-
-	    return win;
-	}
-
-
 	game.checkGameOver = function () {
-		if (game.blueBoxes.length==1 && !game.gameOverMenu) {
+		if (game.blueBoxes.length==1 && !Popup.gameWinWin) {
 			game.gameOverFlag = true;
-			game.gameOverMenu = game.openWinMenu();
+			Popup.openWinMenu();
 			saveSolutionToFirebase();
-		} else if (game.gameOverFlag && !game.gameOverMenu) {
-			game.gameOverMenu = game.openGameOverMenu();
+		} else if (game.gameOverFlag && !Popup.gameOverWin) {
+			Popup.openGameOverMenu();
 		}
 	}
 
