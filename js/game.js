@@ -77,6 +77,7 @@ onGameResized =  function (full) {
 		box.x = xx;
 		box.y = yy; 
 	}
+	Puzzle.Game.rotateArrows();
 	Popup.resize();
 }
 
@@ -126,6 +127,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.doors = [];
 	game.ports = [];
 	game.robots = [];
+	game.arrows = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
@@ -150,6 +152,7 @@ Puzzle.Game.prototype.createStage = function () {
 					if (arr[y][x].value == 5) {
 						box = game.boxes.create(xx, yy, 'box_arr');
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
+						box.dir = arr[y][x].dir;
 					}
 					if (arr[y][x].value == 6) {
 						box = game.boxes.create(xx, yy, 'box_port');
@@ -177,6 +180,8 @@ Puzzle.Game.prototype.createStage = function () {
 					game.ports.push (game.matrix[y][x]);
 				else if (box.key=="box_red")
 					game.robots.push (game.matrix[y][x]);
+				else if (box.key=="box_arr")
+					game.arrows.push (game.matrix[y][x]);
 			}
 		}
 	}
@@ -295,7 +300,7 @@ Puzzle.Game.prototype.createStage = function () {
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
 			if(!elem || !elem.box || elem.type==3 ||
 				(elem.type.value==4 && elem.box.frame==0) ||
-				(elem.type.value==5 && game.canGoOnDirection(elem.box.angle, side)) ||
+				(elem.type.value==5 && game.canGoOnDirection(elem.box.dir, side)) ||
 				 elem.type.value==6) {
 				break;
 			}
@@ -303,7 +308,7 @@ Puzzle.Game.prototype.createStage = function () {
 			break;
 		}
 		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type)
-			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.angle, side))
+			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.dir, side))
 				isBlocked = true;
 
 		return isBlocked;
@@ -321,7 +326,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (next && next.type==3)
 					game.gameOverFlag = true;
 			} else {
-				if (next && next.type==2 && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.angle, side))) {
+				if (next && next.type==2 && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
 					if (this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
@@ -424,14 +429,14 @@ Puzzle.Game.prototype.createStage = function () {
 		});
 	}
 
-	game.canGoFromDirection = function (angle, dir) {
-		if (getDirFromAngle (angle)==dir)
+	game.canGoFromDirection = function (dirArr, dir) {
+		if (dirArr==dir)
 			return true;
 		return false;
 	}
 
-	game.canGoOnDirection = function (angle, dir) {
-		if (opp(getDirFromAngle (angle))==dir)
+	game.canGoOnDirection = function (dirArr, dir) {
+		if (opp(dirArr)==dir)
 			return false;
 		return true;
 	}
@@ -588,4 +593,29 @@ function gofull() {
     {
         game.scale.startFullScreen(false);
     }
+}
+
+Puzzle.Game.rotateArrows = function() {
+	game.arrows.forEach(function(elem){
+		if (!game.invert) {
+			elem.box.angle = o_getAngleFromDir(elem.box.dir);
+		} else {
+			elem.box.angle = Puzzle.Game.getInvertedAngleFromDir(elem.box.dir);
+		}
+	});
+}
+
+Puzzle.Game.getInvertedAngleFromDir = function (dir) {
+	switch (dir) {
+		case Phaser.RIGHT:
+			return o_getAngleFromDir(Phaser.DOWN);
+		case Phaser.DOWN:
+			return o_getAngleFromDir(Phaser.LEFT);
+		case Phaser.LEFT:
+			return  o_getAngleFromDir(Phaser.UP);
+		case Phaser.UP:
+			return o_getAngleFromDir(Phaser.RIGHT);
+		default :
+			return 0;
+	}
 }
