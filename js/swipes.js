@@ -10,7 +10,7 @@ function beginSwipe(){
 	startY = game.input.y;
 	game.input.onDown.remove(beginSwipe);
 	game.input.onUp.add(endSwipe);
-		game.input.addMoveCallback(swiping);
+	game.input.addMoveCallback(swiping);
 }
 
 //#ivano polomani
@@ -57,6 +57,7 @@ function endSwipe(){
 		//tap
 	}
 	// stop listening for the player to release finger/mouse, let's start listening for the player to click/touch
+	game.input.moveCallback = null;
 	game.input.onDown.add(beginSwipe);
 	game.input.onUp.remove(endSwipe);
 	game.input.deleteMoveCallback(0);

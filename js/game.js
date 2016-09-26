@@ -39,11 +39,11 @@ Puzzle.Game.prototype.create = function () {
 
 onGameResized =  function (full) {
 	if (!full) {
-		if (game.scale.prevWidth==innerWidth*window.devicePixelRatio && game.scale.prevHeight==innerHeight*window.devicePixelRatio) {
+		/*if (game.scale.prevWidth==innerWidth*window.devicePixelRatio && game.scale.prevHeight==innerHeight*window.devicePixelRatio) {
 			return;
-		}
-		game.width = window.innerWidth * window.devicePixelRatio;
-		game.height = window.innerHeight * window.devicePixelRatio;
+		}*/
+		game.width = window.innerWidth; //* window.devicePixelRatio;
+		game.height = window.innerHeight; //* window.devicePixelRatio;
 	} else {
 		if (game.scale.prevWidth==(window.screen.availWidth || window.screen.width) && game.scale.prevHeight==(window.screen.availHeight || window.screen.height)) {
 			return;

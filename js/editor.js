@@ -29,9 +29,15 @@ function onResizedEditor () {
 	o.boxes.forEach (function (box) {o_resizeBox(box, indentX, indentY);})
 
 	o_updateNet();
+
+	game.savebutton.x = o.width-200;
 }
 
 function onBoxDown(sprite, pointer) {
+	if (o.input.x > o.width*0.95 || o.input.x < o.width*0.05 || o.input.y > o.height*0.95 || o.input.y < o.height*0.05) {
+		return;
+	}
+
 	if (sprite.key=="box_red" || sprite.key=="box_red_dir") {
 		if (o.cursor && o.cursor.key=="box_red") {
 			o.path.edit = true;
@@ -55,20 +61,31 @@ function onBoxDown(sprite, pointer) {
 }
 
 function mouseClicked (obj) {
-	if (o.cursor) {
-		if (isRedBoxUnderCursor() && o.cursor.key=="box_red") return;
-		o.cursor.inputEnabled = true;
-		o.cursor.events.onInputDown.add(onBoxDown, this);
-		var type = o.cursor.type;
-		if (type==o.SEVEN)
-			o.path.edit = true;
-		if (o.path.edit)
-			o.path.last = o.cursor;
-		o.cursor = null;
-		changeCursor (type);
+	if (o.input.x > o.width*0.95)
+		Puzzle.Editor.cameraRight();
+	else if (o.input.x < o.width*0.05)
+		Puzzle.Editor.cameraLeft()
+	else if (o.input.y > o.height*0.95)
+		Puzzle.Editor.cameraDown();
+	else if (o.input.y < o.height*0.05)
+		Puzzle.Editor.cameraUp();
+	else if (!(o.input.x < 120 && o.input.y< 310)) {
+
+		if (o.cursor) {
+			if (isRedBoxUnderCursor() && o.cursor.key=="box_red") return;
+			o.cursor.inputEnabled = true;
+			o.cursor.events.onInputDown.add(onBoxDown, this);
+			var type = o.cursor.type;
+			if (type==o.SEVEN)
+				o.path.edit = true;
+			if (o.path.edit)
+				o.path.last = o.cursor;
+			o.cursor = null;
+			changeCursor (type);
+		}
+		else
+			changeCursor (o.EIGHT);
 	}
-	else
-		changeCursor (o.EIGHT);
 	reindexBoxes();
 	saveLevel ();
 }
@@ -285,9 +302,42 @@ Puzzle.Editor.prototype.addMenu = function () {
 		this.game.state.start('Game');
 	});
 
-	game.add.text(0, 50, '1 = box black \n2 = box blue \n3 = box gap\n4 = box door\n5 = direction\n6 = teleport\n7 = cursor\nS = save lvl \n ', { font: '18px Arial', fill: '#FFFFFF' });
-
-
+	game.fullbutton = game.add.text(0 , 325, 'Fullscreen', { font: '18px Arial', fill: '#FFFFFF' });
+	game.cursorbutton = game.add.text(0, 75, '8 = cursor', { font: '18px Arial', fill: '#FFFFFF' });
+	game.blackbutton = game.add.text(0, 100, '1 = box black', { font: '18px Arial', fill: '#FFFFFF' });
+	game.bluebutton = game.add.text(0, 125, '2 = box blue', { font: '18px Arial', fill: '#FFFFFF' }); 
+	game.gapbutton = game.add.text(0, 150, '3 = box gap', { font: '18px Arial', fill: '#FFFFFF' });
+	game.doorbutton = game.add.text(0, 175, '4 = box door', { font: '18px Arial', fill: '#FFFFFF' });
+	game.directbutton = game.add.text(0, 200, '5 = direction', { font: '18px Arial', fill: '#FFFFFF' });
+	game.telebutton = game.add.text(0, 225, '6 = teleport', { font: '18px Arial', fill: '#FFFFFF' });
+	game.redbutton = game.add.text(0, 250, '8 = red box', { font: '18px Arial', fill: '#FFFFFF' });
+	game.plusbutton = game.add.text(0, 275, '[zoom in +]', { font: '18px Arial', fill: '#FFFFFF' });
+	game.minusbutton = game.add.text(0, 300, '[zoom out -]', { font: '18px Arial', fill: '#FFFFFF' });
+	game.savebutton = game.add.text(0, 0, 'S = save lvl', { font: '18px Arial', fill: '#FFFFFF' });
+	game.fullbutton.inputEnabled = true;
+	game.cursorbutton.inputEnabled = true;
+	game.blackbutton.inputEnabled = true;
+	game.bluebutton.inputEnabled = true; 
+	game.gapbutton.inputEnabled = true;
+	game.doorbutton.inputEnabled = true;
+	game.directbutton.inputEnabled = true;
+	game.telebutton.inputEnabled = true;
+	game.redbutton.inputEnabled = true;
+	game.plusbutton.inputEnabled = true;
+	game.minusbutton.inputEnabled = true;
+	game.savebutton.inputEnabled = true;
+	game.fullbutton.events.onInputDown.add(function () {gofull();});
+	game.cursorbutton.events.onInputDown.add(function () {changeCursor(o.EIGHT)});
+    game.blackbutton.events.onInputDown.add(function () {changeCursor(o.ONE)});
+    game.bluebutton.events.onInputDown.add(function () {changeCursor(o.TWO)});
+    game.gapbutton.events.onInputDown.add(function () {changeCursor(o.THREE)});
+    game.doorbutton.events.onInputDown.add(function () {changeCursor(o.FOUR)});
+    game.directbutton.events.onInputDown.add(function () {changeCursor(o.FIVE)});
+    game.telebutton.events.onInputDown.add(function () {changeCursor(o.SIX)});
+    game.redbutton.events.onInputDown.add(function () {changeCursor(o.SEVEN)});
+    game.plusbutton.events.onInputDown.add(function () {o_zoom(true);});
+    game.minusbutton.events.onInputDown.add(function () {o_zoom(false);});
+    game.savebutton.events.onInputDown.add(commitLevel);
 }
 
 o_zoom = function(plus) {
@@ -460,25 +510,41 @@ Puzzle.Editor.prototype.update = function() {
 	var cursors = Editor.cursors;
 	if (cursors.up.isDown)
 	{
-		o.camera.y -= o.BSIZE;
+		Puzzle.Editor.cameraUp();
 	}
 	else if (cursors.down.isDown)
 	{
-		o.camera.y += o.BSIZE;
+		Puzzle.Editor.cameraDown();
 	}
 
 	if (cursors.left.isDown)
 	{
-		o.camera.x -= o.BSIZE;
+		Puzzle.Editor.cameraLeft();
 	}
 	else if (cursors.right.isDown)
 	{
-		o.camera.x += o.BSIZE;
+		Puzzle.Editor.cameraRight();
 	}
 };
 
-Puzzle.Editor.prototype.render = function() {
+Puzzle.Editor.cameraLeft = function () {
+	o.camera.x -= o.BSIZE;
+}
 
+Puzzle.Editor.cameraRight = function () {
+	o.camera.x += o.BSIZE;
+}
+
+Puzzle.Editor.cameraUp = function () {
+	o.camera.y -= o.BSIZE;
+}
+
+Puzzle.Editor.cameraDown = function () {
+	o.camera.y += o.BSIZE;
+}
+
+
+Puzzle.Editor.prototype.render = function() {
 };
 
 function reindexBoxes() {
