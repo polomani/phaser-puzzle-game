@@ -22,9 +22,9 @@ Puzzle.Game.prototype.preload = function () {
 
 Puzzle.Game.prototype.create = function () {
 	game.gameOverFlag = false;
-	game.levelWidth = LEVELS[Editor.aimLVL][0].length;
-	game.levelHeight = LEVELS[Editor.aimLVL].length;
-	game.levelArr = LEVELS[Editor.aimLVL];
+	game.levelWidth = LEVELS[Game.aimLVL][0].length;
+	game.levelHeight = LEVELS[Game.aimLVL].length;
+	game.levelArr = LEVELS[Game.aimLVL];
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
@@ -39,11 +39,11 @@ Puzzle.Game.prototype.create = function () {
 
 onGameResized =  function (full) {
 	if (!full) {
-		/*if (game.scale.prevWidth==innerWidth*window.devicePixelRatio && game.scale.prevHeight==innerHeight*window.devicePixelRatio) {
+		if (game.scale.prevWidth==window.innerWidth*window.devicePixelRatio && game.scale.prevHeight==window.innerHeight*window.devicePixelRatio) {
 			return;
-		}*/
-		game.width = window.innerWidth; //* window.devicePixelRatio;
-		game.height = window.innerHeight; //* window.devicePixelRatio;
+		}
+		game.width = window.innerWidth * window.devicePixelRatio;
+		game.height = window.innerHeight * window.devicePixelRatio;
 	} else {
 		if (game.scale.prevWidth==(window.screen.availWidth || window.screen.width) && game.scale.prevHeight==(window.screen.availHeight || window.screen.height)) {
 			return;
@@ -79,6 +79,7 @@ onGameResized =  function (full) {
 	}
 	Puzzle.Game.rotateArrows();
 	Popup.resize();
+	Tutorial.resize();
 }
 
 Puzzle.Game.prototype.addMenu = function () {
@@ -89,17 +90,21 @@ Puzzle.Game.prototype.addMenu = function () {
       this.game.state.start('LevelsMenu');
     });
 
-	var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
-	editor_label.inputEnabled = true;
-	editor_label.events.onInputDown.add(function () {
-		this.game.state.start('Editor');
-	});
+	if (game.device.desktop) {
+		var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
+		editor_label.inputEnabled = true;
+		editor_label.events.onInputDown.add(function () {
+			this.game.state.start('Editor');
+		});
 
-	var full = game.add.text(0 , 80, 'Fullscreen', { font: '24px Arial', fill: '#FFFFFF' });
-	full.inputEnabled = true;
-	full.events.onInputDown.add(function () {
-		gofull();
-	});
+		var full = game.add.text(0 , 80, 'FullScreen', { font: '24px Arial', fill: '#FFFFFF' });
+		full.inputEnabled = true;
+		full.events.onInputDown.add(function () {
+			gofull();
+		});
+
+		$("#lSelect").show();
+	}
 }
 
 Puzzle.Game.prototype.createStage = function () {
@@ -187,6 +192,7 @@ Puzzle.Game.prototype.createStage = function () {
 	}
 	game.inputEnabled = true;
 	game.input.onDown.add(beginSwipe, this);
+	Tutorial.open(Game.aimLVL);
 
 	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
@@ -418,6 +424,7 @@ Puzzle.Game.prototype.createStage = function () {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
+			Data.setCompletedLevels(Game.aimLVL+1);
 		} else if (game.gameOverFlag && !Popup.gameOverWin) {
 			Popup.openGameOverMenu();
 		}
@@ -525,6 +532,7 @@ function step (key)
 }
 
 Puzzle.Game.prototype.render = function() {
+	if (!game.device.desktop) return;
 	this.game.debug.text(this.time.fps + " " + game.debug.resize, 2, 14, "#00ff00");
 	game.debug.resize -= 1;
 	if (game.debug.resize < 0)
@@ -574,7 +582,7 @@ function setBoxPosition (elem) {
 }
 
 function saveSolutionToFirebase() {
-	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Editor.aimLVL)+1);
+	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
 	var data = {};
 	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
 	game.solution = game.solution.replace (new RegExp(Phaser.DOWN, 'g'), "d-");

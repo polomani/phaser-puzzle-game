@@ -14,6 +14,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_red', 'assets/images/box_red.png');
 		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 		this.load.image('window', 'assets/images/window.png');
+		this.load.spritesheet('tutorial_0', 'assets/tutorial/tutorial_0.png', 228, 228);
+		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
 	},
 	create: function() {
 		this.state.start('MainMenu');

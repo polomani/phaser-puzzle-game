@@ -25,8 +25,12 @@ Puzzle.LevelsMenu.prototype.create = function () {
         lvl.image = image;
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
-        lvl.setAll('inputEnabled', true);
-        lvl.callAll('events.onInputDown.add', 'events.onInputDown', Puzzle.LevelsMenu.levelInputListener, this);
+        if (i > Data.completedLevels) {
+          lvl.alpha = 0.5;
+        } else {
+          lvl.setAll('inputEnabled', true);
+          lvl.callAll('events.onInputDown.add', 'events.onInputDown', Puzzle.LevelsMenu.levelInputListener, this);
+        }
         o.lvls.push(lvl);    
     }
 
@@ -70,6 +74,6 @@ Puzzle.LevelsMenu.onResized = function () {
 };
 
 Puzzle.LevelsMenu.levelInputListener = function (lvl) {
-  Editor.aimLVL = lvl.number-1;
+  Game.aimLVL = lvl.number-1;
   this.game.state.start('Game');
 };

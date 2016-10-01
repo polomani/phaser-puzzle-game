@@ -85,7 +85,10 @@ Popup.openWinMenu = function () {
 	var tween = game.add.tween(win).from( { alpha:0, y: -win.height }, 500, Phaser.Easing.Exponential.In, true);
 
 	contin.inputEnabled = true;
-    contin.events.onInputDown.add(function (){Editor.aimLVL++; Popup.closeMenu("Game");});
+    contin.events.onInputDown.add(function (){
+    	Game.aimLVL = Math.min(Game.aimLVL+1, Data.completedLevels);
+     	Popup.closeMenu("Game");
+    });
 
 	replay.inputEnabled = true;
     replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});

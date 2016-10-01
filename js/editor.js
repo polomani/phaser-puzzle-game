@@ -210,7 +210,6 @@ function changeCursor (key) {
 }
 
 Puzzle.Editor.prototype.create = function () {
-	//alert (levelsToString(LEVELS[Editor.aimLVL]));
 	o.world.setBounds(0, 0, 2880, 2880);
 	o.input.addMoveCallback(mouseMove);
 	o.input.onDown.add(mouseClicked);
@@ -246,7 +245,7 @@ Puzzle.Editor.prototype.create = function () {
 		this.game.state.start('Game');
 	});
 
-	var arr = LEVELS[Editor.aimLVL];
+	var arr = LEVELS[Game.aimLVL];
 	for (var y = 0; y < arr.length; y++) {
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y])
@@ -373,7 +372,7 @@ function o_resizeBox (box, indentX, indentY) {
 
 function commitLevel() {
 	var newLvl = saveLevel();
-	LEVELS[Editor.aimLVL] = newLvl;
+	LEVELS[Game.aimLVL] = newLvl;
 	var string = levelsToString();
 	var data = {
 		pass:"korleone",
@@ -381,7 +380,7 @@ function commitLevel() {
 	};
 	console.log(string);
 	$.ajax({
-		url: 'http://dreamlike.cc/puzzle_editor/',
+		url: 'http://dreamlike.wanspi.com/puzzle_editor/',
 		data: $.param(data),
 		type: 'POST',
 		dataType: 'text',
@@ -502,7 +501,7 @@ function saveLevel () {
 	str = str.substring (0, str.length-1);
 	str += "]";
 	//alert (str);
-	LEVELS[Editor.aimLVL] = levelArr;
+	LEVELS[Game.aimLVL] = levelArr;
 	return levelArr;
 }
 

@@ -16,15 +16,14 @@ Puzzle.game.state.add('Editor', Puzzle.Editor);
 Puzzle.game.state.start('Boot');
 
 $(document).ready (function () {
-	//Editor.aimLVL = LEVELS.length - 1;
-	Editor.aimLVL = 0;
+	Game.aimLVL = 0;
 
     updateList();
 
 	$("#lSelect").on ("change", function() {
-		Editor.aimLVL = $( "#lSelect option:selected" ).attr("value");
-		if (Editor.aimLVL == LEVELS.length) {
-			LEVELS[Editor.aimLVL] = [[0]];
+		Game.aimLVL = $( "#lSelect option:selected" ).attr("value");
+		if (Game.aimLVL == LEVELS.length) {
+			LEVELS[Game.aimLVL] = [[0]];
 			updateList();
 		}
 		Puzzle.game.state.restart();

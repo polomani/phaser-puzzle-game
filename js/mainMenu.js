@@ -16,6 +16,7 @@ Puzzle.MainMenu.prototype = {
 
     play.inputEnabled = true;
     play.events.onInputDown.add(function () {
+      Game.aimLVL = Data.completedLevels;
       o.state.start('Game');
     });
 
