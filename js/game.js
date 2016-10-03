@@ -87,6 +87,7 @@ Puzzle.Game.prototype.addMenu = function () {
 	var select = this.game.add.text(0, 20, "Select level",  { font: '24px Arial', fill: '#FFFFFF' });
     select.inputEnabled = true;
     select.events.onInputDown.add(function () {
+      Popup.clearAll();
       this.game.state.start('LevelsMenu');
     });
 
@@ -532,7 +533,7 @@ function step (key)
 }
 
 Puzzle.Game.prototype.render = function() {
-	if (!game.device.desktop) return;
+	//if (!game.device.desktop) return;
 	this.game.debug.text(this.time.fps + " " + game.debug.resize, 2, 14, "#00ff00");
 	game.debug.resize -= 1;
 	if (game.debug.resize < 0)

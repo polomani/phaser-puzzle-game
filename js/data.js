@@ -11,7 +11,9 @@
 	exports.setCompletedLevels = function(number) {
 		if (number > exports.completedLevels) {
 			exports.completedLevels = number;
-			updateData("completedLevels", number);
+			if (db) {
+				updateData("completedLevels", number);
+			}
 		}
 	}
 
