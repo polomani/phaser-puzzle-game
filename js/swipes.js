@@ -4,6 +4,7 @@ var startX;
 var startY;
 var endX;
 var endY;
+var need;
 
 function beginSwipe(){
 	startX = game.input.x;
@@ -17,7 +18,7 @@ function beginSwipe(){
 function swiping (){
 	var distX = startX-game.input.x;
 	var distY = startY-game.input.y;
-	if (Math.sqrt(distX*distX+distY*distY) > 100)
+	if (distX*distX+distY*distY > 1000)
 		endSwipe();
 }
 
@@ -57,8 +58,9 @@ function endSwipe(){
 		//tap
 	}
 	// stop listening for the player to release finger/mouse, let's start listening for the player to click/touch
-	game.input.moveCallback = null;
+	
 	game.input.onDown.add(beginSwipe);
 	game.input.onUp.remove(endSwipe);
-	game.input.deleteMoveCallback(0);
+	game.input.moveCallback = null;
+	game.input.moveCallbacks = [];
 }
