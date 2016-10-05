@@ -10,12 +10,9 @@ Puzzle.Game.prototype.preload = function () {
 	this.game.renderer.renderSession.roundPixels = true;
 	this.game.stage.smoothed = false;
 	game = this.game;
-	//show_all for desktop and no_border for mobile
-	// (someone uses)
-	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-	game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
-	game.scale.setResizeCallback(function () {onGameResized();});
-	game.scale.refresh();
+
+	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+	game.scale.pageAlignHorizontally = true;
 };
 
 Puzzle.Game.prototype.create = function () {
@@ -36,23 +33,6 @@ Puzzle.Game.prototype.create = function () {
 };
 
 onGameResized =  function (full) {
-	if (!full) {
-		if (game.scale.prevWidth==window.innerWidth*window.devicePixelRatio && game.scale.prevHeight==window.innerHeight*window.devicePixelRatio) {
-			return;
-		}
-		game.width = window.innerWidth * window.devicePixelRatio;
-		game.height = window.innerHeight * window.devicePixelRatio;
-	} else {
-		if (game.scale.prevWidth==(window.screen.availWidth || window.screen.width) && game.scale.prevHeight==(window.screen.availHeight || window.screen.height)) {
-			return;
-		}
-		game.width = window.screen.availWidth || window.screen.width;
-		game.height = window.screen.availHeight || window.screen.height;
-	}
-	game.scale.prevWidth = game.width;
-	game.scale.prevHeight = game.height;
-	game.debug.resize = 5;
-	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 	BSIZE = Math.min (50, BSIZE);
@@ -101,7 +81,7 @@ Puzzle.Game.prototype.addMenu = function () {
 			gofull();
 		});
 
-		$("#lSelect").show();
+		//$("#lSelect").show();
 	}
 }
 
@@ -531,10 +511,7 @@ function step (key)
 
 Puzzle.Game.prototype.render = function() {
 	//if (!game.device.desktop) return;
-	this.game.debug.text(this.time.fps + " " + game.debug.resize, 2, 14, "#00ff00");
-	game.debug.resize -= 1;
-	if (game.debug.resize < 0)
-		game.debug.resize = 0;
+	this.game.debug.text(this.time.fps, 2, 14, "#00ff00");
 };
 
 function opp(side) {
@@ -580,6 +557,7 @@ function setBoxPosition (elem) {
 }
 
 function saveSolutionToFirebase() {
+	return;
 	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
 	var data = {};
 	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");

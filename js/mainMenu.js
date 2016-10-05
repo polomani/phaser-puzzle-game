@@ -4,9 +4,12 @@ Puzzle.MainMenu.prototype = {
   create: function() {
     //this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
     var o = this.game;
-    o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+    /*o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
     o.scale.setResizeCallback(Puzzle.MainMenu.onResized);
-    o.scale.refresh();
+    o.scale.refresh();*/
+
+    o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    o.scale.pageAlignHorizontally = true;
 
     var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
     var play = this.game.play = this.game.add.bitmapText(o.width/2, o.height/2, "desyrel", "Play", 30);

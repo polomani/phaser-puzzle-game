@@ -2,9 +2,9 @@ Puzzle.LevelsMenu = function(){};
 
 Puzzle.LevelsMenu.prototype.create = function () {
   var o = Puzzle.LevelsMenu.o =  this.game;
-  o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-  o.scale.setResizeCallback(Puzzle.LevelsMenu.onResized);
-  o.scale.refresh();
+
+  o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  o.scale.pageAlignHorizontally = true;
 
   o.selLevelText = o.add.text(0,0,'Select level', { font: '40px Arial', fill: '#FFFFFF' });
   o.selLevelText.anchor.set(0.5);
@@ -40,11 +40,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
 }
 
 Puzzle.LevelsMenu.onResized = function () {
-  console.log("resize");
   var o = Puzzle.LevelsMenu.o;
-  o.width = window.innerWidth * window.devicePixelRatio;
-  o.height = window.innerHeight * window.devicePixelRatio;
-  o.scale.refresh();
 
   var rows = 5;
   var cols = 3;
