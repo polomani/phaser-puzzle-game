@@ -5,6 +5,7 @@ Puzzle.Game = function(){};
 var game;
 
 Puzzle.Game.prototype.preload = function () {
+	console.log('game preloaded');
 	this.time.advancedTiming = true;
 	this.time.desiredFps = 30;
 	this.game.renderer.renderSession.roundPixels = true;
@@ -104,7 +105,7 @@ Puzzle.Game.prototype.addMenu = function () {
 			gofull();
 		});
 
-		$("#lSelect").show();
+		//$("#lSelect").show();
 	}
 }
 

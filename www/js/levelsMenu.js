@@ -1,6 +1,7 @@
 Puzzle.LevelsMenu = function(){};
 
 Puzzle.LevelsMenu.prototype.create = function () {
+  this.game.add.sprite(0,0,'');
   var o = Puzzle.LevelsMenu.o =  this.game;
   o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
   o.scale.setResizeCallback(Puzzle.LevelsMenu.onResized);

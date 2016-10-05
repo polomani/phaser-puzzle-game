@@ -18,6 +18,8 @@ Puzzle.Preload.prototype = {
 		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
 	},
 	create: function() {
-		this.state.start('MainMenu');
+		this.game.add.sprite(0,0,'');
+		//this.state.start('MainMenu');
+		this.state.start('Game');
 	}
 };

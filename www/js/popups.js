@@ -22,10 +22,10 @@ Popup.clearAll = function() {
 Popup.openGameOverMenu = function () {
 	var win = game.add.group();
 	win.create (0, 0, 'window');
-	var text = game.add.text(0,0,'Sorry, but not this time.', { font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
-	var replay = game.add.text(0,0,'Replay', { font: '30px Arial', fill: '#0' });
-	var levels = game.add.text(0,0,'Levels', { font: '30px Arial', fill: '#0' });
-	var menu = game.add.text(0,0,'Menu', { font: '30px Arial', fill: '#0' });
+	var text = game.add.text(0,0,'Sorry, but not this time.');//, { font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
+	var replay = game.add.text(0,0,'Replay');//, { font: '30px Arial', fill: '#0' });
+	var levels = game.add.text(0,0,'Levels');//, { font: '30px Arial', fill: '#0' });
+	var menu = game.add.text(0,0,'Menu');//, { font: '30px Arial', fill: '#0' });
 	replay.anchor.set (0.5, 0);
 	text.anchor.set (0.5, 0.5);
 	text.x = win.width/2;
