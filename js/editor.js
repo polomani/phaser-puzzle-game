@@ -9,7 +9,6 @@ Puzzle.Editor.prototype.preload = function () {
 	o = this.game;
 	o.cursor = null;
 	o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-	o.scale.setScreenSize(true);
 	o.scale.setResizeCallback(onResizedEditor);
 	o.scale.refresh();
 	o.inputEnabled = true;

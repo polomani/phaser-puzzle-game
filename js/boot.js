@@ -8,7 +8,7 @@ Puzzle.Boot.prototype = {
     
   },
   create: function() {
-    this.game.stage.backgroundColor = '#1d002d';
+    this.game.stage.backgroundColor = '0';
 
     //scaling options
 	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -19,9 +19,6 @@ Puzzle.Boot.prototype = {
 	
 	//have the game centered horizontally
 	this.scale.pageAlignHorizontally = true;
-
-	//screen size will be set automatically
-	this.scale.setScreenSize(true);
     
     this.state.start('Preload');
   }

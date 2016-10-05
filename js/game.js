@@ -14,8 +14,6 @@ Puzzle.Game.prototype.preload = function () {
 	// (someone uses)
 	game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 	game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
-	game.scale.enterFullScreen.add(function () {onGameResized(true);});
-    game.scale.leaveFullScreen.add(function () {onGameResized();});
 	game.scale.setResizeCallback(function () {onGameResized();});
 	game.scale.refresh();
 };
@@ -54,7 +52,6 @@ onGameResized =  function (full) {
 	game.scale.prevWidth = game.width;
 	game.scale.prevHeight = game.height;
 	game.debug.resize = 5;
-	game.scale.setScreenSize(true);
 	game.scale.refresh();
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));

@@ -44,7 +44,6 @@ Puzzle.LevelsMenu.onResized = function () {
   var o = Puzzle.LevelsMenu.o;
   o.width = window.innerWidth * window.devicePixelRatio;
   o.height = window.innerHeight * window.devicePixelRatio;
-  o.scale.setScreenSize(true);
   o.scale.refresh();
 
   var rows = 5;

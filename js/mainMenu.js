@@ -31,7 +31,6 @@ Puzzle.MainMenu.prototype = {
 Puzzle.MainMenu.onResized = function (obj) {
   obj.game.width = window.innerWidth * window.devicePixelRatio;
   obj.game.height = window.innerHeight * window.devicePixelRatio;
-  obj.game.scale.setScreenSize(true);
   obj.game.scale.refresh();
 
   obj.game.play.x = obj.game.width/2;
