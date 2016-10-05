@@ -1,7 +1,9 @@
 
 var Puzzle = Puzzle || {};
 var Editor = {};
-var Game = {};
+var Game = {
+	aimLVL: 10
+};
 
 //Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
 Puzzle.game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.CANVAS, '', null, false, false);
@@ -15,8 +17,8 @@ Puzzle.game.state.add('Editor', Puzzle.Editor);
 
 Puzzle.game.state.start('Boot');
 
-$(document).ready (function () {
-	Game.aimLVL = 0;
+/*$(document).ready (function () {
+	Game.aimLVL = 10;
 
     updateList();
 
@@ -37,4 +39,4 @@ $(document).ready (function () {
 		html += '<option value="'+LEVELS.length+'"> [new level] </option>';
 		$("#lSelect").html(html);
 	}
-});
+});*/

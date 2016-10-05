@@ -5,16 +5,16 @@
 	var db = null;
 
 	exports.load = function() {
-		db = window.sqlitePlugin.openDatabase({name: 'com-dreamlike-puzzle.db', location: 'default'}, onDatabaseOpen);
+		//db = window.sqlitePlugin.openDatabase({name: 'com-dreamlike-puzzle.db', location: 'default'}, onDatabaseOpen);
 	}
 
 	exports.setCompletedLevels = function(number) {
-		if (number > exports.completedLevels) {
+		/*if (number > exports.completedLevels) {
 			exports.completedLevels = number;
 			if (db) {
 				updateData("completedLevels", number);
 			}
-		}
+		}*/
 	}
 
 

@@ -16,6 +16,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('window', 'assets/images/window.png');
 		this.load.spritesheet('tutorial_0', 'assets/tutorial/tutorial_0.png', 228, 228);
 		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
+
+		this.game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
 	},
 	create: function() {
 		this.state.start('MainMenu');

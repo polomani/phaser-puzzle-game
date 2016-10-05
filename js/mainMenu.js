@@ -9,9 +9,9 @@ Puzzle.MainMenu.prototype = {
     o.scale.refresh();
 
     var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
-    var play = this.game.play = this.game.add.text(o.width/2, o.height/2, "Play", style);
+    var play = this.game.play = this.game.add.bitmapText(o.width/2, o.height/2, "desyrel", "Play", 30);
     play.anchor.set(0.5);
-    var select = this.game.select = this.game.add.text(o.width/2, play.height+play.y, "Select level", style);
+    var select = this.game.select = this.game.add.bitmapText(o.width/2, play.height+play.y, "desyrel", "Select level", 30);
     select.anchor.set(0.5);
 
     play.inputEnabled = true;
