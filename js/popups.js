@@ -22,10 +22,11 @@ Popup.clearAll = function() {
 Popup.openGameOverMenu = function () {
 	var win = game.add.group();
 	win.create (0, 0, 'window');
-	var text = game.add.text(0,0,'Sorry, but not this time.', { font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
-	var replay = game.add.text(0,0,'Replay', { font: '30px Arial', fill: '#0' });
-	var levels = game.add.text(0,0,'Levels', { font: '30px Arial', fill: '#0' });
-	var menu = game.add.text(0,0,'Menu', { font: '30px Arial', fill: '#0' });
+
+	var text = game.add.bitmapText(0, 0, "desyrel", "Sorry, but not this time.", 36);
+	var replay = game.add.bitmapText(0, 0, "desyrel", "Replay", 30);0
+	var levels = game.add.bitmapText(0, 0, "desyrel", "Levels", 30);
+	var menu = game.add.bitmapText(0, 0, "desyrel", "Menu", 30);
 	replay.anchor.set (0.5, 0);
 	text.anchor.set (0.5, 0.5);
 	text.x = win.width/2;
@@ -59,12 +60,12 @@ Popup.openGameOverMenu = function () {
 Popup.openWinMenu = function () {
 	var win = game.add.group();
 	win.create (0, 0, 'window');
-	var text = game.add.text(0,0,"Well done!\n  [✭[✭]✭]", {font: '36px Arial', fill: '#0', wordWrap: true, wordWrapWidth: win.width});
-		text.text.align = 'center';
-	var replay = game.add.text(0,0,'Replay', { font: '30px Arial', fill: '#0' });
-	var contin = game.add.text(0,0,'Continue', { font: '30px Arial', fill: '#0' });
-	var levels = game.add.text(0,0,'Levels', { font: '30px Arial', fill: '#0' });
-	var menu = game.add.text(0,0,'Menu', { font: '30px Arial', fill: '#0' });
+	var text = game.add.bitmapText(0, 0, "desyrel", "Well done!", 36);
+	text.text.align = 'center';
+	var replay = game.add.bitmapText(0, 0, "desyrel", "Replay", 30);
+	var contin = game.add.bitmapText(0, 0, "desyrel", "Next level", 30);
+	var levels = game.add.bitmapText(0, 0, "desyrel", "Levels", 30);
+	var menu = game.add.bitmapText(0, 0, "desyrel", "Menu", 30);
 	text.anchor.set (0.5, 0.5);
 	text.x = win.width/2;
 	text.y = win.height/2;
