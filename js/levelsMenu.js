@@ -6,7 +6,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   o.scale.pageAlignHorizontally = true;
 
-  o.selLevelText = o.add.text(0,0,'Select level', { font: '40px Arial', fill: '#FFFFFF' });
+  o.selLevelText = o.add.bitmapText(0, 0, "white", "Select level", 50);
   o.selLevelText.anchor.set(0.5);
   o.selLevelText.text.align = 'center';
 
@@ -14,19 +14,15 @@ Puzzle.LevelsMenu.prototype.create = function () {
 
   for (var i = 0; i < 15; i++) {
         var lvl = o.add.group(); 
-        var image = lvl.create(0,0,'box_blue');
+        var image = lvl.create(0,0,'box_black');
         image.anchor.setTo(0.5, 0.5);
-        var text = o.add.text(0,0, i+1, {}, lvl);
-        text.font = 'Arial';
-        text.fontSize = 50;
-        text.stroke = '#ff00ff';
-        text.strokeThickness = 5;
+        var text = o.add.bitmapText(0, 0, "black", i+1, 36, lvl);
         text.anchor.setTo(0.5, 0.5);
         lvl.image = image;
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
         //i > Data.completedLevels && 
-        if (i > 12) {
+        if (i > 12 && i > Data.completedLevels) {
           lvl.alpha = 0.5;
         } else {
           lvl.setAll('inputEnabled', true);
@@ -50,18 +46,18 @@ Puzzle.LevelsMenu.onResized = function () {
     cols = 5;
   }
 
-  var BSIZE = Math.min(100, Math.min(o.width, o.height)/6);
+  var BSIZE = Math.min(100*2, Math.min(o.width, o.height)/6);
 
   var indentY = o.height/2 - rows*(BSIZE+10)/2 + 100;
   var indentX = o.width/2 - Math.floor(cols/2)*(BSIZE+10);
 
   o.selLevelText.scale.setTo (BSIZE/100, BSIZE/100);
   o.selLevelText.x = o.width/2;
-  o.selLevelText.y = indentY - o.selLevelText.height*2;
+  o.selLevelText.y = indentY - o.selLevelText.height*3;
 
   o.lvls.forEach (function(lvl){
       lvl.image.x = indentX + ((lvl.number-1)%cols)*(BSIZE+10);
-      lvl.image.y = indentY + Math.floor((lvl.number-1)/cols)*BSIZE;
+      lvl.image.y = indentY + Math.floor((lvl.number-1)/cols)*(BSIZE+10);
       lvl.image.scale.setTo (BSIZE/100, BSIZE/100);
       lvl.text.scale.setTo (BSIZE/100, BSIZE/100);
       lvl.text.x = lvl.image.x;

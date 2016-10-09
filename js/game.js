@@ -35,7 +35,7 @@ Puzzle.Game.prototype.create = function () {
 onGameResized =  function (full) {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min (50, BSIZE);
+	BSIZE = Math.min(Math.min (100, BSIZE), game.width/8);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
@@ -55,7 +55,6 @@ onGameResized =  function (full) {
 		box.y = yy; 
 	}
 	Puzzle.Game.rotateArrows();
-	Popup.resize();
 	Tutorial.resize();
 }
 
@@ -511,7 +510,7 @@ function step (key)
 
 Puzzle.Game.prototype.render = function() {
 	//if (!game.device.desktop) return;
-	this.game.debug.text(this.time.fps, 2, 14, "#00ff00");
+	//this.game.debug.text(this.time.fps, 2, 14, "#00ff00");
 };
 
 function opp(side) {

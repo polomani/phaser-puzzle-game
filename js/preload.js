@@ -4,7 +4,8 @@ Puzzle.Preload = function(){};
 
 Puzzle.Preload.prototype = {
 	preload: function() {
-		this.load.image('box_space', 'assets/images/box_space.png');
+		this.load.image('btn_play', 'assets/images/play.png');
+		this.load.image('logo', 'assets/images/logo.png');
 		this.load.image('box_black', 'assets/images/box_black.png');
 		this.load.image('box_blue', 'assets/images/box_blue.png');
 		this.load.image('box_gap', 'assets/images/box_gap.png');
@@ -17,7 +18,8 @@ Puzzle.Preload.prototype = {
 		this.load.spritesheet('tutorial_0', 'assets/tutorial/tutorial_0.png', 228, 228);
 		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
 
-		this.game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
+		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.xml');
+		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.xml');
 	},
 	create: function() {
 		this.state.start('MainMenu');

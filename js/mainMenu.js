@@ -2,42 +2,34 @@ Puzzle.MainMenu = function(){};
 
 Puzzle.MainMenu.prototype = {
   create: function() {
-    //this.background = this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
     var o = this.game;
-    /*o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-    o.scale.setResizeCallback(Puzzle.MainMenu.onResized);
-    o.scale.refresh();*/
 
     o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     o.scale.pageAlignHorizontally = true;
 
-    var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
-    var play = this.game.play = this.game.add.bitmapText(o.width/2, o.height/2, "desyrel", "Play", 30);
+    var logo = o.add.sprite (o.width/2, o.height/3, "logo");
+    logo.scale.x = logo.scale.y = Math.min (o.width*1/3/logo.width, 2);
+    logo.anchor.set(0.5);
+
+    var play = this.game.play = o.add.sprite (o.width/2, o.height/4*3, "btn_play"); 
+    play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 2);
     play.anchor.set(0.5);
-    var select = this.game.select = this.game.add.bitmapText(o.width/2, play.height+play.y, "desyrel", "Select level", 30);
-    select.anchor.set(0.5);
 
     play.inputEnabled = true;
     play.events.onInputDown.add(function () {
       Game.aimLVL = Data.completedLevels;
-      o.state.start('Game');
+      o.state.start('LevelsMenu');
     });
 
-    select.inputEnabled = true;
-    select.events.onInputDown.add(function () {
-      o.state.start('LevelsMenu');
+    play.events.onInputOver.add(function () {
+      Game.aimLVL = Data.completedLevels;
+      play.scale.x = play.scale.y = play.scale.x*1.1;
+    });
+
+    play.events.onInputOut.add(function () {
+      Game.aimLVL = Data.completedLevels;
+      play.scale.x = play.scale.y = play.scale.x*0.9;
     });
 
   }
 };
-
-Puzzle.MainMenu.onResized = function (obj) {
-  obj.game.width = window.innerWidth * window.devicePixelRatio;
-  obj.game.height = window.innerHeight * window.devicePixelRatio;
-  obj.game.scale.refresh();
-
-  obj.game.play.x = obj.game.width/2;
-  obj.game.play.y = obj.game.height/2;
-  obj.game.select.x = obj.game.width/2;
-  obj.game.select.y =  obj.game.play.height+obj.game.play.y;
-}
