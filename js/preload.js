@@ -5,6 +5,7 @@ Puzzle.Preload = function(){};
 Puzzle.Preload.prototype = {
 	preload: function() {
 		this.load.image('btn_play', 'assets/images/play.png');
+		this.load.image('btn_pause', 'assets/images/pause.png');
 		this.load.image('logo', 'assets/images/logo.png');
 		this.load.image('box_black', 'assets/images/box_black.png');
 		this.load.image('box_blue', 'assets/images/box_blue.png');

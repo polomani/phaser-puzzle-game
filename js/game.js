@@ -60,11 +60,13 @@ onGameResized =  function (full) {
 
 Puzzle.Game.prototype.addMenu = function () {
 
-	var select = this.game.add.text(0, 20, "Select level",  { font: '24px Arial', fill: '#FFFFFF' });
-    select.inputEnabled = true;
-    select.events.onInputDown.add(function () {
-      Popup.clearAll();
-      this.game.state.start('LevelsMenu');
+	var pause = this.game.add.sprite (0,0, "btn_pause");
+    pause.inputEnabled = true;
+    pause.scale.setTo(Math.min(1, game.width/12/pause.width));
+    pause.events.onInputDown.add(function () {
+      if (!(Popup.gameWinWin || Popup.gameOverWin || Popup.optWin)) {
+      		Popup.openOptMenu();
+      	}
     });
 
 	if (game.device.desktop) {
@@ -168,7 +170,7 @@ Puzzle.Game.prototype.createStage = function () {
 		}
 	}
 	game.inputEnabled = true;
-	game.input.onDown.add(beginSwipe, this);
+	game.input.onDown.addOnce(beginSwipe, game);
 	Tutorial.open(Game.aimLVL);
 
 	game.matrix.move=function(x, y, side) {

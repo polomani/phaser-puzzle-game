@@ -9,8 +9,8 @@ var need;
 function beginSwipe(){
 	startX = game.input.x;
 	startY = game.input.y;
-	game.input.onDown.remove(beginSwipe);
-	game.input.onUp.add(endSwipe);
+	game.input.onDown.remove(beginSwipe, game);
+	game.input.onUp.addOnce(endSwipe);
 	game.input.addMoveCallback(swiping);
 }
 
@@ -23,6 +23,13 @@ function swiping (){
 }
 
 function endSwipe(){
+	game.input.onDown.addOnce(beginSwipe, game);
+	game.input.onUp.remove(endSwipe);
+	game.input.moveCallback = null;
+	game.input.moveCallbacks = [];
+	if (Popup.optWin)
+		return;
+
 	// saving mouse/finger coordinates
 	endX = game.input.x;
 	endY = game.input.y;
@@ -58,9 +65,4 @@ function endSwipe(){
 		//tap
 	}
 	// stop listening for the player to release finger/mouse, let's start listening for the player to click/touch
-	
-	game.input.onDown.add(beginSwipe);
-	game.input.onUp.remove(endSwipe);
-	game.input.moveCallback = null;
-	game.input.moveCallbacks = [];
 }
