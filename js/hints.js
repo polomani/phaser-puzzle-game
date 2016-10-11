@@ -14,9 +14,9 @@ Tutorial.resize = function() {
 
 Tutorial.open = function (level) {
 	var tutorialText = [];
-	tutorialText[0] = 'Swipe to move boxes. \nConnect them using walls.';
+	tutorialText[0] = 'Swipe to move boxes \nConnect them using walls';
 	tutorialText[2] = 'Beware of red holes';
-	tutorialText[3] = "3 boxes it's not a problem!";
+	tutorialText[3] = "more boxes it is not a problem";
 
 	if (game.cache.checkImageKey('tutorial_'+level)) {
 		var animation = game.add.sprite(game.width-228/2, 0, 'tutorial_'+level);
@@ -29,10 +29,11 @@ Tutorial.open = function (level) {
 	}
 
 	if (tutorialText[level]) {
-	    var text = game.add.text(0,game.height-50, tutorialText[level], { font: '25px Arial', fill: '#FFFFFF', wordWrap: true, wordWrapWidth: game.width});
-		text.anchor.set (0.5, 0.5);
+	    var text = game.add.bitmapText(0, game.height-50, "white", tutorialText[level], 30);  
+		text.anchor.set (0.5, 1);
 		text.align = 'center';
-
+		text.scale.setTo(game.width*0.9/text.width);
+		text.y = game.height;
 		Tutorial.text = text;
 	}
 }

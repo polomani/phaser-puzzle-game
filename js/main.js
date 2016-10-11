@@ -17,7 +17,7 @@ Puzzle.game.state.add('Editor', Puzzle.Editor);
 
 Puzzle.game.state.start('Boot');
 
-/*$(document).ready (function () {
+$(document).ready (function () {
 	Game.aimLVL = 10;
 
     updateList();
@@ -39,4 +39,4 @@ Puzzle.game.state.start('Boot');
 		html += '<option value="'+LEVELS.length+'"> [new level] </option>';
 		$("#lSelect").html(html);
 	}
-});*/
+});

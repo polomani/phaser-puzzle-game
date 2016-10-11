@@ -16,6 +16,7 @@ Puzzle.Game.prototype.preload = function () {
 };
 
 Puzzle.Game.prototype.create = function () {
+	console.log(game.width + "x" + game.height);
 	game.gameOverFlag = false;
 	game.levelWidth = LEVELS[Game.aimLVL][0].length;
 	game.levelHeight = LEVELS[Game.aimLVL].length;
@@ -35,7 +36,7 @@ Puzzle.Game.prototype.create = function () {
 onGameResized =  function (full) {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min(Math.min (100, BSIZE), game.width/8);
+	BSIZE = Math.min(Math.min (200, BSIZE), game.width/8);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {

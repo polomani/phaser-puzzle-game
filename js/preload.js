@@ -19,8 +19,9 @@ Puzzle.Preload.prototype = {
 		this.load.spritesheet('tutorial_0', 'assets/tutorial/tutorial_0.png', 228, 228);
 		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
 
-		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.xml');
-		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.xml');
+		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.fnt');
+		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.fnt');
+		this.game.load.bitmapFont('blue', 'assets/fonts/blue.png', 'assets/fonts/blue.fnt');
 	},
 	create: function() {
 		this.state.start('MainMenu');
