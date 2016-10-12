@@ -64,7 +64,7 @@ Puzzle.Game.prototype.addMenu = function () {
 
 	var pause = this.game.add.sprite (0,0, "btn_pause");
     pause.inputEnabled = true;
-    pause.scale.setTo(Math.min(1, game.width/11/pause.width));
+    pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
     pause.events.onInputDown.add(function () {
       if (!(Popup.gameWinWin || Popup.gameOverWin || Popup.optWin)) {
       		Popup.openOptMenu();
@@ -321,7 +321,7 @@ Puzzle.Game.prototype.createStage = function () {
 					game.gameOverFlag = true;
 			} else {
 				if (next && next.type==2 && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
-					if (this.isBlocked(side, next.x, next.y)) {				
+					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.box.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
 						game.boxes.remove(next.box);
@@ -489,7 +489,6 @@ Puzzle.Game.prototype.update = function() {};
 
 function step (key)
 {
-
 	if (game.moving || game.gameOverFlag) 
 		return;
 	game.updateDoors();

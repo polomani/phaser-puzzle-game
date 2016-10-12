@@ -565,7 +565,7 @@ o_updateNet = function () {
 	o.net.ctx.clearRect(0, 0, o.net.width, o.net.height);
 	o.net.ctx.beginPath();
 	o.net.ctx.lineWidth = "1";
-	o.net.ctx.strokeStyle = 0;
+	o.net.ctx.strokeStyle = "white";
 	o.net.ctx.moveTo(0, 0);
 	for (var j = 0; j < o.world.height/o.BSIZE; ++j) {
 		o.net.ctx.moveTo(0, j*o.BSIZE);

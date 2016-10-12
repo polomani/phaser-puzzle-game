@@ -32,7 +32,7 @@ Tutorial.open = function (level) {
 	    var text = game.add.bitmapText(0, game.height-50, "white", tutorialText[level], 30);  
 		text.anchor.set (0.5, 1);
 		text.align = 'center';
-		text.scale.setTo(game.width*0.9/text.width);
+		text.scale.setTo(Dimensions.getMinDimension()*0.9/text.width);
 		text.y = game.height;
 		Tutorial.text = text;
 	}
