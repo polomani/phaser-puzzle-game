@@ -132,15 +132,15 @@ function changeCursor (key) {
 
 	switch (key) {
 		case o.ONE :
-			o.cursor = o.boxes.create (x, y, 'box_black');
+			o.cursor = o.boxes.create (x, y, 'box_black_small');
 			o.cursor.btype = 1;
 			break;
 		case o.TWO :
-			o.cursor = o.boxes.create (x, y, 'box_blue');
+			o.cursor = o.boxes.create (x, y, 'box_blue_small');
 			o.cursor.btype = 2;
 			break;
 		case o.THREE :
-			o.cursor = o.boxes.create (x, y, 'box_gap');
+			o.cursor = o.boxes.create (x, y, 'box_gap_small');
 			o.cursor.btype = 3;
 			break;
 		case o.FOUR :
@@ -155,7 +155,7 @@ function changeCursor (key) {
 			};
 			break;
 		case o.FIVE:
-			o.cursor = o.boxes.create (x, y, 'box_arr');
+			o.cursor = o.boxes.create (x, y, 'box_arr_small');
 			o.cursor.btype = {
 				value:5
 			};
@@ -258,7 +258,7 @@ Puzzle.Editor.prototype.create = function () {
 						box.frame = arr[y][x].state;
 					}
 					if (arr[y][x].value==5) {
-						box = game.boxes.create(xx, yy, 'box_arr');
+						box = game.boxes.create(xx, yy, 'box_arr_small');
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 					}
 					if (arr[y][x].value==6) {
@@ -269,9 +269,9 @@ Puzzle.Editor.prototype.create = function () {
 						box = game.boxes.create(xx, yy, 'box_red');
 					}
 				} else {
-					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black');
-					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue');
-					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap');
+					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black_small');
+					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue_small');
+					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap_small');
 				}
 				box.btype = arr[y][x];
 				box.indexX = x;

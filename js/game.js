@@ -41,7 +41,6 @@ onGameResized =  function (full) {
 		game.boxes.forEach (resize);
 	function resize (box) {
 		var newscale = BSIZE/Dimensions.getBoxSize();
-		console.log(Dimensions.getBoxSize());
 		box.scale.setTo (newscale, newscale);
 
 		var xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
@@ -65,7 +64,7 @@ Puzzle.Game.prototype.addMenu = function () {
 
 	var pause = this.game.add.sprite (0,0, "btn_pause");
     pause.inputEnabled = true;
-    pause.scale.setTo(Math.min(1, game.width/12/pause.width));
+    pause.scale.setTo(Math.min(1, game.width/11/pause.width));
     pause.events.onInputDown.add(function () {
       if (!(Popup.gameWinWin || Popup.gameOverWin || Popup.optWin)) {
       		Popup.openOptMenu();
@@ -159,16 +158,23 @@ Puzzle.Game.prototype.createStage = function () {
 					type:arr[y][x],
 					box:box
 				};
-				if (box.key=="box_blue") 
+				if (is (box,"box_blue")) 
 					game.blueBoxes.push (game.matrix[y][x]);
-				else if (box.key=="box_door")
+				else if (is (box,"box_door"))
 					game.doors.push (game.matrix[y][x]);
-				else if (box.key=="box_port")
+				else if (is (box,"box_port"))
 					game.ports.push (game.matrix[y][x]);
-				else if (box.key=="box_red")
+				else if (is (box,"box_red"))
 					game.robots.push (game.matrix[y][x]);
-				else if (box.key=="box_arr")
+				else if (is (box,"box_arr"))
 					game.arrows.push (game.matrix[y][x]);
+
+				function is (box, key) {
+					if (box.key.startsWith(key)) {
+						return true;
+					}
+					return false;
+				}
 			}
 		}
 	}
@@ -483,6 +489,7 @@ Puzzle.Game.prototype.update = function() {};
 
 function step (key)
 {
+
 	if (game.moving || game.gameOverFlag) 
 		return;
 	game.updateDoors();

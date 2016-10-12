@@ -16,7 +16,7 @@ Popup.openGameOverMenu = function () {
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = game.add.bitmapText(game.width/2, 0, "blue", "Failed", size+10);
+	var text = game.add.bitmapText(game.width/2, 0, "blue", "Failed", Dimensions.getFontSize()+10);
 	var replay = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Replay", Dimensions.getFontSize());
 	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
 	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*3, "white", "Menu", Dimensions.getFontSize());
@@ -35,6 +35,7 @@ Popup.openGameOverMenu = function () {
 	back.width = game.width;
 	back.height = game.height;
 	var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+	tween.onComplete.add(function() { win.opened = true; });
 
     replay.inputEnabled = true;
     replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
@@ -53,7 +54,7 @@ Popup.openWinMenu = function () {
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = game.add.bitmapText(game.width/2, 0, "blue", "Completed", size+10);
+	var text = game.add.bitmapText(game.width/2, 0, "blue", "Completed", Dimensions.getFontSize()+10);
 	var next = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Next level", Dimensions.getFontSize());
 	var replay = game.add.bitmapText(game.width/2, next.y+next.height*3, "white", "Replay", Dimensions.getFontSize());
 	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
@@ -75,6 +76,7 @@ Popup.openWinMenu = function () {
 	back.width = game.width;
 	back.height = game.height;
 	var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+	tween.onComplete.add(function() { win.opened = true; });
 
 	next.inputEnabled = true;
     next.events.onInputDown.add(function (){
@@ -96,11 +98,10 @@ Popup.openWinMenu = function () {
 
 Popup.openOptMenu = function () {
 	Popup.clearAll();
-	var size = (game.width < 600) ? 30 : 72;
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = game.add.bitmapText(game.width/2, 0, "blue", "Paused", size+10);
+	var text = game.add.bitmapText(game.width/2, 0, "blue", "Paused", Dimensions.getFontSize()+10);
 	var cont = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Continue", Dimensions.getFontSize());
 	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*3, "white", "Replay", Dimensions.getFontSize());
 	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
@@ -122,6 +123,7 @@ Popup.openOptMenu = function () {
 	back.width = game.width;
 	back.height = game.height;
 	var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+	tween.onComplete.add(function() { win.opened = true; });
 
 	cont.inputEnabled = true;
     cont.events.onInputDown.add(function (){Popup.closeMenu();});
@@ -140,7 +142,7 @@ Popup.openOptMenu = function () {
 
 Popup.closeMenu = function (newState) {
 	var win = Popup.gameWinWin || Popup.gameOverWin || Popup.optWin;
-	if (win) {
+	if (win && win.opened) {
 		if (newState) {
 			var tween = game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
