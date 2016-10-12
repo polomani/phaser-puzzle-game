@@ -40,3 +40,39 @@ $(document).ready (function () {
 		$("#lSelect").html(html);
 	}
 });
+
+(function (exports) {
+	var game = Puzzle.game;
+
+	exports.getSize = function () {
+		if (Math.min(game.width, game.height)<400) {
+			return "xsmall";
+		}
+		if (Math.min(game.width, game.height)<800) {
+			return "small";
+		}
+		return "large";
+	}
+
+	exports.getImageKey = function(key) {
+		var size = exports.getSize();
+		if (size == "xsmall")
+			size = "small";
+		return key + "_" + size;
+	}
+
+	exports.getBoxSize = function () {
+		return game.cache.getImage(exports.getImageKey("box_blue")).width;
+	}
+
+	exports.getFontSize = function () {
+		var size = exports.getSize();
+		if (size == "xsmall")
+			return 24;
+		if (size == "small")
+			return 40;
+		return 78;
+	}
+
+	console.log(exports.getSize());
+})(window.Dimensions = {});

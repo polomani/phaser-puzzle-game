@@ -36,11 +36,13 @@ Puzzle.Game.prototype.create = function () {
 onGameResized =  function (full) {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min(Math.min (200, BSIZE), game.width/8);
+	BSIZE = Math.min(Math.min (Dimensions.getBoxSize(), BSIZE), game.width/8);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
-		box.scale.setTo (BSIZE/100, BSIZE/100);
+		var newscale = BSIZE/Dimensions.getBoxSize();
+		console.log(Dimensions.getBoxSize());
+		box.scale.setTo (newscale, newscale);
 
 		var xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
 		var yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
@@ -126,16 +128,16 @@ Puzzle.Game.prototype.createStage = function () {
 				var box;
 				var xx = 0, yy = 0;
 				//if(arr[y][x]==0) box = game.boxes.create (xx, yy, 'box_space');
-				if(arr[y][x]==1) box = game.boxes.create (xx, yy, 'box_black');
-				if(arr[y][x]==2) box = game.boxes.create (xx, yy, 'box_blue');
-				if(arr[y][x]==3) box = game.boxes.create (xx, yy, 'box_gap');
+				if(arr[y][x]==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
+				if(arr[y][x]==2) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue'));
+				if(arr[y][x]==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
 				if (arr[y][x] instanceof Object) {
 					if (arr[y][x].value == 4) {
 						box = game.boxes.create(xx, yy, 'box_door');
 						box.frame = arr[y][x].state;
 					}
 					if (arr[y][x].value == 5) {
-						box = game.boxes.create(xx, yy, 'box_arr');
+						box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 						box.dir = arr[y][x].dir;
 					}
@@ -589,7 +591,7 @@ Puzzle.Game.rotateArrows = function() {
 			elem.box.angle = Puzzle.Game.getInvertedAngleFromDir(elem.box.dir);
 		}
 	});
-}
+};
 
 Puzzle.Game.getInvertedAngleFromDir = function (dir) {
 	switch (dir) {
@@ -604,4 +606,4 @@ Puzzle.Game.getInvertedAngleFromDir = function (dir) {
 		default :
 			return 0;
 	}
-}
+};
