@@ -202,6 +202,12 @@ Puzzle.Game.prototype.createStage = function () {
 		var prev = (game.matrix[y][x] && game.matrix[y][x].box) ? game.matrix[y][x] : false;
 		game.matrix[y][x] = temp;
 		game.matrix[y][x].prev = prev;
+		if (prev && prev.type.value==5) {
+			game.matrix[y][x].box.frame = 1;
+			game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
+		} else {
+			game.matrix[y][x].box.frame = 0;
+		}
 
 		if (game.matrix[y][x].box.teleported)
 			game.matrix[y][x].box.teleported = false;

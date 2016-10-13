@@ -62,7 +62,7 @@ $(document).ready (function () {
 	}
 
 	exports.getBoxSize = function () {
-		return game.cache.getImage(exports.getImageKey("box_blue")).width;
+		return game.cache.getImage(exports.getImageKey("box_blue")).height;
 	}
 
 	exports.getFontSize = function () {

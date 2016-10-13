@@ -8,10 +8,10 @@ Puzzle.Preload.prototype = {
 		this.load.image('btn_pause', 'assets/images/pause.png');
 		this.load.image('logo', 'assets/images/logo.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');
-		this.load.image('box_blue_small', 'assets/images/box_blue_small.png');
+		this.load.spritesheet('box_blue_small', 'assets/images/box_blue_small.png', 100, 100);
 		this.load.image('box_gap_small', 'assets/images/box_gap_small.png');
 		this.load.image('box_black_large', 'assets/images/box_black_large.png');
-		this.load.image('box_blue_large', 'assets/images/box_blue_large.png');
+		this.load.spritesheet('box_blue_large', 'assets/images/box_blue_large.png', 200, 200);
 		this.load.image('box_gap_large', 'assets/images/box_gap_large.png');
 		this.load.spritesheet('box_door', 'assets/images/box_door.png', 100, 100);
 		this.load.image('box_arr_small', 'assets/images/box_arr_small.png');
