@@ -181,6 +181,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.inputEnabled = true;
 	game.input.onDown.addOnce(beginSwipe, game);
 	Tutorial.open(Game.aimLVL);
+	onGameResized();
 
 	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
@@ -573,7 +574,7 @@ function setBoxPosition (elem) {
 }
 
 function saveSolutionToFirebase() {
-	return;
+	//return;
 	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
 	var data = {};
 	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
