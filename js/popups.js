@@ -1,4 +1,3 @@
-
 Popup = function(){};
 
 Popup.clearAll = function() {
@@ -17,9 +16,9 @@ Popup.openGameOverMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", "Failed", Dimensions.getFontSize()+10);
-	var replay = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Replay", Dimensions.getFontSize());
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*3, "white", "Menu", Dimensions.getFontSize());
+	var replay = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", "Replay", Dimensions.getFontSize());
+	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", "Levels", Dimensions.getFontSize());
+	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", "Menu", Dimensions.getFontSize());
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	levels.anchor.set (0.5, 1);
@@ -55,10 +54,10 @@ Popup.openWinMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", "Completed", Dimensions.getFontSize()+10);
-	var next = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Next level", Dimensions.getFontSize());
-	var replay = game.add.bitmapText(game.width/2, next.y+next.height*3, "white", "Replay", Dimensions.getFontSize());
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*3, "white", "Menu", Dimensions.getFontSize());
+	var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", "Next level", Dimensions.getFontSize());
+	var replay = game.add.bitmapText(game.width/2, next.y+next.height*2.5, "white", "Replay", Dimensions.getFontSize());
+	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", "Levels", Dimensions.getFontSize());
+	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", "Menu", Dimensions.getFontSize());
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	next.anchor.set (0.5, 1);
@@ -102,10 +101,10 @@ Popup.openOptMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", "Paused", Dimensions.getFontSize()+10);
-	var cont = game.add.bitmapText(game.width/2, text.y+text.height*3, "white", "Continue", Dimensions.getFontSize());
-	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*3, "white", "Replay", Dimensions.getFontSize());
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*3, "white", "Levels", Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*3, "white", "Menu", Dimensions.getFontSize());
+	var cont = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", "Continue", Dimensions.getFontSize());
+	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*2.5, "white", "Replay", Dimensions.getFontSize());
+	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", "Levels", Dimensions.getFontSize());
+	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", "Menu", Dimensions.getFontSize());
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	cont.anchor.set (0.5, 1);

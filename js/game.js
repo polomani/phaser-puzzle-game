@@ -27,6 +27,7 @@ Puzzle.Game.prototype.create = function () {
 	game.scale.prevWidth = game.scale.prevHeight = false;
 	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 	game.solution = "";
+	Tutorial.clean();
 	Puzzle.Game.prototype.createStage();
 	onGameResized();
 
@@ -76,12 +77,6 @@ Puzzle.Game.prototype.addMenu = function () {
 		editor_label.inputEnabled = true;
 		editor_label.events.onInputDown.add(function () {
 			this.game.state.start('Editor');
-		});
-
-		var full = game.add.text(0 , 80, 'FullScreen', { font: '24px Arial', fill: '#FFFFFF' });
-		full.inputEnabled = true;
-		full.events.onInputDown.add(function () {
-			gofull();
 		});
 
 		//$("#lSelect").show();
@@ -583,17 +578,6 @@ function saveSolutionToFirebase() {
 	game.solution = game.solution.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
 	data[game.solution] = new Date().toUTCString().slice(5, 25) + " =" + game.solution.length/2;
 	firebase.update(data);
-}
-
-function gofull() {
-    if (game.scale.isFullScreen)
-    {
-        game.scale.stopFullScreen();
-    }
-    else
-    {
-        game.scale.startFullScreen(false);
-    }
 }
 
 Puzzle.Game.rotateArrows = function() {

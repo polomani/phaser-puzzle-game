@@ -8,14 +8,18 @@ Tutorial.resize = function() {
 	}
 	if (Tutorial.text) {
 		Tutorial.text.x = game.width/2;
-		Tutorial.text.y = game.height-50;
+		Tutorial.text.y = game.height-Tutorial.text.height-20;
+
+		Tutorial.back.y = Tutorial.text.y;
+		Tutorial.back.width = game.width;
+		Tutorial.back.height = Tutorial.text.height;
 	}
 }
 
 Tutorial.open = function (level) {
 	var tutorialText = [];
-	tutorialText[0] = 'Swipe to move boxes \nConnect them using walls';
-	tutorialText[2] = 'Beware of red holes';
+	tutorialText[0] = 'Swipe to move blue boxes \nConnect them using walls';
+	tutorialText[2] = 'Beware of white points';
 	tutorialText[3] = "more boxes it is not a problem";
 
 	if (game.cache.checkImageKey('tutorial_'+level)) {
@@ -29,11 +33,18 @@ Tutorial.open = function (level) {
 	}
 
 	if (tutorialText[level]) {
-	    var text = game.add.bitmapText(0, game.height-50, "white", tutorialText[level], 30);  
-		text.anchor.set (0.5, 1);
+		var background = game.add.sprite(0,0,"window");
+		background.alpha = 0.6;
+		Tutorial.back = background;
+
+	    var text = game.add.bitmapText(0, 0, "white", tutorialText[level], Dimensions.getFontSize()-12); 
+	    text.anchor.set (0.5, 0);
 		text.align = 'center';
-		text.scale.setTo(Dimensions.getMinDimension()*0.9/text.width);
-		text.y = game.height;
 		Tutorial.text = text;
 	}
+}
+
+Tutorial.clean = function (level) {
+	Tutorial.image = null;
+	Tutorial.text = null;
 }

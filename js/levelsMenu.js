@@ -6,7 +6,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   o.scale.pageAlignHorizontally = true;
 
-  o.selLevelText = o.add.bitmapText(0, 0, "blue", "Select level", Dimensions.getFontSize()+4);
+  o.selLevelText = o.add.bitmapText(0, 0, "blue", "Select level", Dimensions.getFontSize());
   o.selLevelText.anchor.set(0.5, 0.5);
   o.selLevelText.text.align = 'center';
 
@@ -17,8 +17,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
         var lvl = o.add.group();
         var image = lvl.create(0,0, Dimensions.getImageKey('box_black'));
         image.anchor.setTo(0.5, 0.5);
-        var text = o.add.bitmapText(0, 0, "black", i+1, Dimensions.getFontSize()-6, lvl);
-        text.anchor.setTo(0.5, 0.4);
+        var text = o.add.bitmapText(0, 0, "black", i+1, Dimensions.getFontSize()-10, lvl);
+        text.anchor.setTo(0.5, 0.6);
         lvl.image = image;
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
@@ -70,9 +70,9 @@ Puzzle.LevelsMenu.onResized = function () {
   }
 
   var boxSize = Dimensions.getBoxSize();
-  var BSIZE = Math.min(boxSize, Math.min(o.width, o.height)/6);
+  var BSIZE = Math.min(boxSize, Math.min(o.width, o.height)/7);
 
-  var indentY = o.height/2 - rows*(BSIZE+10)/2 + 100;
+  var indentY = o.height/2 - (rows+1)*(BSIZE+10)/2 + 100;
   var indentX = o.width/2 - Math.floor(cols/2)*(BSIZE+10);
 
   o.selLevelText.x = o.width/2;
