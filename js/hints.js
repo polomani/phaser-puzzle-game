@@ -12,17 +12,18 @@ Tutorial.resize = function() {
 
 		Tutorial.back.y = Tutorial.text.y;
 		Tutorial.back.width = game.width;
-		Tutorial.back.height = Tutorial.text.height;
+		Tutorial.back.height = Tutorial.text.height*2;
 	}
 }
 
 Tutorial.open = function (level) {
 	var tutorialText = [];
-	tutorialText[0] = 'Swipe to move blue boxes \nConnect them using walls';
-	tutorialText[2] = 'Beware of white points';
-	tutorialText[3] = "more boxes it is not a problem";
+	tutorialText[0] = 'Swipe to move blue boxes';
+	tutorialText[1] = 'Connect blue boxes \n by using walls';
+	tutorialText[3] = 'Beware of white points';
+	tutorialText[4] = "more boxes \nit is not a problem";
 
-	if (game.cache.checkImageKey('tutorial_'+level)) {
+	if (false && game.cache.checkImageKey('tutorial_'+level)) {
 		var animation = game.add.sprite(game.width-228/2, 0, 'tutorial_'+level);
 	    animation.animations.add('play');
 	    animation.animations.play('play', 13, true);

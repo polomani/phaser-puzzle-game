@@ -72,7 +72,7 @@ Puzzle.Game.prototype.addMenu = function () {
       	}
     });
 
-	if (game.device.desktop) {
+	if (false && game.device.desktop) {
 		var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
 		editor_label.inputEnabled = true;
 		editor_label.events.onInputDown.add(function () {
@@ -200,7 +200,11 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x].prev = prev;
 		if (prev && prev.type.value==5) {
 			game.matrix[y][x].box.frame = 1;
-			game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
+			if (!game.invert) {
+				game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
+			} else {
+				game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
+			}
 		} else {
 			game.matrix[y][x].box.frame = 0;
 		}

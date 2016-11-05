@@ -28,7 +28,7 @@ $(document).ready (function () {
 			LEVELS[Game.aimLVL] = [[0]];
 			updateList();
 		}
-		Puzzle.game.state.restart();
+		Puzzle.game.state.start("Game");
 	});
 
 	function updateList () {
