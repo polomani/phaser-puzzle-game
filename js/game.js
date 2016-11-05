@@ -165,7 +165,7 @@ Puzzle.Game.prototype.createStage = function () {
 					game.arrows.push (game.matrix[y][x]);
 
 				function is (box, key) {
-					if (box.key.startsWith(key)) {
+					if (box.key.lastIndexOf(key)!=-1) {
 						return true;
 					}
 					return false;
