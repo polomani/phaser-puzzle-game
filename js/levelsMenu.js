@@ -6,7 +6,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   o.scale.pageAlignHorizontally = true;
 
-  o.selLevelText = o.add.bitmapText(0, 0, "blue", "Select level", Dimensions.getFontSize());
+  o.selLevelText = o.add.bitmapText(0, 0, "blue", LOCALE.SELECT_LEVEL, Dimensions.getFontSize());
   o.selLevelText.anchor.set(0.5, 0.5);
   o.selLevelText.text.align = 'center';
 
@@ -23,7 +23,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
         //i > Data.completedLevels && 
-        if (i > 12 && i > Data.completedLevels) {
+        if (false && i > Data.completedLevels) {
           lvl.alpha = 0.5;
         } else {
           lvl.setAll('inputEnabled', true);
@@ -44,11 +44,11 @@ Puzzle.LevelsMenu.prototype.create = function () {
           o.pages.x -= o.width*page;
           o.pages.x += o.width*(1-page);
           o.pages.moving = true;
-          var tween = o.add.tween(o.pages).to( { alpha: 0}, 100, "Linear", true);
+          var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
           tween.onComplete.add(function() { 
               o.pages.alpha = 1;
-              o.add.tween(o.paginator).to( { angle: -180*page }, 100, "Linear", true);
-              tween = o.add.tween(o.pages).from( { alpha: 0, x:x}, 100, "Linear", true);
+              o.add.tween(o.paginator).to( { angle: -180*page }, 200, "Linear", true);
+              tween = o.add.tween(o.pages).from( { alpha: 0, x:x}, 200, "Linear", true);
               tween.onComplete.add(function() { o.pages.moving=false;});
           });
         }

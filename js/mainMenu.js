@@ -15,6 +15,16 @@ Puzzle.MainMenu.prototype = {
     play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 1);
     play.anchor.set(0.5);
 
+    var flag = this.game.flag = o.add.sprite (0, 0, "flag"); 
+    flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/9/flag.width, 1);
+
+    flag.inputEnabled = true;
+    flag.events.onInputDown.add(function () {
+      var locales = getLocales();
+      setLocale(locales[(locales.indexOf(getLocale())+1)%locales.length]);
+      flag.frame = locales.indexOf(getLocale());
+    });
+
     play.inputEnabled = true;
     play.events.onInputDown.add(function () {
       Game.aimLVL = Data.completedLevels;
