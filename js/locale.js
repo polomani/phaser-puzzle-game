@@ -10,7 +10,11 @@
 			MENU: "menu",
 			COMPLETED: "completed",
 			NEXT_LEVEL: "next level",
-			FAILED: "failed"
+			FAILED: "failed",
+			TUTORIAL_0: 'Swipe to move blue boxes',
+			TUTORIAL_1: 'Connect blue boxes \n by using walls',
+			TUTORIAL_3: 'Beware of white points',
+			TUTORIAL_4: "more boxes \nit is not a problem"
 		},
 		uk: {
 			SELECT_LEVEL: "вибрати рiвень",
@@ -21,7 +25,11 @@
 			MENU: "меню",
 			COMPLETED: "перемога",
 			NEXT_LEVEL: "наступний",
-			FAILED: "зрада"
+			FAILED: "зрада",
+			TUTORIAL_0: 'Керуйте зеленими квадратиками\n за допомогою свайпiв',
+			TUTORIAL_1: "Щоб з'єднати квадрати\n викориситовуйте стiни",
+			TUTORIAL_3: 'Оберiгайтесь шипiв',
+			TUTORIAL_4: "Не бiйтесь великої\nкількостi квадратiв"
 		},
 		ru: {
 			SELECT_LEVEL: "выбор уровня",
@@ -32,7 +40,11 @@
 			MENU: "меню",
 			COMPLETED: "победа",
 			NEXT_LEVEL: "следующий уровень",
-			FAILED: "неудача"
+			FAILED: "неудача",
+			TUTORIAL_0: 'Делая свайп\n ты двигаешь квадраты',
+			TUTORIAL_1: "Используй стены\n чтобы объединить квадраты",
+			TUTORIAL_3: 'Бойся шипов!',
+			TUTORIAL_4: "Два квадрата слишком\nскучно?"
 		}
 	};
 	exports.setLocale = function (loc) {

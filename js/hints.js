@@ -17,12 +17,7 @@ Tutorial.resize = function() {
 }
 
 Tutorial.open = function (level) {
-	var tutorialText = [];
-	tutorialText[0] = 'Swipe to move blue boxes';
-	tutorialText[1] = 'Connect blue boxes \n by using walls';
-	tutorialText[3] = 'Beware of white points';
-	tutorialText[4] = "more boxes \nit is not a problem";
-
+	
 	if (false && game.cache.checkImageKey('tutorial_'+level)) {
 		var animation = game.add.sprite(game.width-228/2, 0, 'tutorial_'+level);
 	    animation.animations.add('play');
@@ -33,12 +28,12 @@ Tutorial.open = function (level) {
 	    Tutorial.image=animation;
 	}
 
-	if (tutorialText[level]) {
+	if (LOCALE["TUTORIAL_"+level]) {
 		var background = game.add.sprite(0,0,"window");
 		background.alpha = 0.6;
 		Tutorial.back = background;
 
-	    var text = game.add.bitmapText(0, 0, "white", tutorialText[level], Dimensions.getFontSize()-12); 
+	    var text = game.add.bitmapText(0, 0, "white", LOCALE["TUTORIAL_"+level], Dimensions.getFontSize()-12); 
 	    text.anchor.set (0.5, 0);
 		text.align = 'center';
 		Tutorial.text = text;

@@ -16,7 +16,8 @@ Puzzle.MainMenu.prototype = {
     play.anchor.set(0.5);
 
     var flag = this.game.flag = o.add.sprite (0, 0, "flag"); 
-    flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/9/flag.width, 1);
+    flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/11/flag.width, 1);
+    flag.frame = getLocales().indexOf(getLocale())
 
     flag.inputEnabled = true;
     flag.events.onInputDown.add(function () {
