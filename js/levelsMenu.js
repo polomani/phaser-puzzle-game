@@ -40,15 +40,11 @@ Puzzle.LevelsMenu.prototype.create = function () {
     paginator.events.onInputDown.add(function () {
         if (!o.pages.moving) {
           page = (++page)%2;
-          var x = o.pages.x;
-          o.pages.x -= o.width*page;
-          o.pages.x += o.width*(1-page);
           o.pages.moving = true;
           var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
           tween.onComplete.add(function() { 
-              o.pages.alpha = 1;
               o.add.tween(o.paginator).to( { angle: -180*page }, 200, "Linear", true);
-              tween = o.add.tween(o.pages).from( { alpha: 0, x:x}, 200, "Linear", true);
+              tween = o.add.tween(o.pages).to( { alpha: 1, x: o.pages.x - o.width*page + o.width*(1-page) }, 200, "Linear", true);
               tween.onComplete.add(function() { o.pages.moving=false;});
           });
         }
