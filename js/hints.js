@@ -9,10 +9,6 @@ Tutorial.resize = function() {
 	if (Tutorial.text) {
 		Tutorial.text.x = game.width/2;
 		Tutorial.text.y = game.height-Tutorial.text.height-20;
-
-		Tutorial.back.y = Tutorial.text.y;
-		Tutorial.back.width = game.width;
-		Tutorial.back.height = Tutorial.text.height*2;
 	}
 }
 
@@ -29,18 +25,25 @@ Tutorial.open = function (level) {
 	}
 
 	if (LOCALE["TUTORIAL_"+level]) {
-		var background = game.add.sprite(0,0,"window");
-		background.alpha = 0.6;
-		Tutorial.back = background;
-
-	    var text = game.add.bitmapText(0, 0, "white", LOCALE["TUTORIAL_"+level], Dimensions.getFontSize()-12); 
+	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-12); 
 	    text.anchor.set (0.5, 0);
 		text.align = 'center';
+		text.level = level;
 		Tutorial.text = text;
+		Tutorial.changeLocale ();
 	}
 }
 
 Tutorial.clean = function (level) {
 	Tutorial.image = null;
 	Tutorial.text = null;
+}
+
+Tutorial.changeLocale = function () {
+	if (Tutorial.text) {
+		var text = LOCALE["TUTORIAL_"+Tutorial.text.level];
+		var wrapped = Helper.TextWrapper.wrapText(text, game.width, game.height, 'blue', Tutorial.text.fontSize)[0];
+		Tutorial.text.setText(wrapped);
+		Tutorial.resize();
+	}
 }
