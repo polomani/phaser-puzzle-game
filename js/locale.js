@@ -11,9 +11,9 @@
 			COMPLETED: "completed",
 			NEXT_LEVEL: "next level",
 			FAILED: "failed",
-			TUTORIAL_0: 'Swipe to move blue boxes',
+			TUTORIAL_0: 'Swipe to move\ngreen boxes',
 			TUTORIAL_1: 'Connect blue boxes \n by using walls',
-			TUTORIAL_3: 'Beware of white points',
+			TUTORIAL_3: 'Beware of\nwhite points',
 			TUTORIAL_4: "more boxes \nit is not a problem"
 		},
 		uk: {
