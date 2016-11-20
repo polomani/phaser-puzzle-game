@@ -67,7 +67,7 @@ Puzzle.Game.prototype.addMenu = function () {
     pause.inputEnabled = true;
     pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
     pause.events.onInputDown.add(function () {
-      if (!(Popup.gameWinWin || Popup.gameOverWin || Popup.optWin)) {
+      if (!(Popup.anyWinOpened())) {
       		Popup.openOptMenu();
       	}
     });
@@ -75,6 +75,12 @@ Puzzle.Game.prototype.addMenu = function () {
     var props = this.game.add.sprite (this.game.width,0, "btn_props");
     props.anchor.setTo(1, 0);
     props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
+    props.inputEnabled = true;
+    props.events.onInputDown.add(function () {
+      if (!(Popup.anyWinOpened())) {
+      		Popup.openPropsMenu();
+      	}
+    });
 
 	if (false && game.device.desktop) {
 		var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });

@@ -2,10 +2,26 @@
 (function(exports){
 
 	exports.completedLevels = 0;
+	exports.newbie = true;
+	exports.locale = "en";
 	var db = null;
 
 	exports.load = function() {
 		db = window.sqlitePlugin.openDatabase({name: 'com-dreamlike-puzzle.db', location: 'default'}, onDatabaseOpen);
+	}
+
+	exports.checkIn = function() {
+		exports.newbie = false;
+		if (db) {
+			updateData("newbie", exports.newbie);
+		}
+	}
+
+	exports.setLocale = function(locale) {
+		exports.locale = locale;
+		if (db) {
+			updateData("locale", exports.locale);
+		}
 	}
 
 	exports.setCompletedLevels = function(number) {
@@ -16,7 +32,6 @@
 			}
 		}
 	}
-
 
 	function onDatabaseOpen () {
 		db.transaction(function (tx) {
@@ -70,7 +85,9 @@
 	}
 
 	function putEmptyData() {
-		putData("completedLevels", 0);
+		putData("completedLevels", exports.completedLevels);
+		putData("locale", exports.locale);
+		putData("newbie", exports.newbie);
 	}
 
 	function updateData(key, value) {

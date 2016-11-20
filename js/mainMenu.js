@@ -15,32 +15,33 @@ Puzzle.MainMenu.prototype = {
     play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 1);
     play.anchor.set(0.5);
 
-    var flag = this.game.flag = o.add.sprite (0, 0, "flag"); 
-    flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/11/flag.width, 1);
-    flag.frame = getLocales().indexOf(getLocale())
-
-    flag.inputEnabled = true;
-    flag.events.onInputDown.add(function () {
-      var locales = getLocales();
-      setLocale(locales[(locales.indexOf(getLocale())+1)%locales.length]);
-      flag.frame = locales.indexOf(getLocale());
-    });
+    this.game.changeLocale = function () {
+      switch (getLocale()) {
+        case "en":
+          play.frame=1;
+        break;
+        case "uk":
+          play.frame=2;
+        break; 
+        case "ru":
+          play.frame=0;
+        break; 
+      }
+    }
+    o.changeLocale();
 
     play.inputEnabled = true;
     play.events.onInputDown.add(function () {
-      Game.aimLVL = Data.completedLevels;
-      o.state.start('LevelsMenu');
+      if (!Popup.anyWinOpened()) {
+        Game.aimLVL = Data.completedLevels;
+        o.state.start('LevelsMenu');
+      }
     });
 
-    play.events.onInputOver.add(function () {
-      Game.aimLVL = Data.completedLevels;
-      play.scale.x = play.scale.y = play.scale.x*1.1;
-    });
-
-    play.events.onInputOut.add(function () {
-      Game.aimLVL = Data.completedLevels;
-      play.scale.x = play.scale.y = play.scale.x*0.9;
-    });
-
+    if (Data.newbie) {
+        Data.checkIn();
+        Popup.openPropsMenu(this.game, 1);
+    }
+    
   }
 };

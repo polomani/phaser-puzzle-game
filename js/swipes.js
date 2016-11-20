@@ -27,7 +27,7 @@ function endSwipe(){
 	game.input.onUp.remove(endSwipe);
 	game.input.moveCallback = null;
 	game.input.moveCallbacks = [];
-	if (Popup.optWin)
+	if (Popup.anyWinOpened())
 		return;
 
 	// saving mouse/finger coordinates

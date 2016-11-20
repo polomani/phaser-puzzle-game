@@ -6,7 +6,8 @@ Puzzle.Preload.prototype = {
 	preload: function() {
 		this.load.spritesheet('flag', 'assets/images/flag.png', 97, 97);
 		this.load.image('btn_next', 'assets/images/button_next_large.png');
-		this.load.image('btn_play', 'assets/images/play.png');
+		this.load.image('btn_lang_arr', 'assets/images/lang_arrow.png');
+		this.load.spritesheet('btn_play', 'assets/images/play.png', 348, 98);
 		this.load.image('btn_pause', 'assets/images/pause.png');
 		this.load.image('btn_props', 'assets/images/prop_icon.png');
 		this.load.image('logo', 'assets/images/logo.png');

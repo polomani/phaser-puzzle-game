@@ -7,7 +7,13 @@ Popup.clearAll = function() {
 		Popup.gameOverWin.destroy();
 	if (Popup.optWin)
 		Popup.optWin.destroy();
-	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = false;
+	if (Popup.propsMenu)
+		Popup.propsMenu.destroy();
+	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = Popup.propsMenu = false;
+}
+
+Popup.anyWinOpened = function() {
+	return Popup.gameWinWin || Popup.gameOverWin || Popup.optWin || Popup.propsMenu;
 }
 
 Popup.openGameOverMenu = function () {
@@ -139,19 +145,77 @@ Popup.openOptMenu = function () {
     Popup.optWin = win;
 }
 
+Popup.openPropsMenu = function (_game, alpha) {
+	Popup.game = _game = game || _game;
+	alpha = alpha || 0.9;
+	Popup.clearAll();
+	var win = _game.add.group();
+	var elements = win.elements = _game.add.group();
+	var back = win.back = win.create (0, 0, 'window');
+	var text = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize());
+	var flag  = _game.add.sprite (_game.width/2, text.height+50, "flag");
+   	flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/4/flag.width, 1);
+   	flag.frame = getLocales().indexOf(getLocale());
+	var left = _game.add.sprite (text.x-flag.width/2-45,flag.y+flag.height/2, 'btn_lang_arr');
+	var right = _game.add.sprite (flag.x+flag.width/2+45,flag.y+flag.height/2, 'btn_lang_arr');
+	left.scale.x = left.scale.y = flag.scale.x/2.5;
+	right.scale.x = right.scale.y = left.scale.x;
+	left.x-=left.width/2;
+	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+35, "white", LOCALE.OK, Dimensions.getFontSize()-10);
+    ok.anchor.set (0.5, 0);
+	text.anchor.set (0.5, 0);
+	flag.anchor.set (0.5, 0);
+	left.anchor.set (0.5, 0.5);
+	right.anchor.set (0, 0.5);
+	left.angle=-180;
+	win.add(elements);
+	elements.add(text);
+	elements.add(flag);
+	elements.add(left);
+	elements.add(right);
+	elements.add(ok);
+	elements.y = (_game.height-elements.height)/3;
+	back.alpha = alpha;
+	win.realWidth = win.width;
+	back.width = _game.width;
+	back.height = _game.height;
+	var tween = _game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+	tween.onComplete.add(function() { win.opened = true; });
+
+	left.inputEnabled = true;
+    left.events.onInputDown.add(function () {changeLang (false);});
+    right.inputEnabled = true;
+    right.events.onInputDown.add(function () {changeLang (true);});
+    ok.inputEnabled = true;
+   	ok.events.onInputDown.add(function (){Popup.closeMenu();});
+
+    function changeLang (side) {
+    	var locales = getLocales();
+    	var index = side ? 1 : locales.length-1;
+       	setLocale(locales[(locales.indexOf(getLocale())+1*index)%locales.length]);
+       	flag.frame = locales.indexOf(getLocale());
+       	text.setText(LOCALE.LANGUAGE);
+       	ok.setText(LOCALE.OK);
+       	Tutorial.changeLocale();
+       	if (_game) _game.changeLocale();
+    }
+
+    Popup.propsMenu = win;
+}
+
 Popup.closeMenu = function (newState) {
-	var win = Popup.gameWinWin || Popup.gameOverWin || Popup.optWin;
+	var _game = game || Popup.game;
+	var win = Popup.anyWinOpened();
 	if (win && win.opened) {
 		if (newState) {
-			var tween = game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
-			game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
+			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
+			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
 			tween.onComplete.add(function() { 
-				//win.destroy(); 
-				game.state.start(newState); 
+				_game.state.start(newState); 
 				Popup.clearAll();
 			});
 		} else {
-			var tween = game.add.tween(win).to( { alpha:0 }, 300, Phaser.Easing.Exponential.Out, true);
+			var tween = _game.add.tween(win).to( { alpha:0 }, 300, Phaser.Easing.Exponential.Out, true);
 			tween.onComplete.add(function() { 
 				win.destroy(); 
 				Popup.clearAll();
