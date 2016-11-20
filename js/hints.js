@@ -42,7 +42,7 @@ Tutorial.clean = function (level) {
 Tutorial.changeLocale = function () {
 	if (Tutorial.text) {
 		var text = LOCALE["TUTORIAL_"+Tutorial.text.level];
-		var wrapped = Helper.TextWrapper.wrapText(text, game.width, game.height, 'blue', Tutorial.text.fontSize)[0];
+		var wrapped = Helper.TextWrapper.wrapText(text, game.width*0.95, game.height, 'blue', Tutorial.text.fontSize)[0];
 		Tutorial.text.setText(wrapped);
 		Tutorial.resize();
 	}
