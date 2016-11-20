@@ -2,16 +2,16 @@
 (function(exports){
 
 	exports.completedLevels = 0;
-	exports.newbie = true;
+	exports.newbie = 1;
 	exports.locale = "en";
 	var db = null;
 
 	exports.load = function() {
-		db = window.sqlitePlugin.openDatabase({name: 'com-dreamlike-puzzle.db', location: 'default'}, onDatabaseOpen);
+		db = window.sqlitePlugin.openDatabase({name: 'ccdreamlikequady.db', location: 'default'}, onDatabaseOpen);
 	}
 
 	exports.checkIn = function() {
-		exports.newbie = false;
+		exports.newbie = 0;
 		if (db) {
 			updateData("newbie", exports.newbie);
 		}
@@ -54,6 +54,8 @@
 	            } else {
 	            	putEmptyData();
 	            }
+	            setLocale(Data.locale);
+	            Puzzle.game.state.start('MainMenu');
 	        },
 	        function (tx, error) {
 	            console.log('SELECT error: ' + error.message);
@@ -115,5 +117,3 @@ function debug(message) {
 	firebaseData[new Date().toUTCString().slice(5, 25)] = message;
 	firebase.push(firebaseData);
 }
-
-document.addEventListener('deviceready', Data.load);

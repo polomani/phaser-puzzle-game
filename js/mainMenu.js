@@ -38,7 +38,7 @@ Puzzle.MainMenu.prototype = {
       }
     });
 
-    if (Data.newbie) {
+    if (Data.newbie==1) {
         Data.checkIn();
         Popup.openPropsMenu(this.game, 1);
     }
