@@ -17,7 +17,8 @@
 			LANGUAGE: "language",
 			OK:"ok",
 			END_GAME: "You got it!",
-			END_GAME_TEXT: "This was the last level. Thank you for playing."
+			END_GAME_TEXT: "This was the last level. Thank you for playing.",
+			NOTIFICATION: "Quady is waiting for you!"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -36,7 +37,8 @@
 			LANGUAGE: "мова",
 			OK:"добре",
 			END_GAME: "Молодець!",
-			END_GAME_TEXT: "Це був останнiй рiвень. Дякую за гру."
+			END_GAME_TEXT: "Це був останнiй рiвень. Дякую за гру.",
+			NOTIFICATION: "Quady хоче гратися з тобою!"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -55,7 +57,8 @@
 			LANGUAGE: "язык",
 			OK:"хорошо",
 			END_GAME: "Умница!",
-			END_GAME_TEXT: "Это был последний уровень. Спасибо за игру."
+			END_GAME_TEXT: "Это был последний уровень. Спасибо за игру.",
+			NOTIFICATION: "Quady ждет тебя!"
 		}
 	};
 	exports.setLocale = function (loc) {

@@ -4,10 +4,18 @@
 	exports.completedLevels = 0;
 	exports.newbie = 1;
 	exports.locale = "en";
+	exports.notification = Date.now();
 	var db = null;
 
 	exports.load = function() {
 		db = window.sqlitePlugin.openDatabase({name: 'ccdreamlikequady.db', location: 'default'}, onDatabaseOpen);
+	}
+
+	exports.notificate = function(time) {
+		exports.notification = time;
+		if (db) {
+			updateData("notification", exports.notification);
+		}
 	}
 
 	exports.checkIn = function() {
@@ -90,6 +98,7 @@
 		putData("completedLevels", exports.completedLevels);
 		putData("locale", exports.locale);
 		putData("newbie", exports.newbie);
+		putData("notification", exports.notification);
 	}
 
 	function updateData(key, value) {
