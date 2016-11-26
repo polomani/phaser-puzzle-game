@@ -5,6 +5,7 @@
 	exports.newbie = 1;
 	exports.locale = "en";
 	exports.notification = Date.now();
+	exports.rated = 1;
 	var db = null;
 
 	exports.load = function() {
@@ -15,6 +16,13 @@
 		exports.notification = time;
 		if (db) {
 			updateData("notification", exports.notification);
+		}
+	}
+
+	exports.rateFlag = function(flag) {
+		exports.rated = flag;
+		if (db) {
+			updateData("rated", exports.rated);
 		}
 	}
 
@@ -99,6 +107,7 @@
 		putData("locale", exports.locale);
 		putData("newbie", exports.newbie);
 		putData("notification", exports.notification);
+		putData("rated", exports.rated);
 	}
 
 	function updateData(key, value) {

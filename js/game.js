@@ -583,7 +583,7 @@ function setBoxPosition (elem) {
 }
 
 function saveSolutionToFirebase() {
-	//return;
+	return;
 	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
 	var data = {};
 	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");

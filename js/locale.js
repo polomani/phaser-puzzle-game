@@ -18,7 +18,12 @@
 			OK:"ok",
 			END_GAME: "You got it!",
 			END_GAME_TEXT: "This was the last level. Thank you for playing.",
-			NOTIFICATION: "Quady is waiting for you!"
+			NOTIFICATION: "Quady is waiting for you!",
+			RATE_TITLE:'Rate Quady',
+			RATE_TEXT:'If you enjoy using Quady, would you mind taking a moment to rate it? It won’t take more than a minute.\nThanks for your support!',
+			RATE_CANCEL:"No, Thanks",
+			RATE_LATER:"Remind Me Later",
+			RATE_NOW:"Rate It Now"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -38,7 +43,12 @@
 			OK:"добре",
 			END_GAME: "Молодець!",
 			END_GAME_TEXT: "Це був останнiй рiвень. Дякую за гру.",
-			NOTIFICATION: "Quady хоче гратися з тобою!"
+			NOTIFICATION: "Quady хоче гратися з тобою!",
+			RATE_TITLE:"Оцінити Quady",
+			RATE_TEXT: "Якщо вам подобається користуватися Quady, чи не будете ви заперечувати проти того, щоб приділити хвилинку та оцінити її?\nСпасибі вам за підтримку!",
+			RATE_CANCEL:"Ні, дякую",
+			RATE_LATER:"Нагадати пізніше",
+			RATE_NOW:"Оцінити зараз"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -58,7 +68,12 @@
 			OK:"хорошо",
 			END_GAME: "Умница!",
 			END_GAME_TEXT: "Это был последний уровень. Спасибо за игру.",
-			NOTIFICATION: "Quady ждет тебя!"
+			NOTIFICATION: "Quady ждет тебя!",
+			RATE_TITLE:"Оцените Quady",
+			RATE_TEXT:"Если вам нравится пользоваться Quady, не будете ли вы возражать против того, чтобы уделить минуту и оценить его?\nСпасибо вам за поддержку!",
+			RATE_CANCEL: "Нет, спасибо",
+			RATE_LATER: "Напомнить позже",
+			RATE_NOW: "Оценить сейчас"
 		}
 	};
 	exports.setLocale = function (loc) {

@@ -43,49 +43,6 @@ Puzzle.MainMenu.prototype = {
         Popup.openPropsMenu(this.game, 1);
     }
 
-    if (window.Cocoon && window.Cocoon.Ad) {
-        console.log("loading interstitial");
-        Cocoon.Ad.AdMob.configure({
-            android: {
-              interstitial:"ca-app-pub-9147936306521137/8577493605"
-            }
-        });
-        var interstitial = Cocoon.Ad.AdMob.createInterstitial();
-        interstitial.on("load", function(){
-          interstitial.show();
-          console.log("interstitial loaded");
-        });
-        interstitial.on("fail", function(){
-           console.log("interstitial failed");
-        });
-        interstitial.on("show", function(){
-          console.log("Interstitial shown");
-        });
-        interstitial.load();
-    }
-
-    if (window.Cocoon && window.Cocoon.Notification && Data.completedLevels < 25 && Data.notification <= Date.now()) {
-      Cocoon.Notification.Local.cancelAllNotifications();
-      Cocoon.Notification.Local.initialize({}, function(registered) {
-          var notification = {
-          message : LOCALE.NOTIFICATION,
-          date : (Date.now() + 1000*60*60*24*5).toFixed()
-         };
-        Data.notificate(notification.date);
-        Cocoon.Notification.Local.send(notification);
-      });
-    }
-
-    if (false && window.AppRate) {
-      AppRate.preferences = {
-        displayAppName: 'Quady', 
-        useLanguage:getLocale(),
-        storeAppURL: {
-          android: 'market://details?id=cc.dreamlike.quady'
-        }
-      };
-
-      AppRate.promptForRating();
-    }
+    Promotion.init();
   }
 };

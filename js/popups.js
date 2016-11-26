@@ -229,6 +229,7 @@ Popup.closeMenu = function (newState) {
 	var _game = game || Popup.game;
 	var win = Popup.anyWinOpened();
 	if (win && win.opened) {
+		Promotion.showInterstitial();
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
