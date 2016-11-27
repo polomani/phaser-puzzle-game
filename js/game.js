@@ -88,16 +88,12 @@ Puzzle.Game.prototype.addMenu = function () {
 		editor_label.events.onInputDown.add(function () {
 			this.game.state.start('Editor');
 		});
-
-		//$("#lSelect").show();
 	}
 }
 
 Puzzle.Game.prototype.createStage = function () {
 	game.moving = false;
 	game.world.setBounds(0, 0, 2880, 2880);
-	//var tile = game.add.tileSprite(0, 0, game.width, game.height, 'box_space');
-	//tile.tileScale.set(BSIZE/100, BSIZE/100);
 	game.boxes = game.add.group();
 
 	game.keyUP = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -131,7 +127,6 @@ Puzzle.Game.prototype.createStage = function () {
 				}
 				var box;
 				var xx = 0, yy = 0;
-				//if(arr[y][x]==0) box = game.boxes.create (xx, yy, 'box_space');
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue'));
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
@@ -188,7 +183,7 @@ Puzzle.Game.prototype.createStage = function () {
 	Tutorial.open(Game.aimLVL);
 	onGameResized();
 
-	game.matrix.move=function(x, y, side) {
+	game.matrix.move=function(x, y, side, toRemove) {
 		var temp = game.matrix[y][x];
 		game.matrix.del(x, y);
 		switch (side) {
@@ -226,7 +221,7 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x].x=x;
 		game.matrix[y][x].box.indexX = x;
 		game.matrix[y][x].box.indexY = y;
-		setBoxPosition(game.matrix[y][x]);
+		setBoxPosition(game.matrix[y][x], toRemove);
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -340,8 +335,7 @@ Puzzle.Game.prototype.createStage = function () {
 					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.box.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
-						game.boxes.remove(next.box);
-						this.move(cur.x, cur.y, side);
+						this.move(cur.x, cur.y, side, next.box);
 						deleted=true;
 					}
 				}
@@ -566,7 +560,7 @@ function getDirFromAngle(angle) {
 	}
 }
 
-function setBoxPosition (elem) {
+function setBoxPosition (elem, toRemove) {
 	var x = elem.x;
 	var y = elem.y;
 	var xx,yy;
@@ -578,7 +572,12 @@ function setBoxPosition (elem) {
 		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 	}
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
-	tween.onComplete.add(function() { game.moving = false; game.checkTeleport(x, y); game.checkGameOver(); });
+	tween.onComplete.add(function() {
+		game.boxes.remove(toRemove);
+		game.moving = false;
+		game.checkTeleport(x, y); 
+		game.checkGameOver(); 
+	});
 	game.moving = true;
 }
 
