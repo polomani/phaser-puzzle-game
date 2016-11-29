@@ -1,5 +1,5 @@
 (function(exports) {
-	var period = 1;
+	var period = 3;
 	var counter = 0;
 	var interstitial;
 	var IOS_RATING_URL = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=[  ID  ]";
@@ -105,7 +105,7 @@
 
 	exports.showInterstitial = function() {
 		counter++;
-		if (window.Cocoon && window.Cocoon.Ad && counter<=period) {
+		if (window.Cocoon && window.Cocoon.Ad && counter>=period && Data.completedLevels >= 3) {
 			counter = 0;
 			if (interstitial && interstitial.ready) {
 				interstitial.show();

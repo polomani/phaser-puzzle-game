@@ -7,7 +7,7 @@ Puzzle.MainMenu.prototype = {
     o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     o.scale.pageAlignHorizontally = true;
 
-    var logo = o.add.sprite (o.width/2, o.height/3, "logo");
+    var logo = o.add.sprite (o.width/2, o.height/3, Dimensions.getImageKey("logo"));
     logo.scale.x = logo.scale.y = Math.min (o.width*1/3/logo.width, 1);
     logo.anchor.set(0.5);
 

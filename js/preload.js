@@ -4,13 +4,17 @@ Puzzle.Preload = function(){};
 
 Puzzle.Preload.prototype = {
 	preload: function() {
-		this.load.spritesheet('flag', 'assets/images/flag.png', 97, 97);
+
+		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
+		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
 		this.load.image('btn_next', 'assets/images/button_next_large.png');
-		this.load.image('btn_lang_arr', 'assets/images/lang_arrow.png');
+		this.load.image('btn_lang_arr_small', 'assets/images/lang_arrow_small.png');
+		this.load.image('btn_lang_arr_large', 'assets/images/lang_arrow_large.png');
 		this.load.spritesheet('btn_play', 'assets/images/play.png', 348, 98);
 		this.load.image('btn_pause', 'assets/images/pause.png');
 		this.load.image('btn_props', 'assets/images/prop_icon.png');
-		this.load.image('logo', 'assets/images/logo.png');
+		this.load.image('logo_small', 'assets/images/logo_small.png');
+		this.load.image('logo_large', 'assets/images/logo_large.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');
 		this.load.spritesheet('box_blue_small', 'assets/images/box_blue_small.png', 100, 100);
 		this.load.image('box_gap_small', 'assets/images/box_gap_small.png');
