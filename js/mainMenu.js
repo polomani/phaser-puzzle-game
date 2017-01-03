@@ -38,8 +38,25 @@ Puzzle.MainMenu.prototype = {
       }
     });
 
-    if (Data.newbie==1) {
-        Popup.openPropsMenu(this.game, 1);
+    if (Data.newbie==1 || Data.completedLevels==0) {
+      play.alpha = 0;
+      if (Data.newbie==1) {
+        Data.checkIn();
+        if (navigator && navigator.globalization) {
+          navigator.globalization.getPreferredLanguage(function (lang) { 
+            getLocales().forEach (function(elem) {
+                if (lang.value.indexOf(elem)!=-1) {
+                  setLocale (elem);
+                }
+            });
+            o.state.start('Game');
+          });
+        } else {
+          o.state.start('Game');
+        }
+      } else {
+        o.state.start('Game');
+      }
     }
 
     Promotion.init();

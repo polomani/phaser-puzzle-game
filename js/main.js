@@ -18,7 +18,7 @@ Puzzle.game.state.add('Editor', Puzzle.Editor);
 Puzzle.game.state.start('Boot');
 
 $(document).ready (function () {
-	Game.aimLVL = 10;
+	Game.aimLVL = 0;
 
     updateList();
 

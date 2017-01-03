@@ -209,7 +209,7 @@ Popup.openPropsMenu = function (_game, alpha) {
     right.inputEnabled = true;
     right.events.onInputDown.add(function () {changeLang (true);});
     ok.inputEnabled = true;
-   	ok.events.onInputDown.add(function (){ if (Data.newbie==1) { Data.checkIn(); } Popup.closeMenu();});
+   	ok.events.onInputDown.add(function (){ Popup.closeMenu(); });
 
     function changeLang (side) {
     	var locales = getLocales();
