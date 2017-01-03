@@ -23,6 +23,7 @@ $(document).ready (function () {
     updateList();
 
 	$("#lSelect").on ("change", function() {
+		Popup.clearAll();
 		Game.aimLVL = $( "#lSelect option:selected" ).attr("value");
 		if (Game.aimLVL == LEVELS.length) {
 			LEVELS[Game.aimLVL] = [[0]];

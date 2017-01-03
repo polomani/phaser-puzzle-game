@@ -8,6 +8,7 @@
 	exports.rated = 1;
 	var db = null;
 
+	//androidDatabaseImplementation: 2, androidLockWorkaround: 1
 	exports.load = function() {
 		db = window.sqlitePlugin.openDatabase({name: 'ccdreamlikequady.db', location: 'default'}, onDatabaseOpen);
 	}

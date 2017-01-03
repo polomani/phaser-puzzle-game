@@ -21,7 +21,8 @@
 	}
 
 	initRateMe = function() {
-		if (navigator && navigator.notification && window.Cocoon) {
+		if (navigator && navigator.notification && window.Cocoon && !Data.logged) {
+			Data.logged = true;
 			function onConfirm(buttonIndex) {
 				var ratingURL = null;
 				if (/ios/.test(navigator.userAgent))
@@ -82,25 +83,27 @@
 	} 
 
 	initInterstitial = function () {
-		console.log("loading interstitial");
-		interstitial = Cocoon.Ad.AdMob.createInterstitial();
-        interstitial.on("load", function(){
-        	interstitial.ready = true;
-          	console.log("interstitial loaded");
-        });
-        interstitial.on("fail", function(){
-           	console.log("interstitial failed");
-        });
-        interstitial.on("show", function(){
-          	console.log("Interstitial shown");
-        });
-        interstitial.on("dismiss", function(){
-		   	console.log("Interstitial dismissed");
-		}); 
-		interstitial.on("click", function(){
-		   	console.log("Interstitial clicked");
-		});
-        interstitial.load();
+		if (!interstitial) {
+			console.log("loading interstitial");
+			interstitial = Cocoon.Ad.AdMob.createInterstitial();
+	        interstitial.on("load", function(){
+	        	interstitial.ready = true;
+	          	console.log("interstitial loaded");
+	        });
+	        interstitial.on("fail", function(){
+	           	console.log("interstitial failed");
+	        });
+	        interstitial.on("show", function(){
+	          	console.log("Interstitial shown");
+	        });
+	        interstitial.on("dismiss", function(){
+			   	console.log("Interstitial dismissed");
+			}); 
+			interstitial.on("click", function(){
+			   	console.log("Interstitial clicked");
+			});
+	        interstitial.load();
+    	}
 	} 
 
 	exports.showInterstitial = function() {
