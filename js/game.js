@@ -183,7 +183,7 @@ Puzzle.Game.prototype.createStage = function () {
 	Tutorial.open(Game.aimLVL);
 	onGameResized();
 
-	game.matrix.move=function(x, y, side, toRemove) {
+	game.matrix.move=function(x, y, side, toRemove, onSpikes) {
 		var temp = game.matrix[y][x];
 		game.matrix.del(x, y);
 		switch (side) {
@@ -221,7 +221,7 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x].x=x;
 		game.matrix[y][x].box.indexX = x;
 		game.matrix[y][x].box.indexY = y;
-		setBoxPosition(game.matrix[y][x], toRemove);
+		setBoxPosition(game.matrix[y][x], toRemove, onSpikes);
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -327,9 +327,12 @@ Puzzle.Game.prototype.createStage = function () {
 			var cur = game.blueBoxes[i];
 			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
-				this.move(cur.x, cur.y, side);
-				if (next && next.type==3)
+				if (next && next.type==3) {
 					game.gameOverFlag = true;
+					this.move(cur.x, cur.y, side, null, cur.box);
+				} else {
+					this.move(cur.x, cur.y, side);
+				}
 			} else {
 				if (next && next.type==2 && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
 					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.box.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
@@ -560,7 +563,7 @@ function getDirFromAngle(angle) {
 	}
 }
 
-function setBoxPosition (elem, toRemove) {
+function setBoxPosition (elem, toRemove, onSpikes) {
 	var x = elem.x;
 	var y = elem.y;
 	var xx,yy;
@@ -574,9 +577,21 @@ function setBoxPosition (elem, toRemove) {
 	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
 	tween.onComplete.add(function() {
 		game.boxes.remove(toRemove);
-		game.moving = false;
-		game.checkTeleport(x, y); 
-		game.checkGameOver(); 
+		if (onSpikes) {
+			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 200);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 400);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 600);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 800);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 1000).onComplete.add(finish);
+		} else {
+			finish();
+		}
+		function finish () {
+			game.moving = false;
+			game.checkTeleport(x, y); 
+			game.checkGameOver();
+		}
 	});
 	game.moving = true;
 }
