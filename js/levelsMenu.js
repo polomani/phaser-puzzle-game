@@ -3,7 +3,7 @@ Puzzle.LevelsMenu = function(){};
 Puzzle.LevelsMenu.prototype.create = function () {
   var o = Puzzle.LevelsMenu.o =  this.game;
 
-  o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  o.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
   o.scale.pageAlignHorizontally = true;
 
   o.selLevelText = o.add.bitmapText(0, 0, "blue", LOCALE.SELECT_LEVEL, Dimensions.getFontSize());

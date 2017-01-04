@@ -4,7 +4,7 @@ Puzzle.MainMenu.prototype = {
   create: function() {
     var o = this.game;
 
-    o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    o.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
     o.scale.pageAlignHorizontally = true;
 
     var logo = o.add.sprite (o.width/2, o.height/3, Dimensions.getImageKey("logo"));
@@ -37,27 +37,6 @@ Puzzle.MainMenu.prototype = {
         o.state.start('LevelsMenu');
       }
     });
-
-    if ((Data.newbie==1 || Data.completedLevels==0) && !Data.logged) {
-      play.alpha = 0;
-      if (Data.newbie==1) {
-        Data.checkIn();
-        if (navigator && navigator.globalization) {
-          navigator.globalization.getPreferredLanguage(function (lang) { 
-            getLocales().forEach (function(elem) {
-                if (lang.value.indexOf(elem)!=-1) {
-                  setLocale (elem);
-                }
-            });
-            o.state.start('Game');
-          });
-        } else {
-          o.state.start('Game');
-        }
-      } else {
-        o.state.start('Game');
-      }
-    }
 
     Promotion.init();
   }
