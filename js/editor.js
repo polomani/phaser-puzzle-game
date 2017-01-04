@@ -8,9 +8,9 @@ Puzzle.Editor.prototype.preload = function () {
 
 	o = this.game;
 	o.cursor = null;
-	o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-	o.scale.setResizeCallback(onResizedEditor);
-	o.scale.refresh();
+	//o.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+	//o.scale.setResizeCallback(onResizedEditor);
+	//o.scale.refresh();
 	o.inputEnabled = true;
 	o.path = {};
 };
@@ -290,6 +290,7 @@ Puzzle.Editor.prototype.create = function () {
 
 	Editor.cursors = o.input.keyboard.createCursorKeys();
 	this.addMenu();
+	onResizedEditor();
 };
 
 Puzzle.Editor.prototype.addMenu = function () {
