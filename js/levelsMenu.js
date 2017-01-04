@@ -27,6 +27,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
           lvl.alpha = 0.5;
         } else {
           lvl.setAll('inputEnabled', true);
+          lvl.setAll('input.useHandCursor', true);
           lvl.callAll('events.onInputDown.add', 'events.onInputDown', Puzzle.LevelsMenu.levelInputListener, this);
         }
         o.pages.add(lvl);
@@ -35,6 +36,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
 
     var paginator = o.paginator = this.game.add.sprite (0,0, 'btn_next');
     paginator.inputEnabled = true;
+    paginator.input.useHandCursor = true;
     var page = paginator.page = 0;
     paginator.anchor.setTo(0.5, 0.5);
     paginator.events.onInputDown.add(function () {

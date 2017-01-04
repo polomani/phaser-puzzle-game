@@ -43,12 +43,15 @@ Popup.openGameOverMenu = function () {
 	tween.onComplete.add(function() { win.opened = true; });
 
     replay.inputEnabled = true;
+    replay.input.useHandCursor = true;
     replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
 
     levels.inputEnabled = true;
+    levels.input.useHandCursor = true;
     levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
 
     menu.inputEnabled = true;
+    menu.input.useHandCursor = true;
     menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
 
     Popup.gameOverWin = win;
@@ -80,18 +83,22 @@ Popup.openWinMenu = function () {
 		elements.y = (game.height-elements.height)/2;
 
 		next.inputEnabled = true;
+		next.input.useHandCursor = true;
 	    next.events.onInputDown.add(function (){
 	    	++Game.aimLVL;
 	     	Popup.closeMenu("Game");
 	    });
 
 		replay.inputEnabled = true;
+		replay.input.useHandCursor = true;
 	    replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
 
 	    levels.inputEnabled = true;
+	    levels.input.useHandCursor = true;
 	    levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
 
 	    menu.inputEnabled = true;
+	    menu.input.useHandCursor = true;
     	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
 	} else {
 		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.END_GAME, Dimensions.getFontSize()+10);
@@ -105,6 +112,7 @@ Popup.openWinMenu = function () {
 		text2.anchor.set (0.5, 1);
 		menu.anchor.set (0.5, 1);
 		menu.inputEnabled = true;
+		menu.input.useHandCursor = true;
     	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
     	win.add(elements);
 		elements.add(text);
@@ -153,15 +161,19 @@ Popup.openOptMenu = function () {
 	tween.onComplete.add(function() { win.opened = true; });
 
 	cont.inputEnabled = true;
+	cont.input.useHandCursor = true;
     cont.events.onInputDown.add(function (){Popup.closeMenu();});
 
 	replay.inputEnabled = true;
+	replay.input.useHandCursor = true;
     replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
 
     levels.inputEnabled = true;
+    levels.input.useHandCursor = true;
     levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
 
     menu.inputEnabled = true;
+    menu.input.useHandCursor = true;
     menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
 
     Popup.optWin = win;
@@ -205,10 +217,13 @@ Popup.openPropsMenu = function (_game, alpha) {
 	tween.onComplete.add(function() { win.opened = true; });
 
 	left.inputEnabled = true;
+	left.input.useHandCursor = true;
     left.events.onInputDown.add(function () {changeLang (false);});
     right.inputEnabled = true;
+    right.input.useHandCursor = true;
     right.events.onInputDown.add(function () {changeLang (true);});
     ok.inputEnabled = true;
+    ok.input.useHandCursor = true;
    	ok.events.onInputDown.add(function (){ Popup.closeMenu(); });
 
     function changeLang (side) {

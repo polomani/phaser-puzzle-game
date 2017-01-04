@@ -11,7 +11,7 @@ Puzzle.Boot.prototype = {
     this.game.stage.backgroundColor = '#1d2224';
 
     //scaling options
-	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+	this.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
 	this.scale.minWidth = 240;
 	this.scale.minHeight = 170;
 	this.scale.maxWidth = 2880;

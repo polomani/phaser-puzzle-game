@@ -12,7 +12,7 @@ Puzzle.MainMenu.prototype = {
     logo.anchor.set(0.5);
 
     var play = this.game.play = o.add.sprite (o.width/2, o.height/4*3, "btn_play"); 
-    play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 1);
+    play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 0.7);
     play.anchor.set(0.5);
 
     this.game.changeLocale = function () {
@@ -31,11 +31,18 @@ Puzzle.MainMenu.prototype = {
     o.changeLocale();
 
     play.inputEnabled = true;
+    play.input.useHandCursor = true;
     play.events.onInputDown.add(function () {
       if (!Popup.anyWinOpened()) {
         Game.aimLVL = Data.completedLevels;
         o.state.start('LevelsMenu');
       }
+    });
+    play.events.onInputOver.add(function () {
+      play.scale.x=play.scale.y=play.scale.x+0.1;
+    });
+    play.events.onInputOut.add(function () {
+      play.scale.x=play.scale.y=play.scale.x-0.1;
     });
 
     Promotion.init();
