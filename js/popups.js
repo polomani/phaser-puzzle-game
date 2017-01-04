@@ -81,7 +81,7 @@ Popup.openWinMenu = function () {
 
 		next.inputEnabled = true;
 	    next.events.onInputDown.add(function (){
-	    	Game.aimLVL = Math.min(Game.aimLVL+1, Data.completedLevels);
+	    	++Game.aimLVL;
 	     	Popup.closeMenu("Game");
 	    });
 

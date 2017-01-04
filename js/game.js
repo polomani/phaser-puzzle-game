@@ -491,11 +491,6 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 		});	
 	}
-	//game.matrix.down();
-	//game.matrix.up();
-	//game.matrix.right();
-	//game.matrix.left();
-	//console.log();
 };
 
 Puzzle.Game.prototype.update = function() {};
@@ -578,19 +573,15 @@ function setBoxPosition (elem, toRemove, onSpikes) {
 	tween.onComplete.add(function() {
 		game.boxes.remove(toRemove);
 		if (onSpikes) {
-			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true);
-			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 200);
-			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 400);
-			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 600);
-			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 800);
-			game.add.tween(game.matrix[y][x].box).to( { alpha:1 }, 200, "Linear", true, 1000).onComplete.add(finish);
+			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
 		} else {
 			finish();
 		}
 		function finish () {
 			game.moving = false;
 			game.checkTeleport(x, y); 
-			game.checkGameOver();
+			if (toRemove || onSpikes || Game.aimLVL==0) 
+				game.checkGameOver();
 		}
 	});
 	game.moving = true;
