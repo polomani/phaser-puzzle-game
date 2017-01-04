@@ -23,7 +23,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
         //i > Data.completedLevels && 
-        if (false && i > Data.completedLevels) {
+        if (i > Data.completedLevels) {
           lvl.alpha = 0.5;
         } else {
           lvl.setAll('inputEnabled', true);

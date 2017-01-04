@@ -37,7 +37,7 @@ Puzzle.Game.prototype.create = function () {
 onGameResized =  function (full) {
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
-	BSIZE = Math.min(Math.min (Dimensions.getBoxSize(), BSIZE), game.width/8);
+	BSIZE = Math.min(Math.min (Dimensions.getBoxSize(), BSIZE), Dimensions.getMinDimension()/8);
 	if (game.boxes)
 		game.boxes.forEach (resize);
 	function resize (box) {
