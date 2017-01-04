@@ -21,10 +21,10 @@ Popup.openGameOverMenu = function () {
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize()+10);
-	var replay = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
+	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize());
+	var replay = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
+	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
+	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	levels.anchor.set (0.5, 1);
@@ -61,11 +61,11 @@ Popup.openWinMenu = function () {
 	var back = win.back = win.create (0, 0, 'window');
 
 	if (Game.aimLVL<29) {
-		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
-		var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
-		var replay = game.add.bitmapText(game.width/2, next.y+next.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
-		var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-		var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
+		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize());
+		var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize()-10);
+		var replay = game.add.bitmapText(game.width/2, next.y+next.height*2, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
+		var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
+		var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
 		replay.anchor.set (0.5, 1);
 		text.anchor.set (0.5, 1);
 		next.anchor.set (0.5, 1);
@@ -128,11 +128,11 @@ Popup.openOptMenu = function () {
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = game.add.bitmapText(game.width/2, 0, "blue", "Paused", Dimensions.getFontSize()+10);
-	var cont = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.CONTINUE, Dimensions.getFontSize());
-	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
+	var text = game.add.bitmapText(game.width/2, 0, "blue", "Paused", Dimensions.getFontSize());
+	var cont = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.CONTINUE, Dimensions.getFontSize()-10);
+	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*2, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
+	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
+	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	cont.anchor.set (0.5, 1);
