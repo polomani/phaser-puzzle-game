@@ -6,7 +6,7 @@ var Game = {
 };
 
 //Puzzle.game = new Phaser.Game("100%", "100%", Phaser.CANVAS, '');
-Puzzle.game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.CANVAS, '', null, false, false);
+Puzzle.game = new Phaser.Game(800, 480, Phaser.CANVAS, '', null, false, false);
 
 Puzzle.game.state.add('Boot', Puzzle.Boot);
 Puzzle.game.state.add('Preload', Puzzle.Preload);

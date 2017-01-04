@@ -11,7 +11,7 @@ Puzzle.Game.prototype.preload = function () {
 	this.game.stage.smoothed = false;
 	game = this.game;
 
-	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+	game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
 	game.scale.pageAlignHorizontally = true;
 };
 

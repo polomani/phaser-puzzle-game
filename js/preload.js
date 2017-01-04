@@ -36,12 +36,7 @@ Puzzle.Preload.prototype = {
 		this.game.load.bitmapFont('blue', 'assets/fonts/blue.png', 'assets/fonts/blue.fnt');
 	},
 	create: function() {
-		if (window.cordova) {
-			document.addEventListener('deviceready', function() {
-				Data.load();
-			});
-		} else {
-			Puzzle.game.state.start('MainMenu');
-		}
+		Data.load();
+		Puzzle.game.state.start('MainMenu');
 	}
 };

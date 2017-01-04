@@ -8,9 +8,9 @@
 	exports.rated = 1;
 	var db = null;
 
-	//androidDatabaseImplementation: 2, androidLockWorkaround: 1
 	exports.load = function() {
-		db = window.sqlitePlugin.openDatabase({name: 'ccdreamlikequady.db', location: 'default'}, onDatabaseOpen);
+		db = window.localStorage;
+		onDatabaseOpen();
 	}
 
 	exports.notificate = function(time) {
@@ -51,56 +51,26 @@
 	}
 
 	function onDatabaseOpen () {
-		db.transaction(function (tx) {
-		    tx.executeSql('CREATE TABLE IF NOT EXISTS map (key, value)');
-		}, function (error) {
-		    console.log('transaction error: ' + error.message);
-		}, getData);
+		getData();
 	}
 
 	function getData() {
-	    db.transaction(function (tx) {
+		if (!db.getItem("newbie")) {
+			putEmptyData ();
+		}
 
-	        var query = "SELECT key, value FROM map";
+		exports.completedLevels = db.getItem('completedLevels');
+		exports.newbie =  db.getItem('newbie');
+		exports.locale =  db.getItem('locale');
+		exports.notification =  db.getItem('notification');
+		exports.rated =  db.getItem('rated');
 
-	        tx.executeSql(query, null, function (tx, resultSet) {
-	        	if (resultSet.rows.length>0) {
-	        		for(var x = 0; x < resultSet.rows.length; x++) {
-	        			Data[resultSet.rows.item(x)["key"]] = resultSet.rows.item(x)["value"];
-		            }	        		
-	            } else {
-	            	putEmptyData();
-	            }
-	            setLocale(Data.locale);
-	            Puzzle.game.state.start('MainMenu');
-	        },
-	        function (tx, error) {
-	            console.log('SELECT error: ' + error.message);
-	        });
-	    }, function (error) {
-	        console.log('transaction error: ' + error.message);
-	    }, function () {
-	        console.log('transaction ok');
-	    });
-	    
+		setLocale(Data.locale);
+	    Puzzle.game.state.start('MainMenu');
 	}
 
 	function putData(key, value) {
-	    db.transaction(function (tx) {
-	        var query = "INSERT INTO map (key, value) VALUES (?,?)";
-
-	        tx.executeSql(query, [key, value], function(tx, res) {
-	            console.log("insertId: " + res.insertId + " -- probably 1");
-	            console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
-	        },
-	        function(tx, error) {
-	            console.log('INSERT error: ' + error.message);
-	        });
-	    }, function(error) {
-	        console.log('transaction error: ' + error.message);
-	    }, function() {
-	        console.log('transaction ok');
-	    });
+	    db.setItem(key, value);
 	}
 
 	function putEmptyData() {
@@ -112,20 +82,7 @@
 	}
 
 	function updateData(key, value) {
-		db.transaction(function (tx) {
-	        var query = "UPDATE map SET value=? WHERE key=?";
-
-	        tx.executeSql(query, [value, key], function(tx, res) {
-	            console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
-	        },
-	        function(tx, error) {
-	            console.log('INSERT error: ' + error.message);
-	        });
-	    }, function(error) {
-	        console.log('transaction error: ' + error.message);
-	    }, function() {
-	        console.log('transaction ok');
-	    });
+		db.setItem(key, value);
 	}
 
 })(window.Data = {});
