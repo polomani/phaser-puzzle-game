@@ -13,7 +13,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.lvls = []; 
   o.pages = o.add.group(); 
 
-  for (var i = 0; i < 30; i++) {
+  for (var i = 0; i < 45; i++) {
         var lvl = o.add.group();
         var image = lvl.create(0,0, Dimensions.getImageKey('box_black'));
         image.anchor.setTo(0.5, 0.5);
@@ -33,20 +33,47 @@ Puzzle.LevelsMenu.prototype.create = function () {
         o.lvls.push(lvl);    
     }
 
-    var paginator = o.paginator = this.game.add.sprite (0,0, 'btn_next');
-    paginator.inputEnabled = true;
-    var page = paginator.page = 0;
-    paginator.anchor.setTo(0.5, 0.5);
-    paginator.events.onInputDown.add(function () {
+    var left = o.left = this.game.add.sprite (0,0, 'btn_next');
+    var right = o.right = this.game.add.sprite (0,0, 'btn_next');
+    right.inputEnabled = true;
+    left.inputEnabled = true;
+    var page = right.page = 0;
+    left.angle = -180;
+    right.anchor.setTo(0, 0.5);
+    left.anchor.setTo(0, 0.5);
+    left.alpha = 0.5;
+    
+    right.events.onInputDown.add(function () {
         if (!o.pages.moving) {
-          page = (++page)%2;
-          o.pages.moving = true;
-          var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
-          tween.onComplete.add(function() { 
-              o.add.tween(o.paginator).to( { angle: -180*page }, 200, "Linear", true);
-              tween = o.add.tween(o.pages).to( { alpha: 1, x: o.pages.x - o.width*page + o.width*(1-page) }, 200, "Linear", true);
-              tween.onComplete.add(function() { o.pages.moving=false;});
-          });
+          if (page<o.lvls.length/15-1) {
+            ++page;
+            o.pages.moving = true;
+            var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
+            tween.onComplete.add(function() { 
+                tween = o.add.tween(o.pages).to( { alpha: 1, x: -o.width*page }, 200, "Linear", true);
+                tween.onComplete.add(function() { o.pages.moving=false;});
+                left.alpha = 1;
+                if (page==o.lvls.length/15-1)
+                  right.alpha = 0.5;
+            });
+          }
+        }
+    });
+
+    left.events.onInputDown.add(function () {
+        if (!o.pages.moving) {
+          if (page>0) {
+            --page;
+            o.pages.moving = true;
+            var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
+            tween.onComplete.add(function() { 
+                tween = o.add.tween(o.pages).to( { alpha: 1, x: -o.width*page }, 200, "Linear", true);
+                tween.onComplete.add(function() { o.pages.moving=false;});
+                right.alpha = 1;
+                if (page==0) 
+                  left.alpha = 0.5;
+            });
+          }
         }
     });
 
@@ -90,9 +117,12 @@ Puzzle.LevelsMenu.onResized = function () {
   o.selLevelText.x = o.width/2;
   o.selLevelText.y = (o.pages.y-o.selLevelText.height)/2;
 
-  o.paginator.width =  o.paginator.height = o.lvls[0].image.width;
-  o.paginator.y = o.pages.y + o.lvls[14].image.y  + BSIZE/4+ o.pages.y/2;
-  o.paginator.x = o.width/2;
+  o.right.width =  o.right.height = o.left.width =  o.left.height = o.lvls[0].image.width;
+  o.right.y = o.left.y = o.pages.y + o.lvls[14].image.y  + BSIZE/4+ o.pages.y/2;
+  o.right.x = o.left.x = o.width/2;
+  o.left.x -= gap/2;
+  o.right.x += gap/2;
+
 };
 
 Puzzle.LevelsMenu.levelInputListener = function (lvl) {
