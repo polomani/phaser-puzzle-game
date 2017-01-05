@@ -38,6 +38,7 @@ Puzzle.MainMenu.prototype = {
         o.state.start('LevelsMenu');
       }
     });
+
     play.events.onInputOver.add(function () {
       play.scale.x=play.scale.y=play.scale.x+0.1;
     });
