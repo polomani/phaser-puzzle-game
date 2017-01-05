@@ -25,7 +25,7 @@ Tutorial.open = function (level) {
 	}
 
 	if (LOCALE["TUTORIAL_"+level]) {
-	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-12); 
+	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-18); 
 	    text.anchor.set (0.5, 0);
 		text.align = 'center';
 		text.level = level;
