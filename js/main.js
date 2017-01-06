@@ -78,6 +78,4 @@ $(document).ready (function () {
 	exports.getMinDimension = function () {
 		return Math.min(game.width, game.height);
 	}
-
-	console.log(exports.getSize());
 })(window.Dimensions = {});
