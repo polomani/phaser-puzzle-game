@@ -60,7 +60,7 @@ Popup.openWinMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 
-	if (Game.aimLVL<29) {
+	if (Game.aimLVL<44) {
 		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
 		var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
 		var replay = game.add.bitmapText(game.width/2, next.y+next.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
