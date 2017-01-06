@@ -16,6 +16,7 @@ Puzzle.Game.prototype.preload = function () {
 };
 
 Puzzle.Game.prototype.create = function () {
+	console.log(Dimensions.getSize());
 	console.log(game.width + "x" + game.height);
 	game.gameOverFlag = false;
 	game.levelWidth = LEVELS[Game.aimLVL][0].length;
