@@ -4,7 +4,9 @@ Puzzle.Preload = function(){};
 
 Puzzle.Preload.prototype = {
 	preload: function() {
-
+		this.game.bar = this.game.add.bitmapText(this.game.width/2, this.game.height/2, "blue", "0%", Dimensions.getFontSize());
+		this.game.bar.anchor.set (0.5, 0.5);
+		this.load.onFileComplete.add(this.progress, this);
 		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
 		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
 		this.load.image('btn_next', 'assets/images/button_next_large.png');
@@ -33,7 +35,6 @@ Puzzle.Preload.prototype = {
 
 		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.fnt');
 		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.fnt');
-		this.game.load.bitmapFont('blue', 'assets/fonts/blue.png', 'assets/fonts/blue.fnt');
 	},
 	create: function() {
 		if (window.cordova) {
@@ -43,5 +44,8 @@ Puzzle.Preload.prototype = {
 		} else {
 			Puzzle.game.state.start('MainMenu');
 		}
+	},
+	progress: function() {
+		this.game.bar.setText(this.load.progress+'%');
 	}
 };

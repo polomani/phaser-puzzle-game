@@ -5,7 +5,7 @@ Puzzle.Boot = function(){};
 //setting game configuration and loading the assets for the loading screen
 Puzzle.Boot.prototype = {
   preload: function() {
-    
+  	this.game.load.bitmapFont('blue', 'assets/fonts/blue.png', 'assets/fonts/blue.fnt');
   },
   create: function() {
     this.game.stage.backgroundColor = '#1d2224';
