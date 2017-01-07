@@ -107,7 +107,14 @@ Popup.openWinMenu = function () {
 		text2.setText(wrapped);
 		text2.align = 'center';
 		text2.y = text.y+text.height*3;
-		var menu = game.add.bitmapText(game.width/2, text2.y+text.height*2, "blue", LOCALE.OK, Dimensions.getFontSize()-8);
+		var googlePlay = game.add.sprite (game.width/2, text2.y+text.height*3,"google_play_badge");
+		googlePlay.frame = getLocales().indexOf(getLocale());
+		googlePlay.scale.x = googlePlay.scale.y = 0.34;
+		googlePlay.anchor.set(0.5, 1);
+		googlePlay.inputEnabled = true;
+		googlePlay.input.useHandCursor = true;
+		googlePlay.events.onInputDown.add(function () { window.open('https://play.google.com/store/apps/details?id=cc.dreamlike.quady'); });
+		var menu = game.add.bitmapText(game.width/2, googlePlay.y+text.height*1.5, "blue", LOCALE.OK, Dimensions.getFontSize()-8);
 		text.anchor.set (0.5, 1);
 		text2.anchor.set (0.5, 1);
 		menu.anchor.set (0.5, 1);
@@ -115,6 +122,7 @@ Popup.openWinMenu = function () {
 		menu.input.useHandCursor = true;
     	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
     	win.add(elements);
+    	elements.add(googlePlay);
 		elements.add(text);
 		elements.add(text2);
 		elements.add(menu);

@@ -1,7 +1,7 @@
 (function(exports) {
 	var locales = {
 		en: {
-			SELECT_LEVEL: "select level",
+			SELECT_LEVEL: "select a level",
 			PAUSED: "paused",
 			CONTINUE: "continue",
 			REPLAY: "replay",
@@ -19,13 +19,14 @@
 			LANGUAGE: "language",
 			OK:"ok",
 			END_GAME: "You got it!",
-			END_GAME_TEXT: "This was the last level. Thank you for playing.",
+			END_GAME_TEXT: "PLay more levels on your mobile device",
 			NOTIFICATION: "Quady is waiting for you!",
 			RATE_TITLE:'Rate Quady',
 			RATE_TEXT:'If you enjoy using Quady, would you mind taking a moment to rate it? It won’t take more than a minute.\nThanks for your support!',
 			RATE_CANCEL:"No, Thanks",
 			RATE_LATER:"Remind Me Later",
-			RATE_NOW:"Rate It Now"
+			RATE_NOW:"Rate It Now",
+			TRY_MOBILE:"PLay more levels\non your mobile device"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -46,13 +47,14 @@
 			LANGUAGE: "  мова  ",
 			OK:"добре",
 			END_GAME: "Молодець!",
-			END_GAME_TEXT: "Це був останнiй рiвень. Дякую за гру.",
+			END_GAME_TEXT: "Бiльше рiвнiв доступно на смартфонах",
 			NOTIFICATION: "Quady хоче гратися з тобою!",
-			RATE_TITLE:"Оцінити Quady",
-			RATE_TEXT: "Якщо Вам подобається користуватися Quady, чи не будете Ви заперечувати проти того, щоб приділити хвилинку та оцінити її?\nСпасибі вам за підтримку!",
-			RATE_CANCEL:"Ні, дякую",
-			RATE_LATER:"Нагадати пізніше",
-			RATE_NOW:"Оцінити зараз"
+			RATE_TITLE:"Оцiнити Quady",
+			RATE_TEXT: "Якщо Вам подобається користуватися Quady, чи не будете Ви заперечувати проти того, щоб придiлити хвилинку та оцiнити її?\nСпасибi вам за пiдтримку!",
+			RATE_CANCEL:"Нi, дякую",
+			RATE_LATER:"Нагадати пiзнiше",
+			RATE_NOW:"Оцiнити зараз",
+			TRY_MOBILE:"Бiльше рiвнiв\nдоступно на смартфонах"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -73,13 +75,14 @@
 			LANGUAGE: "  язык  ",
 			OK:"хорошо",
 			END_GAME: "Умница!",
-			END_GAME_TEXT: "Это был последний уровень. Спасибо за игру.",
+			END_GAME_TEXT: "Больше уровней доступно на смартфонах",
 			NOTIFICATION: "Quady ждет тебя!",
 			RATE_TITLE:"Оцените Quady",
 			RATE_TEXT:"Если Вам нравится пользоваться Quady, не будете ли Вы возражать против того, чтобы уделить минуту и оценить его?\nСпасибо вам за поддержку!",
 			RATE_CANCEL: "Нет, спасибо",
 			RATE_LATER: "Напомнить позже",
-			RATE_NOW: "Оценить сейчас"
+			RATE_NOW: "Оценить сейчас",
+			TRY_MOBILE:"Больше уровней\nдоступно на смартфонах"
 		}
 	};
 	exports.setLocale = function (loc) {

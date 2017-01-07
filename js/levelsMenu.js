@@ -10,10 +10,18 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.selLevelText.anchor.set(0.5, 0.5);
   o.selLevelText.text.align = 'center';
 
+  var googlePlay = o.add.sprite (o.width/2, o.height,"google_play_badge");
+  googlePlay.frame = getLocales().indexOf(getLocale());
+  googlePlay.scale.x = googlePlay.scale.y = 0.34;
+  googlePlay.anchor.set(0.5, 1);
+  googlePlay.inputEnabled = true;
+  googlePlay.input.useHandCursor = true;
+  googlePlay.events.onInputDown.add(function () { window.open('https://play.google.com/store/apps/details?id=cc.dreamlike.quady'); });
+
   o.lvls = []; 
   o.pages = o.add.group(); 
 
-  for (var i = 0; i < 45; i++) {
+  for (var i = 0; i < 30; i++) {
         var lvl = o.add.group();
         var image = lvl.create(0,0, Dimensions.getImageKey('box_black'));
         image.anchor.setTo(0.5, 0.5);
@@ -34,6 +42,20 @@ Puzzle.LevelsMenu.prototype.create = function () {
         o.lvls.push(lvl);    
     }
 
+    var google = o.google = o.add.sprite (0, 0, "google_play_badge");
+    google.scale.x = google.scale.y = 0.34;
+    google.anchor.set(0.5, 0);
+    google.inputEnabled = true;
+    google.input.useHandCursor = true;
+    google.frame = getLocales().indexOf(getLocale());
+    google.events.onInputDown.add(function () { window.open('https://play.google.com/store/apps/details?id=cc.dreamlike.quady'); });
+    o.pages.add(google);
+
+    var googleText = o.googleText = o.add.bitmapText(0, 0, "white", LOCALE.TRY_MOBILE, Dimensions.getFontSize()-17);
+    googleText.align = "center";
+    googleText.anchor.set(0.5, 1);
+    o.pages.add(googleText);
+
     var left = o.left = this.game.add.sprite (0,0, 'btn_next');
     var right = o.right = this.game.add.sprite (0,0, 'btn_next');
     right.inputEnabled = true;
@@ -49,15 +71,16 @@ Puzzle.LevelsMenu.prototype.create = function () {
     
     right.events.onInputDown.add(function () {
         if (!o.pages.moving) {
-          if (page<o.lvls.length/15-1) {
+          if (page<o.lvls.length/15) {
             ++page;
             o.pages.moving = true;
             var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
-            tween.onComplete.add(function() { 
-                tween = o.add.tween(o.pages).to( { alpha: 1, x: -o.width*page }, 200, "Linear", true);
+            tween.onComplete.add(function() {
+                o.pages.x = -o.width*page;
+                tween = o.add.tween(o.pages).to( {alpha: 1}, 200, "Linear", true);
                 tween.onComplete.add(function() { o.pages.moving=false;});
                 left.alpha = 1;
-                if (page==o.lvls.length/15-1) {
+                if (page==o.lvls.length/15) {
                   right.alpha = 0.5;
                 }
             });
@@ -72,7 +95,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
             o.pages.moving = true;
             var tween = o.add.tween(o.pages).to( { alpha: 0}, 200, "Linear", true);
             tween.onComplete.add(function() { 
-                tween = o.add.tween(o.pages).to( { alpha: 1, x: -o.width*page }, 200, "Linear", true);
+                o.pages.x = -o.width*page;
+                tween = o.add.tween(o.pages).to( {alpha: 1}, 200, "Linear", true);
                 tween.onComplete.add(function() { o.pages.moving=false;});
                 right.alpha = 1;
                 if (page==0) {
@@ -124,10 +148,17 @@ Puzzle.LevelsMenu.onResized = function () {
   o.selLevelText.y = (o.pages.y-o.selLevelText.height)/2;
 
   o.right.width =  o.right.height = o.left.width =  o.left.height = o.lvls[0].image.width;
-  o.right.y = o.left.y = o.pages.y + o.lvls[14].image.y  + BSIZE/4+ o.pages.y/2;
-  o.right.x = o.left.x = o.width/2;
-  o.left.x -= gap/2;
-  o.right.x += gap/2;
+  o.right.y = o.left.y = o.pages.y + o.lvls[5].image.y;
+  o.left.x = o.lvls[5].image.x - o.lvls[5].image.width;
+  o.right.x = o.lvls[9].image.x + o.lvls[5].image.width;
+
+
+  o.googleText.x = o.width * 2 + o.width/2;
+  o.googleText.y = o.pages.height/2 - o.googleText.height*1.5;
+
+  o.google.x = o.googleText.x;
+  o.google.y = o.googleText.y;
+
 
 };
 

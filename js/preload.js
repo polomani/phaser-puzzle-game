@@ -7,6 +7,8 @@ Puzzle.Preload.prototype = {
 		this.game.bar = this.game.add.bitmapText(this.game.width/2, this.game.height/2, "blue", "0%", Dimensions.getFontSize());
 		this.game.bar.anchor.set (0.5, 0.5);
 		this.load.onFileComplete.add(this.progress, this);
+
+		this.load.spritesheet('google_play_badge', 'assets/images/google-play-badge.png', 646, 250);
 		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
 		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
 		this.load.image('btn_next', 'assets/images/button_next_large.png');
