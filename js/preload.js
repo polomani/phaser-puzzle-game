@@ -39,6 +39,7 @@ Puzzle.Preload.prototype = {
 	create: function() {
 		Data.load();
 		Puzzle.game.state.start('MainMenu');
+	},
 	progress: function() {
 		this.game.bar.setText(this.load.progress+'%');
 	}
