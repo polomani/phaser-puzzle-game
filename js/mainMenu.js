@@ -12,7 +12,7 @@ Puzzle.MainMenu.prototype = {
     logo.anchor.set(0.5);
 
     var googlePlay = o.add.sprite (o.width/2, o.height,"google_play_badge");
-    googlePlay.scale.x = googlePlay.scale.y = Math.min (o.width*1/15/logo.width, 1);
+    googlePlay.scale.x = googlePlay.scale.y = 0.34;
     googlePlay.anchor.set(0.5, 1);
     googlePlay.inputEnabled = true;
     googlePlay.input.useHandCursor = true;
