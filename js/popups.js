@@ -81,7 +81,7 @@ Popup.openWinMenu = function () {
 
 		next.inputEnabled = true;
 	    next.events.onInputDown.add(function (){
-	    	++Game.aimLVL;
+	    	if (!win.closing) ++Game.aimLVL;
 	     	Popup.closeMenu("Game");
 	    });
 
@@ -228,7 +228,8 @@ Popup.openPropsMenu = function (_game, alpha) {
 Popup.closeMenu = function (newState) {
 	var _game = game || Popup.game;
 	var win = Popup.anyWinOpened();
-	if (win && win.opened) {
+	if (win && win.opened && !win.closing) {
+		win.closing = true;
 		Promotion.showInterstitial();
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
