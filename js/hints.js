@@ -3,7 +3,7 @@ Tutorial = function(){};
 Tutorial.resize = function() {
 	if (Tutorial.image) {
 		Tutorial.image.width = 
-		Tutorial.image.height = Math.min (Dimensions.getMinDimension()/3, Tutorial.image.realWidth);
+		Tutorial.image.height = Math.min (Dimensions.getMinDimension()/3, Tutorial.image.realWidth*1.5);
 		Tutorial.image.x = game.width/2;
 	}
 	if (Tutorial.text) {
@@ -26,7 +26,7 @@ Tutorial.open = function (level) {
 	}
 
 	if (LOCALE["TUTORIAL_"+level]) {
-	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-12); 
+	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-8); 
 	    text.anchor.set (0.5, 0);
 		text.align = 'center';
 		text.level = level;
