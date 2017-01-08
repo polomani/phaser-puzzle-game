@@ -32,8 +32,10 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_red', 'assets/images/box_red.png');
 		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 		this.load.image('window', 'assets/images/window.png');
-		this.load.spritesheet('tutorial_0', 'assets/tutorial/tutorial_0.png', 228, 228);
-		this.load.spritesheet('tutorial_2', 'assets/tutorial/tutorial_2.png', 228, 228);
+		this.load.spritesheet('tutorial_1', 'assets/tutorial/tutorial_1.png', 162, 162);
+		this.load.spritesheet('tutorial_3', 'assets/tutorial/tutorial_3.png', 162, 162, 57);
+		this.load.spritesheet('tutorial_4', 'assets/tutorial/tutorial_4.png', 162, 162);
+		this.load.spritesheet('tutorial_5', 'assets/tutorial/tutorial_5.png', 162, 162, 49);
 
 		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.fnt');
 		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.fnt');
