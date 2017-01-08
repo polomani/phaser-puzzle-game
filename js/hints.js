@@ -4,7 +4,8 @@ Tutorial.resize = function() {
 	if (Tutorial.image) {
 		Tutorial.image.width = 
 		Tutorial.image.height = Math.min (Dimensions.getMinDimension()/3, Tutorial.image.realWidth);
-		Tutorial.image.x = game.width/2;
+		Tutorial.image.y = game.height/2;
+		Tutorial.image.x = 0;
 	}
 	if (Tutorial.text) {
 		Tutorial.text.x = game.width/2;
@@ -15,9 +16,10 @@ Tutorial.resize = function() {
 Tutorial.open = function (level) {
 	
 	if (game.cache.checkImageKey('tutorial_'+level)) {
-		var animation = game.add.sprite(game.width-228/2, 0, 'tutorial_'+level);
+		var animation = game.add.sprite(0, 0, 'tutorial_'+level);
 	    animation.animations.add('play');
 	    animation.anchor.set (0.5, 0);
+	    animation.angle = -90; 
 	    animation.animations.play('play', 30, true);
 	    animation.realWidth=animation.width;
 	    animation.realHeight=animation.height;
