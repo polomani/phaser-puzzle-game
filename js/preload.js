@@ -12,7 +12,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('btn_next', 'assets/images/button_next_large.png');
 		this.load.image('btn_lang_arr_small', 'assets/images/lang_arrow_small.png');
 		this.load.image('btn_lang_arr_large', 'assets/images/lang_arrow_large.png');
-		this.load.spritesheet('btn_play', 'assets/images/play.png', 348, 98);
+		this.load.spritesheet('btn_play_small', 'assets/images/play_small.png', 249, 69);
+		this.load.spritesheet('btn_play_large', 'assets/images/play_large.png', 500, 139);
 		this.load.image('btn_pause', 'assets/images/pause.png');
 		this.load.image('btn_props', 'assets/images/prop_icon.png');
 		this.load.image('logo_small', 'assets/images/logo_small.png');
