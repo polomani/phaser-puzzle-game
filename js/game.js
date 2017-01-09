@@ -59,7 +59,7 @@ onGameResized =  function (full) {
 		box.y = yy; 
 	}
 	Puzzle.Game.rotateArrows();
-	Tutorial.resize();
+	Tutorial.resize({bbounds:game.boxes.getLocalBounds()});
 }
 
 Puzzle.Game.prototype.addMenu = function () {
