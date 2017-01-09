@@ -18,11 +18,11 @@ Tutorial.resize = function(data) {
 Tutorial.open = function (level) {
 	Tutorial.level = level;
 	var key = Dimensions.getImageKey('tutorial_'+level);
-	if (game.cache.checkImageKey(key) {
+	if (game.cache.checkImageKey(key)) {
 		var animation = game.add.sprite(0, 0, key);
 	    animation.animations.add('play');
 	    animation.anchor.set (0.5, 0.5);
-	    animation.angle = -90; 
+	    if (level!=0) animation.angle = -90; 
 	    animation.animations.play('play', 30, true);
 	    animation.realWidth=animation.width;
 	    animation.realHeight=animation.height;
