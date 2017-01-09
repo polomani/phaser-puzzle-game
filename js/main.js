@@ -59,7 +59,10 @@ $(document).ready (function () {
 		var size = exports.getSize();
 		if (size == "xsmall")
 			size = "small";
-		return key + "_" + size;
+		var sizeKey =  key + "_" + size;
+		if (game.cache.checkImageKey(sizeKey))
+			return sizeKey;
+		return key;
 	}
 
 	exports.getBoxSize = function () {

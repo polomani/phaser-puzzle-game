@@ -1,11 +1,13 @@
 Tutorial = function(){};
 
-Tutorial.resize = function() {
-	if (Tutorial.image) {
+Tutorial.resize = function(data) {
+	if (data && Tutorial.image) {
+		var maxDimension = Tutorial.image.realWidth;
+		if (Tutorial.level!=0) maxDimension *= 1.5;
 		Tutorial.image.width = 
-		Tutorial.image.height = Math.min (Dimensions.getMinDimension()/3, Tutorial.image.realWidth);
+		Tutorial.image.height = Math.round(Math.min (Dimensions.getMinDimension()/4, maxDimension));
 		Tutorial.image.y = game.height/2;
-		Tutorial.image.x = 0;
+		Tutorial.image.x = Math.max(data.bbounds.x/2, Tutorial.image.height/2);
 	}
 	if (Tutorial.text) {
 		Tutorial.text.x = game.width/2;
@@ -14,11 +16,12 @@ Tutorial.resize = function() {
 }
 
 Tutorial.open = function (level) {
-	
-	if (game.cache.checkImageKey('tutorial_'+level)) {
-		var animation = game.add.sprite(0, 0, 'tutorial_'+level);
+	Tutorial.level = level;
+	var key = Dimensions.getImageKey('tutorial_'+level);
+	if (game.cache.checkImageKey(key) {
+		var animation = game.add.sprite(0, 0, key);
 	    animation.animations.add('play');
-	    animation.anchor.set (0.5, 0);
+	    animation.anchor.set (0.5, 0.5);
 	    animation.angle = -90; 
 	    animation.animations.play('play', 30, true);
 	    animation.realWidth=animation.width;
@@ -31,7 +34,6 @@ Tutorial.open = function (level) {
 	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-18); 
 	    text.anchor.set (0.5, 0);
 		text.align = 'center';
-		text.level = level;
 		Tutorial.text = text;
 		Tutorial.changeLocale ();
 	}
@@ -40,11 +42,12 @@ Tutorial.open = function (level) {
 Tutorial.clean = function (level) {
 	Tutorial.image = null;
 	Tutorial.text = null;
+	Tutorial.level = null;
 }
 
 Tutorial.changeLocale = function () {
 	if (Tutorial.text) {
-		var text = LOCALE["TUTORIAL_"+Tutorial.text.level];
+		var text = LOCALE["TUTORIAL_"+Tutorial.level];
 		var wrapped = Helper.TextWrapper.wrapText(text, game.width*0.95, game.height, 'blue', Tutorial.text.fontSize)[0];
 		Tutorial.text.setText(wrapped);
 		Tutorial.resize();
