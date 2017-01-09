@@ -18,22 +18,12 @@ Puzzle.MainMenu.prototype = {
     googlePlay.input.useHandCursor = true;
     googlePlay.events.onInputDown.add(function () { window.open('https://play.google.com/store/apps/details?id=cc.dreamlike.quady'); });
 
-    var play = this.game.play = o.add.sprite (o.width/2, 330, "btn_play"); 
-    play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 0.6);
+    var play = this.game.play = o.add.sprite (o.width/2, 330, Dimensions.getImageKey("btn_play")); 
+    play.scale.x = play.scale.y = Math.min (o.width*1/2/play.width, 0.7);
     play.anchor.set(0.5);
 
     this.game.changeLocale = function () {
-      switch (getLocale()) {
-        case "en":
-          play.frame=1;
-        break;
-        case "uk":
-          play.frame=2;
-        break; 
-        case "ru":
-          play.frame=0;
-        break; 
-      }
+      play.frame = getLocales().indexOf(getLocale());
       googlePlay.frame = getLocales().indexOf(getLocale());
     }
     o.changeLocale();
