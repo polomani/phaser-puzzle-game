@@ -64,7 +64,7 @@ onGameResized =  function (full) {
 
 Puzzle.Game.prototype.addMenu = function () {
 
-	var pause = this.game.add.sprite (0,0, "btn_pause");
+	var pause = this.game.add.sprite (0,0, Dimensions.getImageKey("btn_pause"));
     pause.inputEnabled = true;
     pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
     pause.events.onInputDown.add(function () {
@@ -73,13 +73,23 @@ Puzzle.Game.prototype.addMenu = function () {
       	}
     });
 
-    var props = this.game.add.sprite (this.game.width,0, "btn_props");
+    var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
     props.anchor.setTo(1, 0);
     props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
     props.inputEnabled = true;
     props.events.onInputDown.add(function () {
       if (!(Popup.anyWinOpened())) {
       		Popup.openPropsMenu();
+      	}
+    });
+
+    var replay = this.game.add.sprite (this.game.width,this.game.height, Dimensions.getImageKey("btn_replay"));
+    replay.anchor.setTo(1, 1);
+    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
+    replay.inputEnabled = true;
+    replay.events.onInputDown.add(function () {
+      if (!(Popup.anyWinOpened())) {
+      		this.game.state.start("Game");
       	}
     });
 

@@ -14,8 +14,12 @@ Puzzle.Preload.prototype = {
 		this.load.image('btn_lang_arr_large', 'assets/images/lang_arrow_large.png');
 		this.load.spritesheet('btn_play_small', 'assets/images/play_small.png', 249, 69);
 		this.load.spritesheet('btn_play_large', 'assets/images/play_large.png', 500, 139);
-		this.load.image('btn_pause', 'assets/images/pause.png');
-		this.load.image('btn_props', 'assets/images/prop_icon.png');
+		this.load.image('btn_pause_small', 'assets/images/pause_small.png');
+		this.load.image('btn_pause_large', 'assets/images/pause_large.png');
+		this.load.image('btn_props_small', 'assets/images/prop_icon_small.png');
+		this.load.image('btn_props_large', 'assets/images/prop_icon_large.png');
+		this.load.image('btn_replay_small', 'assets/images/replay_small.png');
+		this.load.image('btn_replay_large', 'assets/images/replay_large.png');
 		this.load.image('logo_small', 'assets/images/logo_small.png');
 		this.load.image('logo_large', 'assets/images/logo_large.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');
