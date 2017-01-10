@@ -83,15 +83,17 @@ Puzzle.Game.prototype.addMenu = function () {
       	}
     });
 
-    var replay = this.game.add.sprite (this.game.width,this.game.height, Dimensions.getImageKey("btn_replay"));
-    replay.anchor.setTo(1, 1);
-    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
-    replay.inputEnabled = true;
-    replay.events.onInputDown.add(function () {
-      if (!(Popup.anyWinOpened())) {
-      		this.game.state.start("Game");
-      	}
-    });
+    if (Game.aimLVL > 6) {
+	    var replay = this.game.add.sprite (this.game.width,this.game.height, Dimensions.getImageKey("btn_replay"));
+	    replay.anchor.setTo(1, 1);
+	    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
+	    replay.inputEnabled = true;
+	    replay.events.onInputDown.add(function () {
+	      if (!(Popup.anyWinOpened())) {
+	      		this.game.state.start("Game");
+	      	}
+	    });
+	}
 
 	if (false && game.device.desktop) {
 		var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
