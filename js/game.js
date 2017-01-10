@@ -90,6 +90,7 @@ Puzzle.Game.prototype.addMenu = function () {
 	    replay.anchor.setTo(1, 1);
 	    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
 	    replay.inputEnabled = true;
+	    replay.input.useHandCursor = true;
 	    replay.events.onInputDown.add(function () {
 	      if (!(Popup.anyWinOpened())) {
 	      		this.game.state.start("Game");
