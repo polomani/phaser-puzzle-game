@@ -44,6 +44,11 @@ Tutorial.clean = function (level) {
 	Tutorial.level = null;
 }
 
+Tutorial.invise = function () {
+	if (Tutorial.image) Tutorial.image.visible=false;
+	if (Tutorial.text) Tutorial.text.visible=false;
+}
+
 Tutorial.changeLocale = function () {
 	if (Tutorial.text) {
 		var text = LOCALE["TUTORIAL_"+Tutorial.level];
