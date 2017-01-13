@@ -258,6 +258,8 @@ Popup.closeMenu = function (newState) {
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
+			Tutorial.invise();
+			_game.boxes.visible = false;
 			tween.onComplete.add(function() { 
 				_game.state.start(newState); 
 				Popup.clearAll();

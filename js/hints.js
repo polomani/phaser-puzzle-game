@@ -9,9 +9,15 @@ Tutorial.resize = function(data) {
 		Tutorial.image.y = game.height/2;
 		Tutorial.image.x = Math.max(data.bbounds.x/2, Tutorial.image.height/2);
 	}
-	if (Tutorial.text) {
-		Tutorial.text.x = game.width/2;
-		Tutorial.text.y = game.height-Tutorial.text.height-20;
+	if (Tutorial.label) {
+		var sensei = Tutorial.label.sensei;
+		sensei.scale.x = sensei.scale.y = Math.min (Dimensions.getMinDimension()/8/sensei.rwidth, 1); 
+
+		Tutorial.label.text.x = sensei.x + sensei.width + Dimensions.getMinDimension()*0.02;
+		Tutorial.label.text.y = Math.min(sensei.y, sensei.y - sensei.height/2 + Tutorial.label.text.height/2);
+
+		Tutorial.label.y = game.height*0.99;
+		Tutorial.label.x = (game.width-Tutorial.label.width)/2;
 	}
 }
 
@@ -32,24 +38,37 @@ Tutorial.open = function (level) {
 
 	if (LOCALE["TUTORIAL_"+level]) {
 	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-18); 
-	    text.anchor.set (0.5, 0);
-		text.align = 'center';
-		Tutorial.text = text;
+	    text.anchor.set (0, 1);
+
+		var sensei = game.add.sprite(0, 0, Dimensions.getImageKey('sensei'));
+		sensei.rwidth = sensei.width;
+		sensei.anchor.set (0, 1);
+
+		Tutorial.label = game.add.group();
+		Tutorial.label.add (sensei);
+		Tutorial.label.add (text);
+		Tutorial.label.sensei = sensei;
+		Tutorial.label.text = text;
 		Tutorial.changeLocale ();
 	}
 }
 
 Tutorial.clean = function (level) {
 	Tutorial.image = null;
-	Tutorial.text = null;
+	Tutorial.label= null;
 	Tutorial.level = null;
 }
 
+Tutorial.invise = function () {
+	if (Tutorial.image) Tutorial.image.visible=false;
+	if (Tutorial.label) Tutorial.label.visible=false;
+}
+
 Tutorial.changeLocale = function () {
-	if (Tutorial.text) {
+	if (Tutorial.label) {
 		var text = LOCALE["TUTORIAL_"+Tutorial.level];
-		var wrapped = Helper.TextWrapper.wrapText(text, game.width*0.95, game.height, 'blue', Tutorial.text.fontSize)[0];
-		Tutorial.text.setText(wrapped);
+		var wrapped = Helper.TextWrapper.wrapText(text, game.width*0.83, game.height, 'blue', Tutorial.label.text.fontSize)[0];
+		Tutorial.label.text.setText(wrapped);
 		Tutorial.resize();
 	}
 }

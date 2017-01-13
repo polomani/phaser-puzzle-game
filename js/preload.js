@@ -37,6 +37,9 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_red', 'assets/images/box_red.png');
 		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 		this.load.image('window', 'assets/images/window.png');
+		this.load.image('sensei_small', 'assets/images/sensei_small.png');
+		this.load.image('sensei_large', 'assets/images/sensei_large.png');
+
 
 		this.load.image('tutorial_0_small', 'assets/tutorial/tutorial_0_small.png');
 		this.load.image('tutorial_0_large', 'assets/tutorial/tutorial_0_large.png');
