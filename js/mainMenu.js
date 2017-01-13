@@ -30,6 +30,7 @@ Puzzle.MainMenu.prototype = {
 
     if ((Data.newbie==1 || Data.completedLevels==0) && !Data.logged) {
       play.alpha = 0;
+      logo.y = o.height/2;
       Data.logged = true;
       if (Data.newbie==1) {
         Data.checkIn();

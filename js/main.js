@@ -52,13 +52,18 @@ $(document).ready (function () {
 		if (Math.min(game.width, game.height)<800) {
 			return "small";
 		}
-		return "large";
+		if (Math.min(game.width, game.height)<1200) {
+			return "large";
+		}
+		return "xlarge";
 	}
 
 	exports.getImageKey = function(key) {
 		var size = exports.getSize();
 		if (size == "xsmall")
 			size = "small";
+		if (size == "xlarge")
+			size = "large";
 		var sizeKey =  key + "_" + size;
 		if (game.cache.checkImageKey(sizeKey))
 			return sizeKey;
@@ -75,7 +80,20 @@ $(document).ready (function () {
 			return 24;
 		if (size == "small")
 			return 40;
-		return 78;
+		if (size == "large")
+			return 74;
+		return 82;
+	}
+
+	exports.getHintFontSize = function () {
+		var size = exports.getSize();
+		if (size == "xsmall")
+			return 16;
+		if (size == "small")
+			return 28;
+		if (size == "large")
+			return 52;
+		return 74;
 	}
 
 	exports.getMinDimension = function () {
