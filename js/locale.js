@@ -18,7 +18,7 @@
 			TUTORIAL_5: "use arrows to block up boxes",
 			TUTORIAL_6: "more boxes is not a problem",
 			LANGUAGE: "language",
-			OK:"ok",
+			OK:"okay",
 			END_GAME: "You got it!",
 			END_GAME_TEXT: "This was the last level. Thank you for playing.",
 			NOTIFICATION: "Quady is waiting for you!",
@@ -26,7 +26,10 @@
 			RATE_TEXT:'If you enjoy using Quady, would you mind taking a moment to rate it? It won’t take more than a minute.\nThanks for your support!',
 			RATE_CANCEL:"No, Thanks",
 			RATE_LATER:"Remind Me Later",
-			RATE_NOW:"Rate It Now"
+			RATE_NOW:"Rate It Now",
+			SHARE:"Share",
+			ASK_SHARE:"Not bad! You solved % levels. Whould you like to share this with your friends?",
+			SHARE_TEXT:"I have solved % levels in #quady puzzle on #android by @dreamlikegames. It trains my brain"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -54,7 +57,10 @@
 			RATE_TEXT: "Якщо Вам подобається користуватися Quady, чи не будете Ви заперечувати проти того, щоб придiлити хвилинку та оцiнити її?\nСпасибi вам за пiдтримку!",
 			RATE_CANCEL:"Нi, дякую",
 			RATE_LATER:"Нагадати потiм",
-			RATE_NOW:"Оцiнити зараз"
+			RATE_NOW:"Оцiнити зараз",
+			SHARE:"Подiлитись",
+			ASK_SHARE:"Непогано! Ти пройшов % рiвнiв. Хочеш подiлитись рекордом з друзями?",
+			SHARE_TEXT:"Пройшов % рiвнiв в головоломцi #quady на #android вiд @dreamlikegames. Спробуйте i ви!"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -74,7 +80,7 @@
 			TUTORIAL_5: "Блокируй квадраты стрелками",
 			TUTORIAL_6: "Квадратов бывает больше",
 			LANGUAGE: "   язык   ",
-			OK:"хорошо",
+			OK:"окей",
 			END_GAME: "Умница!",
 			END_GAME_TEXT: "Это был последний уровень. Спасибо за игру.",
 			NOTIFICATION: "Quady ждет тебя!",
@@ -82,7 +88,10 @@
 			RATE_TEXT:"Если Вам нравится пользоваться Quady, не будете ли Вы возражать против того, чтобы уделить минуту и оценить его?\nСпасибо вам за поддержку!",
 			RATE_CANCEL: "Нет, спасибо",
 			RATE_LATER: "Напомнить позже",
-			RATE_NOW: "Оценить сейчас"
+			RATE_NOW: "Оценить сейчас",
+			SHARE:"Поделиться",
+			ASK_SHARE:"Неплохо! Ты прошел % уровней. Хочешь поделиться рекордом с друзьями?",
+			SHARE_TEXT:"Уверенно прохожу уровни в #quady на #android от @dreamlikegames. % - не предел, попробуйте и вы"
 		}
 	};
 	exports.setLocale = function (loc) {

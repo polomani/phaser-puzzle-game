@@ -24,15 +24,13 @@ Popup.openGameOverMenu = function () {
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize()+10);
 	var replay = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
+	
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	levels.anchor.set (0.5, 1);
-	menu.anchor.set (0.5, 1);
 	win.add(elements);
 	elements.add(text);
 	elements.add(replay);
-	elements.add(menu);
 	elements.add(levels);
 	elements.y = (game.height-elements.height)/2;
 	back.alpha = 0.9;
@@ -48,9 +46,6 @@ Popup.openGameOverMenu = function () {
     levels.inputEnabled = true;
     levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
 
-    menu.inputEnabled = true;
-    menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
-
     Popup.gameOverWin = win;
 }
 
@@ -61,21 +56,38 @@ Popup.openWinMenu = function () {
 	var back = win.back = win.create (0, 0, 'window');
 
 	if (Game.aimLVL<44) {
-		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
-		var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
+		var text;
+		var next;
+		var share;
+		if (Game.aimLVL == 14 || Game.aimLVL == 24 || Game.aimLVL == 34) {
+			text = game.add.bitmapText(game.width/2, 0, "blue", "", Dimensions.getFontSize()-10);
+			text.align = 'center';
+			var wrapped = Helper.TextWrapper.wrapText(LOCALE.ASK_SHARE.replace("%", Game.aimLVL+1), game.width*0.9, game.height, 'blue', text.fontSize)[0];
+			text.setText(wrapped);
+			share = game.add.bitmapText(game.width/2, text.y+text.height, "white", LOCALE.SHARE, Dimensions.getFontSize());
+			share.y += share.height*1.5;
+			next = game.add.bitmapText(game.width/2, share.y+share.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
+			share.inputEnabled = true;
+	    	share.events.onInputDown.add(Promotion.openShare);
+		} else {
+			text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
+			next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
+		}
 		var replay = game.add.bitmapText(game.width/2, next.y+next.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
 		var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-		var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
-		replay.anchor.set (0.5, 1);
-		text.anchor.set (0.5, 1);
-		next.anchor.set (0.5, 1);
-		levels.anchor.set (0.5, 1);
-		menu.anchor.set (0.5, 1);
+		
+		replay.anchor.set (0.5, 0);
+		text.anchor.set (0.5, 0);
+		next.anchor.set (0.5, 0);
+		levels.anchor.set (0.5, 0);
 		win.add(elements);
 		elements.add(text);
+		if (share) {
+			share.anchor.set (0.5, 0);
+			elements.add(share);
+		}
 		elements.add(next);
 		elements.add(replay);
-		elements.add(menu);
 		elements.add(levels);
 		elements.y = (game.height-elements.height)/2;
 
@@ -90,9 +102,6 @@ Popup.openWinMenu = function () {
 
 	    levels.inputEnabled = true;
 	    levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
-
-	    menu.inputEnabled = true;
-    	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
 	} else {
 		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.END_GAME, Dimensions.getFontSize()+10);
 		var text2 = game.add.bitmapText(game.width/2, 0, "white", "", Dimensions.getFontSize()-10);
@@ -100,16 +109,24 @@ Popup.openWinMenu = function () {
 		text2.setText(wrapped);
 		text2.align = 'center';
 		text2.y = text.y+text.height*3;
-		var menu = game.add.bitmapText(game.width/2, text2.y+text.height*2, "blue", LOCALE.OK, Dimensions.getFontSize()-8);
-		text.anchor.set (0.5, 1);
-		text2.anchor.set (0.5, 1);
-		menu.anchor.set (0.5, 1);
+		var menu = game.add.bitmapText(0, text2.y+text2.height*1.7, "blue", LOCALE.OK, Dimensions.getFontSize()-8);
+		var share = game.add.bitmapText(menu.x+menu.width*1.3, text2.y+text2.height*1.7, "blue", LOCALE.SHARE, Dimensions.getFontSize()-8);
+		text.anchor.set (0.5, 0);
+		text2.anchor.set (0.5, 0);
+		menu.anchor.set (0, 0);
+		share.anchor.set (0, 0);
 		menu.inputEnabled = true;
     	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+    	share.inputEnabled = true;
+    	share.events.onInputDown.add(Promotion.openShare);
+    	var buttons = game.add.group();
     	win.add(elements);
 		elements.add(text);
 		elements.add(text2);
-		elements.add(menu);
+		elements.add(buttons);
+		buttons.add(menu);
+		buttons.add(share);
+		buttons.x = (game.width-buttons.width)/2;
 		elements.y = (game.height-elements.height)/2;
 	}
 
@@ -132,17 +149,15 @@ Popup.openOptMenu = function () {
 	var cont = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.CONTINUE, Dimensions.getFontSize());
 	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2.5, "white", LOCALE.LEVELS, Dimensions.getFontSize());
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2.5, "white", LOCALE.MENU, Dimensions.getFontSize());
+	
 	replay.anchor.set (0.5, 1);
 	text.anchor.set (0.5, 1);
 	cont.anchor.set (0.5, 1);
 	levels.anchor.set (0.5, 1);
-	menu.anchor.set (0.5, 1);
 	win.add(elements);
 	elements.add(text);
 	elements.add(cont);
 	elements.add(replay);
-	elements.add(menu);
 	elements.add(levels);
 	elements.y = (game.height-elements.height)/2;
 	back.alpha = 0.9;
@@ -160,9 +175,6 @@ Popup.openOptMenu = function () {
 
     levels.inputEnabled = true;
     levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
-
-    menu.inputEnabled = true;
-    menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
 
     Popup.optWin = win;
 }

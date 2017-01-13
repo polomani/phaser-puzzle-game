@@ -104,6 +104,28 @@
 			});
 	        interstitial.load();
     	}
+	}
+
+	exports.openShare = function(lvl) {
+		var options = {
+		  message: LOCALE.SHARE_TEXT.replace("%", Data.completedLevels),
+		  files: [game.cache.getText('share')],
+		  url: "https://play.google.com/store/apps/details?id=cc.dreamlike.quady",
+		  chooserTitle: 'Share ...'
+		}
+
+		var onSuccess = function(result) {
+		  console.log("Share completed? " + result.completed);
+		  console.log("Shared to app: " + result.app);
+		}
+
+		var onError = function(msg) {
+		  console.log("Sharing failed with message: " + msg);
+		}
+
+		if (window.plugins && window.plugins.socialsharing) {
+			window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+		}
 	} 
 
 	exports.showInterstitial = function() {
