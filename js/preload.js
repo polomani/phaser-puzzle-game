@@ -55,7 +55,7 @@ Puzzle.Preload.prototype = {
 				Data.load();
 			});
 		} else {
-			Puzzle.game.state.start('MainMenu');
+			Data.load();
 		}
 	},
 	progress: function() {
