@@ -180,7 +180,7 @@ Popup.openOptMenu = function () {
 }
 
 Popup.openPropsMenu = function (_game, alpha) {
-	Popup.game = _game = game || _game;
+	Popup.game = _game = _game || game;
 	alpha = alpha || 0.9;
 	Popup.clearAll();
 	var win = _game.add.group();

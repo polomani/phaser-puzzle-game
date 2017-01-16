@@ -1,6 +1,7 @@
 Puzzle.LevelsMenu = function(){};
 
 Puzzle.LevelsMenu.prototype.create = function () {
+  Tutorial.clean();
   var o = Puzzle.LevelsMenu.o =  this.game;
 
   o.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -76,6 +77,29 @@ Puzzle.LevelsMenu.prototype.create = function () {
           }
         }
     });
+
+    if (Data.completedLevels >= 2) {
+      var share = this.game.add.sprite (0,0, Dimensions.getImageKey("btn_share"));
+      share.inputEnabled = true;
+      share.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/share.width));
+      share.events.onInputDown.add(function () {
+        Promotion.openShare();
+      });
+
+      var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
+      props.anchor.setTo(1, 0);
+      props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
+      props.inputEnabled = true;
+      props.events.onInputDown.add(function () {
+        if (!(Popup.anyWinOpened())) {
+            Popup.openPropsMenu(o);
+          }
+      });
+    }
+
+    o.changeLocale = function () {
+      o.selLevelText.setText(LOCALE.SELECT_LEVEL);
+    }
 
     Puzzle.LevelsMenu.onResized();
 
