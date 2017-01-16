@@ -15,38 +15,28 @@
 
 	exports.notificate = function(time) {
 		exports.notification = time;
-		if (db) {
-			updateData("notification", exports.notification);
-		}
+		updateData("notification", exports.notification);
 	}
 
 	exports.rateFlag = function(flag) {
 		exports.rated = flag;
-		if (db) {
-			updateData("rated", exports.rated);
-		}
+		updateData("rated", exports.rated);
 	}
 
 	exports.checkIn = function() {
 		exports.newbie = 0;
-		if (db) {
-			updateData("newbie", exports.newbie);
-		}
+		updateData("newbie", exports.newbie);
 	}
 
 	exports.setLocale = function(locale) {
 		exports.locale = locale;
-		if (db) {
-			updateData("locale", exports.locale);
-		}
+		updateData("locale", exports.locale);
 	}
 
 	exports.setCompletedLevels = function(number) {
 		if (number > exports.completedLevels) {
 			exports.completedLevels = number;
-			if (db) {
-				updateData("completedLevels", number);
-			}
+			updateData("completedLevels", number);
 		}
 	}
 
@@ -55,22 +45,25 @@
 	}
 
 	function getData() {
-		if (!db.getItem("newbie")) {
-			putEmptyData ();
+		if (db) {
+			if (!db.getItem("newbie")) {
+				putEmptyData ();
+			}
+
+			exports.completedLevels = db.getItem('completedLevels');
+			exports.newbie =  db.getItem('newbie');
+			exports.locale =  db.getItem('locale');
+			exports.notification =  db.getItem('notification');
+			exports.rated =  db.getItem('rated');
+
+			setLocale(Data.locale);
 		}
-
-		exports.completedLevels = db.getItem('completedLevels');
-		exports.newbie =  db.getItem('newbie');
-		exports.locale =  db.getItem('locale');
-		exports.notification =  db.getItem('notification');
-		exports.rated =  db.getItem('rated');
-
-		setLocale(Data.locale);
 	    Puzzle.game.state.start('MainMenu');
 	}
 
 	function putData(key, value) {
-	    db.setItem(key, value);
+		if (db)
+	    	db.setItem(key, value);
 	}
 
 	function putEmptyData() {
@@ -82,7 +75,8 @@
 	}
 
 	function updateData(key, value) {
-		db.setItem(key, value);
+		if (db)
+			db.setItem(key, value);
 	}
 
 })(window.Data = {});

@@ -69,15 +69,17 @@
 	}
 
 	initNotification = function() {
-		if (window.Cocoon && window.Cocoon.Notification && Data.completedLevels < 25 && Data.notification <= Date.now()) {
-	      	Cocoon.Notification.Local.cancelAllNotifications();
-	      	Cocoon.Notification.Local.initialize({}, function(registered) {
-	          	var notification = {
-	          		message : LOCALE.NOTIFICATION,
-	          		date : (Date.now() + 1000*60*60*24*5).toFixed()
-	        	};
-		        Data.notificate(notification.date);
-		        Cocoon.Notification.Local.send(notification);
+		if (window.Cocoon && Cocoon.Notification && Cocoon.Notification.Local && Data.completedLevels < 40 && Data.notification <= Date.now()) {
+	      	Cocoon.Notification.Local.initialize({}, function(registered, error) {
+	      		if (registered && !error) {
+		      		Cocoon.Notification.Local.cancelAllNotifications();
+		          	var notification = {
+		          		message : LOCALE.NOTIFICATION,
+		          		date : (Date.now() + 1000*60*60*24*5).toFixed()
+		        	};
+			        Data.notificate(notification.date);
+			        Cocoon.Notification.Local.send(notification);
+		    	}
 	      	});
 	    }
 	} 
