@@ -69,15 +69,17 @@
 	}
 
 	initNotification = function() {
-		if (window.Cocoon && window.Cocoon.Notification && Data.completedLevels < 25 && Data.notification <= Date.now()) {
-	      	Cocoon.Notification.Local.cancelAllNotifications();
-	      	Cocoon.Notification.Local.initialize({}, function(registered) {
-	          	var notification = {
-	          		message : LOCALE.NOTIFICATION,
-	          		date : (Date.now() + 1000*60*60*24*5).toFixed()
-	        	};
-		        Data.notificate(notification.date);
-		        Cocoon.Notification.Local.send(notification);
+		if (window.Cocoon && Cocoon.Notification && Cocoon.Notification.Local && Data.completedLevels < 40 && Data.notification <= Date.now()) {
+	      	Cocoon.Notification.Local.initialize({}, function(registered, error) {
+	      		if (registered && !error) {
+		      		Cocoon.Notification.Local.cancelAllNotifications();
+		          	var notification = {
+		          		message : LOCALE.NOTIFICATION,
+		          		date : (Date.now() + 1000*60*60*24*5).toFixed()
+		        	};
+			        Data.notificate(notification.date);
+			        Cocoon.Notification.Local.send(notification);
+		    	}
 	      	});
 	    }
 	} 
@@ -104,6 +106,28 @@
 			});
 	        interstitial.load();
     	}
+	}
+
+	exports.openShare = function(lvl) {
+		var options = {
+		  message: LOCALE.SHARE_TEXT.replace("%", Data.completedLevels),
+		  files: [game.cache.getText('share')],
+		  url: "https://play.google.com/store/apps/details?id=cc.dreamlike.quady",
+		  chooserTitle: 'Share ...'
+		}
+
+		var onSuccess = function(result) {
+		  console.log("Share completed? " + result.completed);
+		  console.log("Shared to app: " + result.app);
+		}
+
+		var onError = function(msg) {
+		  console.log("Sharing failed with message: " + msg);
+		}
+
+		if (window.plugins && window.plugins.socialsharing) {
+			window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+		}
 	} 
 
 	exports.showInterstitial = function() {

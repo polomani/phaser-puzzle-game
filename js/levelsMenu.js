@@ -56,8 +56,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
     googleText.anchor.set(0.5, 1);
     o.pages.add(googleText);
 
-    var left = o.left = this.game.add.sprite (0,0, 'btn_next');
-    var right = o.right = this.game.add.sprite (0,0, 'btn_next');
+    var left = o.left = this.game.add.sprite (0,0, Dimensions.getImageKey('btn_next'));
+    var right = o.right = this.game.add.sprite (0,0, Dimensions.getImageKey('btn_next'));
     right.inputEnabled = true;
     left.inputEnabled = true;
     right.input.useHandCursor = true;

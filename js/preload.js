@@ -11,7 +11,8 @@ Puzzle.Preload.prototype = {
 		this.load.spritesheet('google_play_badge', 'assets/images/google-play-badge.png', 646, 250);
 		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
 		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
-		this.load.image('btn_next', 'assets/images/button_next_large.png');
+		this.load.image('btn_next_large', 'assets/images/button_next_large.png');
+		this.load.image('btn_next_small', 'assets/images/button_next_small.png');
 		this.load.image('btn_lang_arr_small', 'assets/images/lang_arrow_small.png');
 		this.load.image('btn_lang_arr_large', 'assets/images/lang_arrow_large.png');
 		this.load.spritesheet('btn_play_small', 'assets/images/play_small.png', 249, 69);
@@ -30,12 +31,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_black_large', 'assets/images/box_black_large.png');
 		this.load.spritesheet('box_blue_large', 'assets/images/box_blue_large.png', 200, 200);
 		this.load.image('box_gap_large', 'assets/images/box_gap_large.png');
-		this.load.spritesheet('box_door', 'assets/images/box_door.png', 100, 100);
 		this.load.image('box_arr_small', 'assets/images/box_arr_small.png');
 		this.load.image('box_arr_large', 'assets/images/box_arr_large.png');
-		this.load.spritesheet('box_port', 'assets/images/box_port.png', 100, 100);
-		this.load.image('box_red', 'assets/images/box_red.png');
-		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 		this.load.image('window', 'assets/images/window.png');
 		this.load.image('sensei_small', 'assets/images/sensei_small.png');
 		this.load.image('sensei_large', 'assets/images/sensei_large.png');
