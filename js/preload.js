@@ -28,12 +28,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('box_black_large', 'assets/images/box_black_large.png');
 		this.load.spritesheet('box_blue_large', 'assets/images/box_blue_large.png', 200, 200);
 		this.load.image('box_gap_large', 'assets/images/box_gap_large.png');
-		this.load.spritesheet('box_door', 'assets/images/box_door.png', 100, 100);
 		this.load.image('box_arr_small', 'assets/images/box_arr_small.png');
 		this.load.image('box_arr_large', 'assets/images/box_arr_large.png');
-		this.load.spritesheet('box_port', 'assets/images/box_port.png', 100, 100);
-		this.load.image('box_red', 'assets/images/box_red.png');
-		this.load.spritesheet('box_red_dir', 'assets/images/box_red_dir.png', 100, 100);
 		this.load.image('window', 'assets/images/window.png');
 		this.load.image('sensei_small', 'assets/images/sensei_small.png');
 		this.load.image('sensei_large', 'assets/images/sensei_large.png');
