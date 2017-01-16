@@ -33,8 +33,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
         o.lvls.push(lvl);    
     }
 
-    var left = o.left = this.game.add.sprite (0,0, 'btn_next');
-    var right = o.right = this.game.add.sprite (0,0, 'btn_next');
+    var left = o.left = this.game.add.sprite (0,0, Dimensions.getImageKey('btn_next'));
+    var right = o.right = this.game.add.sprite (0,0, Dimensions.getImageKey('btn_next'));
     right.inputEnabled = true;
     left.inputEnabled = true;
     var page = right.page = 0;

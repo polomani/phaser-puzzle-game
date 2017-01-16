@@ -9,7 +9,8 @@ Puzzle.Preload.prototype = {
 		this.load.onFileComplete.add(this.progress, this);
 		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
 		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
-		this.load.image('btn_next', 'assets/images/button_next_large.png');
+		this.load.image('btn_next_large', 'assets/images/button_next_large.png');
+		this.load.image('btn_next_small', 'assets/images/button_next_small.png');
 		this.load.image('btn_lang_arr_small', 'assets/images/lang_arrow_small.png');
 		this.load.image('btn_lang_arr_large', 'assets/images/lang_arrow_large.png');
 		this.load.spritesheet('btn_play_small', 'assets/images/play_small.png', 249, 69);
