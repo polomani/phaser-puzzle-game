@@ -94,14 +94,6 @@ Puzzle.Game.prototype.addMenu = function () {
 	      	}
 	    });
 	}
-
-	if (false && game.device.desktop) {
-		var editor_label = game.add.text(0 , 50, 'F1 - Editor', { font: '24px Arial', fill: '#FFFFFF' });
-		editor_label.inputEnabled = true;
-		editor_label.events.onInputDown.add(function () {
-			this.game.state.start('Editor');
-		});
-	}
 }
 
 Puzzle.Game.prototype.createStage = function () {
@@ -113,14 +105,10 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	game.keyUP.onDown.add(step, this);
 	game.keyDOWN.onDown.add(step, this);
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
-	game.keyF1.onDown.add(function () {
-		this.game.state.start('Editor');
-	});
 
 	game.matrix = [];
 	game.blueBoxes = [];
