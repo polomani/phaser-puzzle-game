@@ -113,7 +113,7 @@
 		  message: LOCALE.SHARE_TEXT.replace("%", Data.completedLevels),
 		  files: [Puzzle.game.cache.getText('share')],
 		  url: "https://play.google.com/store/apps/details?id=cc.dreamlike.quady",
-		  chooserTitle: 'Share ...'
+		  chooserTitle: LOCALE.SHARE
 		}
 
 		var onSuccess = function(result) {
