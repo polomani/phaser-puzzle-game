@@ -143,7 +143,7 @@ function addButton(y, text, fontSize) {
 	button.x = game.width/2;
 	button.y = y;
 	img.inputEnabled = true;
-	//img.alpha = 0;
+	img.alpha = 0;
   	img.events.onInputDown.add (function () { button.alpha = 0.6; });
   	img.events.onInputUp.add (function () { button.alpha = 1; button.onInputUpListener(); });
   	button.onInputUp = function(listener) { button.onInputUpListener = listener; };
