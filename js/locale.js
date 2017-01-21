@@ -1,7 +1,7 @@
 (function(exports) {
 	var locales = {
 		en: {
-			SELECT_LEVEL: "select a level",
+			SELECT_LEVEL: "levels",
 			PAUSED: "paused",
 			CONTINUE: "continue",
 			REPLAY: "replay",

@@ -426,7 +426,7 @@ Puzzle.Game.prototype.createStage = function () {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
-			Data.setCompletedLevels(Game.aimLVL+1);
+			Data.setCompletedLevels(Number(Game.aimLVL)+1);
 		} else if (game.gameOverFlag && !Popup.gameOverWin) {
 			Popup.openGameOverMenu();
 		}
