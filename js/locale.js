@@ -8,7 +8,7 @@
 			LEVELS: "levels",
 			MENU: "menu",
 			COMPLETED: "completed",
-			NEXT_LEVEL: "next level",
+			NEXT_LEVEL: "next lvl",
 			FAILED: "failed",
 			TUTORIAL_0: 'Swipe to move green boxes',
 			TUTORIAL_1: 'Connect boxes using walls',
