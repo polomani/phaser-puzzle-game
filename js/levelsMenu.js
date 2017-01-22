@@ -17,7 +17,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
         var lvl = o.add.group();
         var image = lvl.create(0,0, Dimensions.getImageKey('box_black'));
         image.anchor.setTo(0.5, 0.5);
-        var text = o.add.bitmapText(0, 0, "black", i+1, Dimensions.getFontSize()-10, lvl);
+        var text = o.add.bitmapText(0, 0, "black", i+1, Dimensions.getLvlsFontSize(), lvl);
         text.anchor.setTo(0.5, 0.6);
         lvl.image = image;
         lvl.text = text;
