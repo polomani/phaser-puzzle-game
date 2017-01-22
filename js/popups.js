@@ -53,11 +53,11 @@ Popup.openWinMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 
-	if (Game.aimLVL>44) {
+	if (Game.aimLVL<44) {
 		var text;
 		var next;
 		var share;
-		if (Game.aimLVL == 0 || Game.aimLVL == 24 || Game.aimLVL == 34) {
+		if (Game.aimLVL == 14 || Game.aimLVL == 24 || Game.aimLVL == 34) {
 			text = game.add.bitmapText(game.width/2, 0, "blue", "", Dimensions.getFontSize()-10);
 			text.align = 'center';
 			var wrapped = Helper.TextWrapper.wrapText(LOCALE.ASK_SHARE.replace("%", Game.aimLVL+1), game.width*0.9, game.height, 'blue', text.fontSize)[0];
