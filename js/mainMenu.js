@@ -21,11 +21,14 @@ Puzzle.MainMenu.prototype = {
     o.changeLocale();
 
     play.inputEnabled = true;
-    play.events.onInputDown.add(function () {
+    play.events.onInputUp.add(function () {
       if (!Popup.anyWinOpened()) {
         Game.aimLVL = Data.completedLevels;
         o.state.start('LevelsMenu');
       }
+    });
+    play.events.onInputDown.add(function () {
+      play.alpha = 0.6;
     });
 
     if ((Data.newbie==1 || Data.completedLevels==0) && !Data.logged) {
