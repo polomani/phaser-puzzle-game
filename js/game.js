@@ -67,10 +67,14 @@ Puzzle.Game.prototype.addMenu = function () {
 	var pause = this.game.add.sprite (0,0, Dimensions.getImageKey("btn_pause"));
     pause.inputEnabled = true;
     pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
-    pause.events.onInputDown.add(function () {
+    pause.events.onInputUp.add(function () {
+      pause.alpha = 1;
       if (!(Popup.anyWinOpened())) {
       		Popup.openOptMenu();
       	}
+    });
+    pause.events.onInputDown.add(function () {
+      pause.alpha = 0.6;
     });
 
     var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
@@ -78,6 +82,10 @@ Puzzle.Game.prototype.addMenu = function () {
     props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
     props.inputEnabled = true;
     props.events.onInputDown.add(function () {
+      props.alpha = 0.6;
+    });
+    props.events.onInputUp.add(function () {
+      props.alpha = 1;
       if (!(Popup.anyWinOpened())) {
       		Popup.openPropsMenu();
       	}
@@ -88,11 +96,15 @@ Puzzle.Game.prototype.addMenu = function () {
 	    replay.anchor.setTo(1, 1);
 	    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
 	    replay.inputEnabled = true;
-	    replay.events.onInputDown.add(function () {
+	    replay.events.onInputUp.add(function () {
+	      replay.alpha = 1;
 	      if (!(Popup.anyWinOpened())) {
 	      		this.game.state.start("Game");
 	      	}
 	    });
+	    replay.events.onInputDown.add(function () {
+      		replay.alpha = 0.6;
+    	});
 	}
 }
 
@@ -624,3 +636,4 @@ Puzzle.Game.getInvertedAngleFromDir = function (dir) {
 			return 0;
 	}
 };
+

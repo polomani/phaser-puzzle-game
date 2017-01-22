@@ -1,7 +1,7 @@
 
 (function(exports){
 
-	exports.completedLevels = 0;
+	exports.completedLevels = 44;
 	exports.newbie = 1;
 	exports.locale = "en";
 	exports.notification = Date.now();

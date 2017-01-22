@@ -27,7 +27,10 @@ Puzzle.LevelsMenu.prototype.create = function () {
           lvl.alpha = 0.5;
         } else {
           lvl.setAll('inputEnabled', true);
-          lvl.callAll('events.onInputDown.add', 'events.onInputDown', Puzzle.LevelsMenu.levelInputListener, this);
+          text.image = image;
+          text.events.onInputDown.add (function (text) { text.image.width=text.image.height*= 0.85;});
+          image.events.onInputDown.add (function (image) { image.width=image.height*= 0.85;});
+          lvl.callAll('events.onInputUp.add', 'events.onInputUp', Puzzle.LevelsMenu.levelInputListener, this);     
         }
         o.pages.add(lvl);
         o.lvls.push(lvl);    
@@ -44,6 +47,18 @@ Puzzle.LevelsMenu.prototype.create = function () {
     left.alpha = 0.5;
     
     right.events.onInputDown.add(function () {
+      if (right.alpha == 1)
+        right.x += right.width*0.1;
+    });
+
+    left.events.onInputDown.add(function () {
+      if (left.alpha == 1)
+        left.x -= left.width*0.1;
+    });
+
+    right.events.onInputUp.add(function () {
+        if (right.alpha == 1)
+          right.x -= right.width*0.1;
         if (!o.pages.moving) {
           if (page<o.lvls.length/15-1) {
             ++page;
@@ -60,7 +75,9 @@ Puzzle.LevelsMenu.prototype.create = function () {
         }
     });
 
-    left.events.onInputDown.add(function () {
+    left.events.onInputUp.add(function () {
+        if (left.alpha == 1)
+          left.x += left.width*0.1;
         if (!o.pages.moving) {
           if (page>0) {
             --page;

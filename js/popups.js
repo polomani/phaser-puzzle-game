@@ -53,7 +53,7 @@ Popup.openWinMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 
-	if (Game.aimLVL<44) {
+	if (Game.aimLVL>44) {
 		var text;
 		var next;
 		var share;
@@ -105,9 +105,11 @@ Popup.openWinMenu = function () {
 		menu.anchor.set (0, 0);
 		share.anchor.set (0, 0);
 		menu.inputEnabled = true;
-    	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+    	menu.events.onInputDown.add(function (){menu.alpha = 0.6;});
+    	menu.events.onInputUp.add(function (){Popup.closeMenu("MainMenu");});
     	share.inputEnabled = true;
-    	share.events.onInputDown.add(Promotion.openShare);
+    	share.events.onInputDown.add(function (){share.alpha = 0.6;});
+    	share.events.onInputUp.add(function () {Promotion.openShare(); share.alpha = 1;});
     	var buttons = game.add.group();
     	win.add(elements);
 		elements.add(text);
@@ -145,7 +147,7 @@ function addButton(y, text, fontSize) {
 	img.inputEnabled = true;
 	img.alpha = 0;
   	img.events.onInputDown.add (function () { button.alpha = 0.6; });
-  	img.events.onInputUp.add (function () { button.alpha = 1; button.onInputUpListener(); });
+  	img.events.onInputUp.add (function () { button.onInputUpListener(); });
   	button.onInputUp = function(listener) { button.onInputUpListener = listener; };
 	return button;
 }
@@ -220,11 +222,14 @@ Popup.openPropsMenu = function (_game, alpha) {
 	tween.onComplete.add(function() { win.opened = true; });
 
 	left.inputEnabled = true;
-    left.events.onInputDown.add(function () {changeLang (false);});
+    left.events.onInputUp.add(function () { left.alpha=1; changeLang (false);});
+    left.events.onInputDown.add (function () { left.alpha=0.6; });
     right.inputEnabled = true;
-    right.events.onInputDown.add(function () {changeLang (true);});
+    right.events.onInputUp.add(function () {right.alpha=1; changeLang (true);});
+    right.events.onInputDown.add (function () { right.alpha=0.6; });
     ok.inputEnabled = true;
-   	ok.events.onInputDown.add(function (){ Popup.closeMenu(); });
+   	ok.events.onInputDown.add(function (){ ok.alpha = 0.6; });
+   	ok.events.onInputUp.add(function (){ Popup.closeMenu(); });
 
     function changeLang (side) {
     	var locales = getLocales();
