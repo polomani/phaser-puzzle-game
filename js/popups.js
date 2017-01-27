@@ -17,12 +17,13 @@ Popup.anyWinOpened = function() {
 }
 
 Popup.openGameOverMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize()+10);
-	Promotion.showInterstitial();
+	var replay = addButton (text.y+text.height*3.5, LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 	
 	text.anchor.set (0.5, 1);
@@ -74,7 +75,7 @@ Popup.openWinMenu = function () {
 		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 
-		text.anchor.set (0.5, 0);
+		text.anchor.set (0.5, 1);
 		win.add(elements);
 		elements.add(text);
 		if (share) {
@@ -154,12 +155,13 @@ function addButton(y, text, fontSize) {
 }
 
 Popup.openOptMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.PAUSED, Dimensions.getFontSize()+10);
-	Promotion.showInterstitial();
+	var cont = addButton (text.y+text.height*3.5, LOCALE.CONTINUE, Dimensions.getFontSize());
 	var replay = addButton (cont.y+cont.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 	
