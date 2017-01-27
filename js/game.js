@@ -5,8 +5,6 @@ Puzzle.Game = function(){};
 var game;
 
 Puzzle.Game.prototype.preload = function () {
-	this.time.advancedTiming = true;
-	this.time.desiredFps = 30;
 	this.game.renderer.renderSession.roundPixels = true;
 	this.game.stage.smoothed = false;
 	game = this.game;

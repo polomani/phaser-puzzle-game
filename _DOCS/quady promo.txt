@@ -1,0 +1,53 @@
+Уникальная головоломка которая проверит Ваши способности в координации действий. Вам придется управлять не одним, а сразу несколькими объектами одновременно. Продумывайте каждый шаг в игре чтобы совместить квадраты вместе и преодолеть запутанные препятствия стоящие на вашем пути.
+
+Особенности игры:
+-уникальная паззл-игра
+-приятный минималистичный стиль
+-повышающийся уровень сложности с новыми елементами и препятствиями
+-более 40 уровней с подальшими обновлениями
+
+Скачайте игру Quady совершенно БЕСПЛАТНО для Вашего смартфона и начните наслаждаться непринужденной атмосферой тактической головоломки
+
+Хотите следить за обновлениями подписывайтесь на нас в социальных сетях:
+
+Вконтакте
+Твиттер
+
+android forums (тут не реєструвався)
+не забувай дивитись якісь там головні правила (типу в яку тему постити і тп)
+http://www.android.net/forum/
+http://androidforums.com/
+http://androidcommunity.com/forums/index.php
+http://www.everythingandroid.org/forum/
+
+обзори шукай кнопку "submit foe review"
+androidtapp.com/get-reviewed/
+androidappsreview.com 
+androidapps.com/reviews
+androidpolice.com/topics/applications-games/
+androidpit.com/en/android/tests/test-reports
+apps400.com/category/android-apps
+lifeofandroid.com/android-app-reviews/
+latestandroidapps.net/category/apps/
+
+game showcase (тут я зареєструвався)
+пароль скрізь brogol95 логін наше мило
+перші два в списку треба дійсно згадати що гра написана на html5
+з движком Phaser. та і взагалі на геймдев форумах це скрізь можна писати
+http://www.html5gamedevs.com/forum/8-game-showcase/
+https://forums.cocoon.io/c/showcase
+http://pgl.ilinov.eu/
+https://www.gamedev.net/forum/6-your-announcements/
+http://forums.indiegamer.com/forums/announcements.24/
+---------потрібен інвайт (навряд чи знайдемо) http://forum.devmaster.net/c/announcements 
+http://www.gamedev.ru/projects/forum/?appreciate
+https://www.reddit.com/r/gamedev/
+http://forums.androidcentral.com/android-games/
+https://www.androidpit.com/forum/let-me-show-you-my-app/recent
+http://www.anddev.org/promote-your-android-application-f22/
+
+
+сайти з браузерками
+newgrounds 
+kongregate
+armorgames

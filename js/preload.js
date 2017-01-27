@@ -34,7 +34,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('window', 'assets/images/window.png');
 		this.load.image('sensei_small', 'assets/images/sensei_small.png');
 		this.load.image('sensei_large', 'assets/images/sensei_large.png');
-		this.load.image('btn', 'assets/images/btn.png');
+		this.load.image('btn_small', 'assets/images/btn_small.png');
+		this.load.image('btn_large', 'assets/images/btn_large.png');
 		this.load.text('share', 'assets/images/share.txt');
 
 
