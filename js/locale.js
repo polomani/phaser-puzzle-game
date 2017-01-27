@@ -7,7 +7,7 @@
 			REPLAY: "replay",
 			LEVELS: "levels",
 			MENU: "menu",
-			COMPLETED: "completed",
+			COMPLETED: "solved",
 			NEXT_LEVEL: "next lvl",
 			FAILED: "failed",
 			TUTORIAL_0: 'Swipe to move green boxes',

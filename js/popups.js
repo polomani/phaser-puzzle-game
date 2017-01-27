@@ -17,12 +17,13 @@ Popup.anyWinOpened = function() {
 }
 
 Popup.openGameOverMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize()+10);
-	var replay = addButton (text.y+text.height*2.5, LOCALE.REPLAY, Dimensions.getFontSize());
+	var replay = addButton (text.y+text.height*3.5, LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 	
 	text.anchor.set (0.5, 1);
@@ -48,6 +49,7 @@ Popup.openGameOverMenu = function () {
 }
 
 Popup.openWinMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
@@ -73,7 +75,7 @@ Popup.openWinMenu = function () {
 		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 
-		text.anchor.set (0.5, 0);
+		text.anchor.set (0.5, 1);
 		win.add(elements);
 		elements.add(text);
 		if (share) {
@@ -133,19 +135,19 @@ Popup.openWinMenu = function () {
 
 function addButton(y, text, fontSize) {
 	var button = game.add.group();
-	var img = game.add.sprite (0, 0, "btn");
-	var text = game.add.bitmapText(0, 0, "white", text, fontSize);
+	var img = game.add.sprite (0, 0, Dimensions.getImageKey("btn"));
+	var text = game.add.bitmapText(0, 0, "black", text, fontSize);
 	text.anchor.set (0.5,0.5);
 	img.anchor.set (0.5,0.5);
 	var w = img.width;
-	img.scale.x = fontSize*9/img.width;
+	img.scale.x = Math.min(fontSize*9/img.width, 1);
 	img.scale.y = img.scale.x;
 	button.add(img);
 	button.add(text);
 	button.x = game.width/2;
 	button.y = y;
 	img.inputEnabled = true;
-	img.alpha = 0;
+	//img.alpha = 0;
   	img.events.onInputDown.add (function () { button.alpha = 0.6; });
   	img.events.onInputUp.add (function () { button.onInputUpListener(); });
   	button.onInputUp = function(listener) { button.onInputUpListener = listener; };
@@ -153,12 +155,13 @@ function addButton(y, text, fontSize) {
 }
 
 Popup.openOptMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.PAUSED, Dimensions.getFontSize()+10);
-	var cont = addButton (text.y+text.height*2.5, LOCALE.CONTINUE, Dimensions.getFontSize());
+	var cont = addButton (text.y+text.height*3.5, LOCALE.CONTINUE, Dimensions.getFontSize());
 	var replay = addButton (cont.y+cont.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 	
@@ -250,7 +253,6 @@ Popup.closeMenu = function (newState) {
 	var win = Popup.anyWinOpened();
 	if (win && win.opened && !win.closing) {
 		win.closing = true;
-		Promotion.showInterstitial();
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);

@@ -64,7 +64,7 @@ Puzzle.game.state.start('Boot');
 		if (size == "xsmall")
 			return 24;
 		if (size == "small")
-			return 50;
+			return 45;
 		if (size == "large")
 			return 74;
 		return 96;
