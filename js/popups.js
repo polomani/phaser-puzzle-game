@@ -68,14 +68,15 @@ Popup.openWinMenu = function () {
 			share.y += share.height*1.5;
 			next = addButton (share.y+share.height*1.3, LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
 	    	share.onInputUp(Promotion.openShare);
+	    	text.anchor.set (0.5, 0);
 		} else {
 			text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
 			next = addButton (text.y+text.height*3.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
+			text.anchor.set (0.5, 1);
 		}
 		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 
-		text.anchor.set (0.5, 1);
 		win.add(elements);
 		elements.add(text);
 		if (share) {
