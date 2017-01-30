@@ -37,7 +37,7 @@ Tutorial.open = function (level) {
 	}
 
 	if (LOCALE["TUTORIAL_"+level]) {
-	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-18); 
+	    var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize()-23); 
 	    text.anchor.set (0, 1);
 
 		var sensei = game.add.sprite(0, 0, Dimensions.getImageKey('sensei'));

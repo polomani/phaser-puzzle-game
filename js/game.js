@@ -109,6 +109,17 @@ Puzzle.Game.prototype.addMenu = function () {
 	}
 }
 
+function space () {
+	if (!(Popup.anyWinOpened())) {
+	    game.state.start("Game");
+	} else if (Popup.anyWinOpened()==Popup.gameWinWin && Game.aimLVL < 29) {
+		if (!Popup.anyWinOpened().closing) ++Game.aimLVL;
+		Popup.closeMenu ("Game");
+	} else if (Popup.anyWinOpened()==Popup.gameOverWin) {
+		Popup.closeMenu ("Game");
+	}
+}
+
 Puzzle.Game.prototype.createStage = function () {
 	game.moving = false;
 	game.world.setBounds(0, 0, 2880, 2880);
@@ -118,10 +129,12 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	game.keySPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	game.keyUP.onDown.add(step, this);
 	game.keyDOWN.onDown.add(step, this);
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
+	game.keySPACE.onDown.add(space, this);
 
 	game.matrix = [];
 	game.blueBoxes = [];

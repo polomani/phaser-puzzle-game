@@ -23,12 +23,15 @@ Popup.openGameOverMenu = function () {
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize());
-	var replay = addButton (text.y+text.height*3.5, LOCALE.REPLAY, Dimensions.getFontSize()-10);
+	var replay = addButton (text.y+text.height*4, LOCALE.REPLAY, Dimensions.getFontSize()-10);
 	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize()-10);
+	var text2 = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.PRESS_SPACE, Dimensions.getFontSize()-20);
 	
-	text.anchor.set (0.5, 1);
+	text.anchor.set (0.5);
+	text2.anchor.set (0.5);
 	win.add(elements);
 	elements.add(text);
+	elements.add(text2);
 	elements.add(replay);
 	elements.add(levels);
 	elements.y = (game.height-elements.height)/2;
@@ -57,13 +60,16 @@ Popup.openWinMenu = function () {
 
 	if (Game.aimLVL<29) {
 		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize());
-		var next = addButton (text.y+text.height*3.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize()-10);
+		var next = addButton (text.y+text.height*4.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize()-10);
 		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize()-10);
 		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize()-10);
+		var text2 = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.PRESS_SPACE, Dimensions.getFontSize()-20);
 
-		text.anchor.set (0.5, 1);
+		text.anchor.set (0.5, 0);
+		text2.anchor.set (0.5, 0);
 		win.add(elements);
 		elements.add(text);
+		elements.add(text2);
 		elements.add(next);
 		elements.add(replay);
 		elements.add(levels);
@@ -177,7 +183,7 @@ Popup.openPropsMenu = function (_game, alpha) {
 	var win = _game.add.group();
 	var elements = win.elements = _game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize());
+	var text = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize()-10);
 	var flag  = _game.add.sprite (_game.width/2, text.y + text.height + Dimensions.getMinDimension()/6, Dimensions.getImageKey('flag'));
    	flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/4/flag.width, 1);
    	flag.frame = getLocales().indexOf(getLocale());
@@ -185,7 +191,7 @@ Popup.openPropsMenu = function (_game, alpha) {
 	var right = _game.add.sprite (text.x,flag.y+flag.height/2, Dimensions.getImageKey("btn_lang_arr"));
 	left.scale.x = left.scale.y = flag.scale.x/1.5;
 	right.scale.x = right.scale.y = left.scale.x;
-	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/6, "white", LOCALE.OK, Dimensions.getFontSize()-20);
+	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/9, "white", LOCALE.OK, Dimensions.getFontSize()-20);
     ok.anchor.set (0.5, 0);
 	text.anchor.set (0.5, 0);
 	flag.anchor.set (0.5, 0);

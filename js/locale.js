@@ -17,6 +17,7 @@
 			TUTORIAL_4: 'Arrows restrict movements',
 			TUTORIAL_5: "use arrows to block up boxes",
 			TUTORIAL_6: "more boxes is not a problem",
+			TUTORIAL_7: "press spacebar to replay",
 			LANGUAGE: "language",
 			OK:"okay",
 			END_GAME: "You got it!",
@@ -27,7 +28,8 @@
 			RATE_CANCEL:"No, Thanks",
 			RATE_LATER:"Remind Me Later",
 			RATE_NOW:"Rate It Now",
-			TRY_MOBILE:"PLay more levels\non your mobile device"
+			TRY_MOBILE:"PLay more levels\non your mobile device",
+			PRESS_SPACE:"Press SPACE to play"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -56,7 +58,8 @@
 			RATE_CANCEL:"Нi, дякую",
 			RATE_LATER:"Нагадати потiм",
 			RATE_NOW:"Оцiнити зараз",
-			TRY_MOBILE:"Бiльше рiвнiв\nдоступно на смартфонах"
+			TRY_MOBILE:"Бiльше рiвнiв\nдоступно на смартфонах",
+			PRESS_SPACE:"Натиснiть ПРОБIЛ, щоб грати"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -85,7 +88,8 @@
 			RATE_CANCEL: "Нет, спасибо",
 			RATE_LATER: "Напомнить позже",
 			RATE_NOW: "Оценить сейчас",
-			TRY_MOBILE:"Больше уровней\nдоступно на смартфонах"
+			TRY_MOBILE:"Больше уровней\nдоступно на смартфонах",
+			PRESS_SPACE:"Нажми пробел, чтобы играть"
 		}
 	};
 	exports.setLocale = function (loc) {

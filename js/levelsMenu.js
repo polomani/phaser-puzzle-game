@@ -6,7 +6,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
   o.scale.pageAlignHorizontally = true;
 
-  o.selLevelText = o.add.bitmapText(0, 0, "blue", LOCALE.SELECT_LEVEL, Dimensions.getFontSize());
+  o.selLevelText = o.add.bitmapText(0, 0, "blue", LOCALE.SELECT_LEVEL, Dimensions.getFontSize()-5);
   o.selLevelText.anchor.set(0.5, 0.5);
   o.selLevelText.text.align = 'center';
 
@@ -37,8 +37,8 @@ Puzzle.LevelsMenu.prototype.create = function () {
           lvl.setAll('inputEnabled', true);
           lvl.setAll('input.useHandCursor', true);
           text.image = image;
-          text.events.onInputDown.add (function (text) { text.image.width=text.image.height*= 0.85;});
-          image.events.onInputDown.add (function (image) { image.width=image.height*= 0.85;});
+          text.events.onInputDown.add (function (text) { text.alpha = 0.7; });
+          image.events.onInputDown.add (function (image) { image.alpha = 0.7;});
           lvl.callAll('events.onInputUp.add', 'events.onInputUp', Puzzle.LevelsMenu.levelInputListener, this);     
         }
         o.pages.add(lvl);
