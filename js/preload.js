@@ -54,6 +54,34 @@ Puzzle.Preload.prototype = {
 		if (window.cordova) {
 			document.addEventListener('deviceready', function() {
 				Data.load();
+				document.addEventListener("backbutton", onBackKeyDown, false);
+				function onBackKeyDown() {
+				    switch (Puzzle.game.state.current)  {
+				    	case "Game":
+					    	switch (Popup.anyWinOpened()) {
+					    		case Popup.optWin:
+					    		case Popup.propsMenu:
+					    			Popup.closeMenu ();
+					    		break;
+					    		case Popup.gameWinWin:
+					    			Popup.closeMenu ("Game");
+					    		break;
+					    		case Popup.gameOverWin:
+					    			Popup.closeMenu ("Game");
+					    		break;
+					    	}
+					    	if (!Popup.anyWinOpened()) {
+					    		Popup.openOptMenu();
+					    	}
+					    	break;
+					    case "LevelsMenu":
+					    	Puzzle.game.state.start ("MainMenu");
+					    break;
+				    	default:
+				    		navigator.app.exitApp();
+				    	break;
+			      	}
+				}
 			});
 		} else {
 			Data.load();

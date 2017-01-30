@@ -1,14 +1,11 @@
 (function(exports) {
 	function period () {
 		if (Data.completedLevels < 10) {
-			return 100;
+			return false;
 		}
-		if (Data.completedLevels < 20) {
-			return 3;
-		}
-		return 1;
+		return (new Date().getTime() - showed) > 1000 * 60;
 	}
-	var counter = 0;
+	var showed = new Date().getTime();
 	var interstitial;
 	var IOS_RATING_URL = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=[  ID  ]";
 	var ANDROID_RATING_URL = "market://details?id=cc.dreamlike.quady";
@@ -139,10 +136,9 @@
 	} 
 
 	exports.showInterstitial = function() {
-		counter++;
-		if (window.Cocoon && window.Cocoon.Ad && counter>=period()) {
-			counter = 0;
+		if (window.Cocoon && window.Cocoon.Ad && period()) {
 			if (interstitial && interstitial.ready) {
+				showed = new Date().getTime();
 				interstitial.show();
 				interstitial = null;
 				initInterstitial();
