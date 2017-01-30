@@ -5,8 +5,6 @@ Puzzle.Game = function(){};
 var game;
 
 Puzzle.Game.prototype.preload = function () {
-	this.time.advancedTiming = true;
-	this.time.desiredFps = 30;
 	this.game.renderer.renderSession.roundPixels = true;
 	this.game.stage.smoothed = false;
 	game = this.game;
@@ -68,10 +66,14 @@ Puzzle.Game.prototype.addMenu = function () {
     pause.inputEnabled = true;
     pause.input.useHandCursor = true;
     pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
-    pause.events.onInputDown.add(function () {
+    pause.events.onInputUp.add(function () {
+      pause.alpha = 1;
       if (!(Popup.anyWinOpened())) {
       		Popup.openOptMenu();
       	}
+    });
+    pause.events.onInputDown.add(function () {
+      pause.alpha = 0.6;
     });
 
     var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
@@ -80,6 +82,10 @@ Puzzle.Game.prototype.addMenu = function () {
     props.inputEnabled = true;
     props.input.useHandCursor = true;
     props.events.onInputDown.add(function () {
+      props.alpha = 0.6;
+    });
+    props.events.onInputUp.add(function () {
+      props.alpha = 1;
       if (!(Popup.anyWinOpened())) {
       		Popup.openPropsMenu();
       	}
@@ -90,12 +96,16 @@ Puzzle.Game.prototype.addMenu = function () {
 	    replay.anchor.setTo(1, 1);
 	    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
 	    replay.inputEnabled = true;
-	    replay.input.useHandCursor = true;
-	    replay.events.onInputDown.add(function () {
+		replay.input.useHandCursor = true;
+	    replay.events.onInputUp.add(function () {
+	      replay.alpha = 1;
 	      if (!(Popup.anyWinOpened())) {
 	      		this.game.state.start("Game");
 	      	}
 	    });
+	    replay.events.onInputDown.add(function () {
+      		replay.alpha = 0.6;
+    	});
 	}
 }
 
@@ -429,7 +439,7 @@ Puzzle.Game.prototype.createStage = function () {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
-			Data.setCompletedLevels(Game.aimLVL+1);
+			Data.setCompletedLevels(Number(Game.aimLVL)+1);
 		} else if (game.gameOverFlag && !Popup.gameOverWin) {
 			Popup.openGameOverMenu();
 		}
@@ -627,3 +637,4 @@ Puzzle.Game.getInvertedAngleFromDir = function (dir) {
 			return 0;
 	}
 };
+

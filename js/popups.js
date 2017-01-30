@@ -17,22 +17,19 @@ Popup.anyWinOpened = function() {
 }
 
 Popup.openGameOverMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.FAILED, Dimensions.getFontSize());
-	var replay = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
-	replay.anchor.set (0.5, 1);
+	var replay = addButton (text.y+text.height*3.5, LOCALE.REPLAY, Dimensions.getFontSize()-10);
+	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize()-10);
+	
 	text.anchor.set (0.5, 1);
-	levels.anchor.set (0.5, 1);
-	menu.anchor.set (0.5, 1);
 	win.add(elements);
 	elements.add(text);
 	elements.add(replay);
-	elements.add(menu);
 	elements.add(levels);
 	elements.y = (game.height-elements.height)/2;
 	back.alpha = 0.9;
@@ -43,21 +40,16 @@ Popup.openGameOverMenu = function () {
 	tween.onComplete.add(function() { win.opened = true; });
 
     replay.inputEnabled = true;
-    replay.input.useHandCursor = true;
-    replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
+    replay.onInputUp(function (){Popup.closeMenu("Game");});
 
     levels.inputEnabled = true;
-    levels.input.useHandCursor = true;
-    levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
-
-    menu.inputEnabled = true;
-    menu.input.useHandCursor = true;
-    menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+    levels.onInputUp(function (){Popup.closeMenu("LevelsMenu");});
 
     Popup.gameOverWin = win;
 }
 
 Popup.openWinMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
@@ -65,43 +57,26 @@ Popup.openWinMenu = function () {
 
 	if (Game.aimLVL<29) {
 		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize());
-		var next = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.NEXT_LEVEL, Dimensions.getFontSize()-10);
-		var replay = game.add.bitmapText(game.width/2, next.y+next.height*2, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
-		var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
-		var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
-		replay.anchor.set (0.5, 1);
+		var next = addButton (text.y+text.height*3.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize()-10);
+		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize()-10);
+		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize()-10);
+
 		text.anchor.set (0.5, 1);
-		next.anchor.set (0.5, 1);
-		levels.anchor.set (0.5, 1);
-		menu.anchor.set (0.5, 1);
 		win.add(elements);
 		elements.add(text);
 		elements.add(next);
 		elements.add(replay);
-		elements.add(menu);
 		elements.add(levels);
 		elements.y = (game.height-elements.height)/2;
 
-		next.inputEnabled = true;
-		next.input.useHandCursor = true;
-	    next.events.onInputDown.add(function (){
+	    next.onInputUp(function (){
 	    	if (!win.closing) ++Game.aimLVL;
 	     	Popup.closeMenu("Game");
 	    });
-
-		replay.inputEnabled = true;
-		replay.input.useHandCursor = true;
-	    replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
-
-	    levels.inputEnabled = true;
-	    levels.input.useHandCursor = true;
-	    levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
-
-	    menu.inputEnabled = true;
-	    menu.input.useHandCursor = true;
-    	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+	    replay.onInputUp(function (){Popup.closeMenu("Game");});
+	    levels.onInputUp(function (){Popup.closeMenu("LevelsMenu");});
 	} else {
-		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.END_GAME, Dimensions.getFontSize()+10);
+		var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.END_GAME, Dimensions.getFontSize());
 		var text2 = game.add.bitmapText(game.width/2, 0, "white", "", Dimensions.getFontSize()-10);
 		var wrapped = Helper.TextWrapper.wrapText(LOCALE.END_GAME_TEXT, game.width*0.9, game.height, 'white', text2.fontSize)[0];
 		text2.setText(wrapped);
@@ -120,7 +95,9 @@ Popup.openWinMenu = function () {
 		menu.anchor.set (0.5, 1);
 		menu.inputEnabled = true;
 		menu.input.useHandCursor = true;
-    	menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+    	menu.events.onInputDown.add(function (){menu.alpha = 0.6;});
+    	menu.events.onInputUp.add(function (){Popup.closeMenu("MainMenu");});
+    	var buttons = game.add.group();
     	win.add(elements);
     	elements.add(googlePlay);
 		elements.add(text);
@@ -139,26 +116,44 @@ Popup.openWinMenu = function () {
     Popup.gameWinWin = win;
 }
 
+function addButton(y, text, fontSize) {
+	var button = game.add.group();
+	var img = game.add.sprite (0, 0, Dimensions.getImageKey("btn"));
+	var text = game.add.bitmapText(0, 0, "black", text, fontSize);
+	text.anchor.set (0.5,0.5);
+	img.anchor.set (0.5,0.5);
+	var w = img.width;
+	img.scale.x = Math.min(fontSize*9/img.width, 1);
+	img.scale.y = img.scale.x;
+	button.add(img);
+	button.add(text);
+	button.x = game.width/2;
+	button.y = y;
+	img.inputEnabled = true;
+	img.input.useHandCursor = true;
+	//img.alpha = 0;
+  	img.events.onInputDown.add (function () { button.alpha = 0.6; });
+  	img.events.onInputUp.add (function () { button.onInputUpListener(); });
+  	button.onInputUp = function(listener) { button.onInputUpListener = listener; };
+	return button;
+}
+
 Popup.openOptMenu = function () {
+	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
 	var text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.PAUSED, Dimensions.getFontSize());
-	var cont = game.add.bitmapText(game.width/2, text.y+text.height*2.5, "white", LOCALE.CONTINUE, Dimensions.getFontSize()-10);
-	var replay = game.add.bitmapText(game.width/2, cont.y+cont.height*2, "white", LOCALE.REPLAY, Dimensions.getFontSize()-10);
-	var levels = game.add.bitmapText(game.width/2, replay.y+replay.height*2, "white", LOCALE.LEVELS, Dimensions.getFontSize()-10);
-	var menu = game.add.bitmapText(game.width/2, levels.y+levels.height*2, "white", LOCALE.MENU, Dimensions.getFontSize()-10);
-	replay.anchor.set (0.5, 1);
+	var cont = addButton (text.y+text.height*3.5, LOCALE.CONTINUE, Dimensions.getFontSize()-10);
+	var replay = addButton (cont.y+cont.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize()-10);
+	var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize()-10);
+	
 	text.anchor.set (0.5, 1);
-	cont.anchor.set (0.5, 1);
-	levels.anchor.set (0.5, 1);
-	menu.anchor.set (0.5, 1);
 	win.add(elements);
 	elements.add(text);
 	elements.add(cont);
 	elements.add(replay);
-	elements.add(menu);
 	elements.add(levels);
 	elements.y = (game.height-elements.height)/2;
 	back.alpha = 0.9;
@@ -168,21 +163,9 @@ Popup.openOptMenu = function () {
 	var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
 	tween.onComplete.add(function() { win.opened = true; });
 
-	cont.inputEnabled = true;
-	cont.input.useHandCursor = true;
-    cont.events.onInputDown.add(function (){Popup.closeMenu();});
-
-	replay.inputEnabled = true;
-	replay.input.useHandCursor = true;
-    replay.events.onInputDown.add(function (){Popup.closeMenu("Game");});
-
-    levels.inputEnabled = true;
-    levels.input.useHandCursor = true;
-    levels.events.onInputDown.add(function (){Popup.closeMenu("LevelsMenu");});
-
-    menu.inputEnabled = true;
-    menu.input.useHandCursor = true;
-    menu.events.onInputDown.add(function (){Popup.closeMenu("MainMenu");});
+    cont.onInputUp(function (){Popup.closeMenu();});
+    replay.onInputUp(function (){Popup.closeMenu("Game");});
+    levels.onInputUp(function (){Popup.closeMenu("LevelsMenu");});
 
     Popup.optWin = win;
 }
@@ -202,7 +185,7 @@ Popup.openPropsMenu = function (_game, alpha) {
 	var right = _game.add.sprite (text.x,flag.y+flag.height/2, Dimensions.getImageKey("btn_lang_arr"));
 	left.scale.x = left.scale.y = flag.scale.x/1.5;
 	right.scale.x = right.scale.y = left.scale.x;
-	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/6, "white", LOCALE.OK, Dimensions.getFontSize()-10);
+	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/6, "white", LOCALE.OK, Dimensions.getFontSize()-20);
     ok.anchor.set (0.5, 0);
 	text.anchor.set (0.5, 0);
 	flag.anchor.set (0.5, 0);
@@ -225,15 +208,19 @@ Popup.openPropsMenu = function (_game, alpha) {
 	var tween = _game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
 	tween.onComplete.add(function() { win.opened = true; });
 
+
 	left.inputEnabled = true;
-	left.input.useHandCursor = true;
-    left.events.onInputDown.add(function () {changeLang (false);});
+    left.events.onInputUp.add(function () { left.alpha=1; changeLang (false);});
+    left.events.onInputDown.add (function () { left.alpha=0.6; });
     right.inputEnabled = true;
-    right.input.useHandCursor = true;
-    right.events.onInputDown.add(function () {changeLang (true);});
+    right.events.onInputUp.add(function () {right.alpha=1; changeLang (true);});
+    right.events.onInputDown.add (function () { right.alpha=0.6; });
     ok.inputEnabled = true;
+    left.input.useHandCursor = true;
+    right.input.useHandCursor = true;
     ok.input.useHandCursor = true;
-   	ok.events.onInputDown.add(function (){ Popup.closeMenu(); });
+   	ok.events.onInputDown.add(function (){ ok.alpha = 0.6; });
+   	ok.events.onInputUp.add(function (){ Popup.closeMenu(); });
 
     function changeLang (side) {
     	var locales = getLocales();
@@ -254,7 +241,6 @@ Popup.closeMenu = function (newState) {
 	var win = Popup.anyWinOpened();
 	if (win && win.opened && !win.closing) {
 		win.closing = true;
-		Promotion.showInterstitial();
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);

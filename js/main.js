@@ -48,15 +48,26 @@ Puzzle.game.state.start('Boot');
 		return game.cache.getImage(exports.getImageKey("box_blue")).height;
 	}
 
+	exports.getLvlsFontSize = function () {
+		var size = exports.getSize();
+		if (size == "xsmall")
+			return 20;
+		if (size == "small")
+			return 34;
+		if (size == "large")
+			return 64;
+		return 72;
+	}
+
 	exports.getFontSize = function () {
 		var size = exports.getSize();
 		if (size == "xsmall")
 			return 24;
 		if (size == "small")
-			return 40;
+			return 45;
 		if (size == "large")
 			return 74;
-		return 82;
+		return 96;
 	}
 
 	exports.getHintFontSize = function () {

@@ -1,5 +1,13 @@
 (function(exports) {
-	var period = 3;
+	function period () {
+		if (Data.completedLevels < 10) {
+			return 100;
+		}
+		if (Data.completedLevels < 20) {
+			return 3;
+		}
+		return 1;
+	}
 	var counter = 0;
 	var interstitial;
 	var IOS_RATING_URL = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=[  ID  ]";
@@ -113,7 +121,7 @@
 		  message: LOCALE.SHARE_TEXT.replace("%", Data.completedLevels),
 		  files: [game.cache.getText('share')],
 		  url: "https://play.google.com/store/apps/details?id=cc.dreamlike.quady",
-		  chooserTitle: 'Share ...'
+		  chooserTitle: LOCALE.SHARE
 		}
 
 		var onSuccess = function(result) {
@@ -132,10 +140,11 @@
 
 	exports.showInterstitial = function() {
 		counter++;
-		if (window.Cocoon && window.Cocoon.Ad && counter>=period && Data.completedLevels >= 3) {
+		if (window.Cocoon && window.Cocoon.Ad && counter>=period()) {
 			counter = 0;
 			if (interstitial && interstitial.ready) {
 				interstitial.show();
+				interstitial = null;
 				initInterstitial();
 			}
 		}

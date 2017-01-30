@@ -28,13 +28,16 @@ Puzzle.MainMenu.prototype = {
     }
     o.changeLocale();
 
-    play.inputEnabled = true;
+    play.inputEnabled = true;  
     play.input.useHandCursor = true;
-    play.events.onInputDown.add(function () {
+    play.events.onInputUp.add(function () {
       if (!Popup.anyWinOpened()) {
         Game.aimLVL = Data.completedLevels;
         o.state.start('LevelsMenu');
       }
+    });
+    play.events.onInputDown.add(function () {
+      play.alpha = 0.6;
     });
 
     play.events.onInputOver.add(function () {
