@@ -29,7 +29,10 @@
 			RATE_LATER:"Remind Me Later",
 			RATE_NOW:"Rate It Now",
 			TRY_MOBILE:"PLay more levels\non your mobile device",
-			PRESS_SPACE:"Press SPACE to play"
+			PRESS_SPACE:"Press SPACE to play",
+			MUSIC:"Music",
+			MUSIC_OFF:"off",
+			MUSIC_ON:"on"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -50,7 +53,7 @@
 			TUTORIAL_6: "Квадратiв бува i бiльше",
 			TUTORIAL_7: "Натисни ПРОБIЛ, щоб переграти",
 			LANGUAGE: "   мова   ",
-			OK:"добре",
+			OK:"окей",
 			END_GAME: "Молодець!",
 			END_GAME_TEXT: "Бiльше рiвнiв доступно на смартфонах",
 			NOTIFICATION: "Quady хоче гратися з тобою!",
@@ -60,7 +63,10 @@
 			RATE_LATER:"Нагадати потiм",
 			RATE_NOW:"Оцiнити зараз",
 			TRY_MOBILE:"Бiльше рiвнiв\nдоступно на смартфонах",
-			PRESS_SPACE:"Натиснiть ПРОБIЛ, щоб грати"
+			PRESS_SPACE:"Натиснiть ПРОБIЛ, щоб грати",
+			MUSIC:"Музика",
+			MUSIC_OFF:"Вимк",
+			MUSIC_ON:"Увiмк"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -91,7 +97,10 @@
 			RATE_LATER: "Напомнить позже",
 			RATE_NOW: "Оценить сейчас",
 			TRY_MOBILE:"Больше уровней\nдоступно на смартфонах",
-			PRESS_SPACE:"Нажми пробел, чтобы играть"
+			PRESS_SPACE:"Нажми пробел, чтобы играть",
+			MUSIC:"Музыка",
+			MUSIC_OFF:"Выкл",
+			MUSIC_ON:"Вкл"
 		}
 	};
 	exports.setLocale = function (loc) {

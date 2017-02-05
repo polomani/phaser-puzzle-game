@@ -122,14 +122,16 @@ Popup.openWinMenu = function () {
     Popup.gameWinWin = win;
 }
 
-function addButton(y, text, fontSize) {
+function addButton(y, text, fontSize, imageKey, length) {
+	imageKey = imageKey || "btn";
+	length = length || 9;
 	var button = game.add.group();
-	var img = game.add.sprite (0, 0, Dimensions.getImageKey("btn"));
+	var img = game.add.sprite (0, 0, Dimensions.getImageKey(imageKey));
 	var text = game.add.bitmapText(0, 0, "black", text, fontSize);
 	text.anchor.set (0.5,0.5);
 	img.anchor.set (0.5,0.5);
 	var w = img.width;
-	img.scale.x = Math.min(fontSize*9/img.width, 1);
+	img.scale.x = Math.min(fontSize*length/img.width, 1);
 	img.scale.y = img.scale.x;
 	button.add(img);
 	button.add(text);
@@ -137,9 +139,10 @@ function addButton(y, text, fontSize) {
 	button.y = y;
 	img.inputEnabled = true;
 	img.input.useHandCursor = true;
+	button.text = text;
 	//img.alpha = 0;
   	img.events.onInputDown.add (function () { button.alpha = 0.6; });
-  	img.events.onInputUp.add (function () { button.onInputUpListener(); });
+  	img.events.onInputUp.add (function () { button.alpha = 1; button.onInputUpListener(); });
   	button.onInputUp = function(listener) { button.onInputUpListener = listener; };
 	return button;
 }
@@ -177,22 +180,36 @@ Popup.openOptMenu = function () {
 }
 
 Popup.openPropsMenu = function (_game, alpha) {
-	Popup.game = _game = game || _game;
+	Popup.game = _game = Puzzle.game;
 	alpha = alpha || 0.9;
 	Popup.clearAll();
 	var win = _game.add.group();
 	var elements = win.elements = _game.add.group();
 	var back = win.back = win.create (0, 0, 'window');
-	var text = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize()-10);
-	var flag  = _game.add.sprite (_game.width/2, text.y + text.height + Dimensions.getMinDimension()/6, Dimensions.getImageKey('flag'));
-   	flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/4/flag.width, 1);
+// <<<<<<< HEAD
+// 	var text = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize()-10);
+// 	var flag  = _game.add.sprite (_game.width/2, text.y + text.height + Dimensions.getMinDimension()/6, Dimensions.getImageKey('flag'));
+// =======
+	var music = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.MUSIC, Dimensions.getFontSize()-10);
+	var toggle = addButton (music.y+music.height*3, LOCALE.MUSIC_OFF, Dimensions.getFontSize()-25, "short_btn", 5);
+	toggle.state = Boombox.isMusic() ? "MUSIC_ON" : "MUSIC_OFF";
+	toggle.text.setText (LOCALE[toggle.state]);
+	var text = _game.add.bitmapText(_game.width/2, toggle.y+toggle.height * 3, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize()-10);
+	var flag  = _game.add.sprite (_game.width/2, text.y + text.height * 2.5, Dimensions.getImageKey('flag'));
+// >>>>>>> refs/remotes/origin/master
+   	flag.scale.x = flag.scale.y = Math.min (Dimensions.getMinDimension()/4.5/flag.width, 1);
    	flag.frame = getLocales().indexOf(getLocale());
 	var left = _game.add.sprite (text.x,flag.y+flag.height/2, Dimensions.getImageKey("btn_lang_arr"));
 	var right = _game.add.sprite (text.x,flag.y+flag.height/2, Dimensions.getImageKey("btn_lang_arr"));
 	left.scale.x = left.scale.y = flag.scale.x/1.5;
 	right.scale.x = right.scale.y = left.scale.x;
-	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/9, "white", LOCALE.OK, Dimensions.getFontSize()-20);
-    ok.anchor.set (0.5, 0);
+// <<<<<<< HEAD
+// 	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/9, "white", LOCALE.OK, Dimensions.getFontSize()-20);
+//     ok.anchor.set (0.5, 0);
+// =======
+	var ok = addButton (flag.y+flag.height + text.height * 2.5, LOCALE.OK, Dimensions.getFontSize()-25, "short_btn", 5);
+    music.anchor.set (0.5, 0);
+// >>>>>>> refs/remotes/origin/master
 	text.anchor.set (0.5, 0);
 	flag.anchor.set (0.5, 0);
 	left.anchor.set (0, 0.5);
@@ -201,6 +218,8 @@ Popup.openPropsMenu = function (_game, alpha) {
 	left.x -= Math.max(text.width/2, flag.width/2 + left.width/3);
 	right.x += Math.max(text.width/2, flag.height/2 + right.width/3);
 	win.add(elements);
+	elements.add(toggle);
+	elements.add(music);
 	elements.add(text);
 	elements.add(flag);
 	elements.add(left);
@@ -221,12 +240,25 @@ Popup.openPropsMenu = function (_game, alpha) {
     right.inputEnabled = true;
     right.events.onInputUp.add(function () {right.alpha=1; changeLang (true);});
     right.events.onInputDown.add (function () { right.alpha=0.6; });
-    ok.inputEnabled = true;
     left.input.useHandCursor = true;
     right.input.useHandCursor = true;
-    ok.input.useHandCursor = true;
-   	ok.events.onInputDown.add(function (){ ok.alpha = 0.6; });
-   	ok.events.onInputUp.add(function (){ Popup.closeMenu(); });
+// <<<<<<< HEAD
+//     ok.inputEnabled = true; 
+//     ok.input.useHandCursor = true;
+//    	ok.events.onInputDown.add(function (){ ok.alpha = 0.6; });
+//    	ok.events.onInputUp.add(function (){ Popup.closeMenu(); });
+// =======
+   	ok.onInputUp(function (){Popup.closeMenu();});
+   	toggle.onInputUp(function (){ 
+   		if (toggle.state == "MUSIC_ON") {
+   			toggle.state = "MUSIC_OFF";
+		} else {
+			toggle.state="MUSIC_ON"
+		}
+		toggle.text.setText (LOCALE[toggle.state]);
+		Boombox.toggleMusic();
+	});
+// >>>>>>> refs/remotes/origin/master
 
     function changeLang (side) {
     	var locales = getLocales();
@@ -234,7 +266,9 @@ Popup.openPropsMenu = function (_game, alpha) {
        	setLocale(locales[(locales.indexOf(getLocale())+1*index)%locales.length]);
        	flag.frame = locales.indexOf(getLocale());
        	text.setText(LOCALE.LANGUAGE);
-       	ok.setText(LOCALE.OK);
+       	ok.text.setText(LOCALE.OK);
+       	toggle.text.setText(LOCALE[toggle.state]);
+       	music.setText(LOCALE.MUSIC);
        	Tutorial.changeLocale();
        	if (_game) _game.changeLocale();
     }
