@@ -199,6 +199,7 @@ Popup.openPropsMenu = function (_game, alpha) {
 	var back = win.back = win.create (0, 0, 'window');
 	var music = _game.add.bitmapText(_game.width/2, 0, "blue", LOCALE.MUSIC, Dimensions.getFontSize());
 	var toggle = addButton (music.y+music.height*3.5, LOCALE.MUSIC_OFF, Dimensions.getFontSize()-10, "short_btn", 5);
+	toggle.state = Boombox.isMusic() ? "MUSIC_ON" : "MUSIC_OFF";
 	toggle.text.setText (LOCALE[toggle.state]);
 	var text = _game.add.bitmapText(_game.width/2, toggle.y+toggle.height * 2, "blue", LOCALE.LANGUAGE, Dimensions.getFontSize());
 	var flag  = _game.add.sprite (_game.width/2, text.y + text.height * 3, Dimensions.getImageKey('flag'));
