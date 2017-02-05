@@ -125,6 +125,7 @@ Popup.openWinMenu = function () {
 function addButton(y, text, fontSize, imageKey, length) {
 	imageKey = imageKey || "btn";
 	length = length || 9;
+	var game = Puzzle.game;
 	var button = game.add.group();
 	var img = game.add.sprite (0, 0, Dimensions.getImageKey(imageKey));
 	var text = game.add.bitmapText(0, 0, "black", text, fontSize);
@@ -207,7 +208,7 @@ Popup.openPropsMenu = function (_game, alpha) {
 // 	var ok = _game.add.bitmapText(_game.width/2, flag.y+flag.height+Dimensions.getMinDimension()/9, "white", LOCALE.OK, Dimensions.getFontSize()-20);
 //     ok.anchor.set (0.5, 0);
 // =======
-	var ok = addButton (flag.y+flag.height + text.height * 2.5, LOCALE.OK, Dimensions.getFontSize()-25, "short_btn", 5);
+	var ok = addButton (flag.y+flag.height + text.height * 2, LOCALE.OK, Dimensions.getFontSize()-25, "short_btn", 5);
     music.anchor.set (0.5, 0);
 // >>>>>>> refs/remotes/origin/master
 	text.anchor.set (0.5, 0);

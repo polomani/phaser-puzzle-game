@@ -51,6 +51,8 @@ Puzzle.Preload.prototype = {
 
 		this.game.load.bitmapFont('white', 'assets/fonts/white.png', 'assets/fonts/white.fnt');
 		this.game.load.bitmapFont('black', 'assets/fonts/black.png', 'assets/fonts/black.fnt');
+
+		this.game.load.audio('ambient', ['assets/audio/ambient.mp3', 'assets/audio/ambient.ogg']);
 	},
 	create: function() {
 		Data.load();

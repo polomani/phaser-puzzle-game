@@ -124,8 +124,21 @@ Puzzle.LevelsMenu.prototype.create = function () {
         }
     });
 
-    Puzzle.LevelsMenu.onResized();
+    var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
+    props.anchor.setTo(1, 0);
+    props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
+    props.inputEnabled = true;
+    props.events.onInputDown.add(function () {
+      if (!(Popup.anyWinOpened())) {
+          Popup.openPropsMenu(o);
+        }
+    });
 
+    o.changeLocale = function () {
+      o.selLevelText.setText(LOCALE.SELECT_LEVEL);
+    }
+
+    Puzzle.LevelsMenu.onResized();
 }
 
 Puzzle.LevelsMenu.onResized = function () {
