@@ -29,7 +29,10 @@
 			RATE_NOW:"Rate It Now",
 			SHARE:"Share",
 			ASK_SHARE:"Not bad! You solved % levels. Whould you like to share this with your friends?",
-			SHARE_TEXT:"I have solved % levels in #quady puzzle on #android by @dreamlikegames. It trains my brain"
+			SHARE_TEXT:"I have solved % levels in #quady puzzle on #android by @dreamlikegames. It trains my brain",
+			MUSIC:"Music",
+			MUSIC_OFF:"off",
+			MUSIC_ON:"on"
 		},
 		uk: {
 			SELECT_LEVEL: "рiвнi",
@@ -49,7 +52,7 @@
 			TUTORIAL_5: "Блокуй квадрати стрiлками",
 			TUTORIAL_6: "Квадратiв бува i бiльше",
 			LANGUAGE: "   мова   ",
-			OK:"добре",
+			OK:"окей",
 			END_GAME: "Молодець!",
 			END_GAME_TEXT: "Це був останнiй рiвень. Дякую за гру.",
 			NOTIFICATION: "Quady хоче гратися з тобою!",
@@ -60,7 +63,10 @@
 			RATE_NOW:"Оцiнити зараз",
 			SHARE:"Подiлитись",
 			ASK_SHARE:"Непогано! Ти пройшов % рiвнiв. Хочеш подiлитись рекордом з друзями?",
-			SHARE_TEXT:"Пройшов % рiвнiв в головоломцi #quady на #android вiд @dreamlikegames. Спробуйте i ви!"
+			SHARE_TEXT:"Пройшов % рiвнiв в головоломцi #quady на #android вiд @dreamlikegames. Спробуйте i ви!",
+			MUSIC:"Музика",
+			MUSIC_OFF:"Вимк",
+			MUSIC_ON:"Увiмк"
 		},
 		ru: {
 			SELECT_LEVEL: "уровни",
@@ -91,7 +97,10 @@
 			RATE_NOW: "Оценить сейчас",
 			SHARE:"Поделиться",
 			ASK_SHARE:"Неплохо! Ты прошел % уровней. Хочешь поделиться рекордом с друзьями?",
-			SHARE_TEXT:"Уверенно прохожу уровни в #quady на #android от @dreamlikegames. % - не предел, попробуйте и вы"
+			SHARE_TEXT:"Уверенно прохожу уровни в #quady на #android от @dreamlikegames. % - не предел, попробуйте и вы",
+			MUSIC:"Музыка",
+			MUSIC_OFF:"Выкл",
+			MUSIC_ON:"Вкл"
 		}
 	};
 	exports.setLocale = function (loc) {
