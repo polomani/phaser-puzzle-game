@@ -128,6 +128,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
     props.anchor.setTo(1, 0);
     props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
     props.inputEnabled = true;
+    props.input.useHandCursor = true;
     props.events.onInputDown.add(function () {
       if (!(Popup.anyWinOpened())) {
           Popup.openPropsMenu(o);
