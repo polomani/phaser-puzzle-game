@@ -135,6 +135,7 @@ Popup.openWinMenu = function () {
 }
 
 function addButton(y, text, fontSize, imageKey, length) {
+	var game = Puzzle.game;
 	imageKey = imageKey || "btn";
 	length = length || 9;
 	var button = game.add.group();
