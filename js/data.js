@@ -6,6 +6,7 @@
 	exports.locale = "en";
 	exports.notification = Date.now();
 	exports.rated = 1;
+	exports.music = 1;
 	var db = null;
 
 	exports.load = function() {
@@ -40,6 +41,14 @@
 		}
 	}
 
+	exports.toggleMusic = function() {
+		if (exports.music == 0) 
+			exports.music = 1;
+		else 
+			exports.music = 0;
+		updateData("music", exports.music);
+	}
+
 	function onDatabaseOpen () {
 		getData();
 	}
@@ -55,6 +64,7 @@
 			exports.locale =  db.getItem('locale');
 			exports.notification =  db.getItem('notification');
 			exports.rated =  db.getItem('rated');
+			exports.music =  db.getItem('music') || exports.music;
 
 			setLocale(Data.locale);
 		}
@@ -72,6 +82,7 @@
 		putData("newbie", exports.newbie);
 		putData("notification", exports.notification);
 		putData("rated", exports.rated);
+		putData("music", exports.music);
 	}
 
 	function updateData(key, value) {
