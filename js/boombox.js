@@ -9,11 +9,7 @@
 			function(){
 		    	ambient = true;
 		        if (exports.isMusic()) {
-		        	plugins.NativeAudio.loop('ambient', function(msg){
-				    	alert("success1"+JSON.stringify(msg));
-				    }, function (msg) {
-				    	alert(JSON.stringify(msg));
-				    });
+		        	plugins.NativeAudio.loop('ambient');
 		        }
 		    });
 		}
