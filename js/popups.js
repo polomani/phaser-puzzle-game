@@ -17,7 +17,6 @@ Popup.anyWinOpened = function() {
 }
 
 Popup.openGameOverMenu = function () {
-	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
@@ -49,7 +48,6 @@ Popup.openGameOverMenu = function () {
 }
 
 Popup.openWinMenu = function () {
-	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();
@@ -59,21 +57,9 @@ Popup.openWinMenu = function () {
 		var text;
 		var next;
 		var share;
-		if (Game.aimLVL == 14 || Game.aimLVL == 24 || Game.aimLVL == 34) {
-			text = game.add.bitmapText(game.width/2, 0, "blue", "", Dimensions.getFontSize()-10);
-			text.align = 'center';
-			var wrapped = Helper.TextWrapper.wrapText(LOCALE.ASK_SHARE.replace("%", Game.aimLVL+1), game.width*0.9, game.height, 'blue', text.fontSize)[0];
-			text.setText(wrapped);
-			share = addButton (text.y+text.height*1.3, LOCALE.SHARE, Dimensions.getFontSize());
-			share.y += share.height*1.5;
-			next = addButton (share.y+share.height*1.3, LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
-	    	share.onInputUp(Promotion.openShare);
-	    	text.anchor.set (0.5, 0);
-		} else {
-			text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
-			next = addButton (text.y+text.height*3.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
-			text.anchor.set (0.5, 1);
-		}
+		text = game.add.bitmapText(game.width/2, 0, "blue", LOCALE.COMPLETED, Dimensions.getFontSize()+10);
+		next = addButton (text.y+text.height*3.5, LOCALE.NEXT_LEVEL, Dimensions.getFontSize());
+		text.anchor.set (0.5, 1);
 		var replay = addButton (next.y+next.height*1.3, LOCALE.REPLAY, Dimensions.getFontSize());
 		var levels = addButton (replay.y+replay.height*1.3, LOCALE.LEVELS, Dimensions.getFontSize());
 
@@ -102,24 +88,18 @@ Popup.openWinMenu = function () {
 		text2.align = 'center';
 		text2.y = text.y+text.height*3;
 		var menu = game.add.bitmapText(0, text2.y+text2.height*1.7, "blue", LOCALE.OK, Dimensions.getFontSize()-8);
-		var share = game.add.bitmapText(menu.x+menu.width*1.3, text2.y+text2.height*1.7, "blue", LOCALE.SHARE, Dimensions.getFontSize()-8);
 		text.anchor.set (0.5, 0);
 		text2.anchor.set (0.5, 0);
 		menu.anchor.set (0, 0);
-		share.anchor.set (0, 0);
 		menu.inputEnabled = true;
     	menu.events.onInputDown.add(function (){menu.alpha = 0.6;});
     	menu.events.onInputUp.add(function (){Popup.closeMenu("MainMenu");});
-    	share.inputEnabled = true;
-    	share.events.onInputDown.add(function (){share.alpha = 0.6;});
-    	share.events.onInputUp.add(function () {Promotion.openShare(); share.alpha = 1;});
     	var buttons = game.add.group();
     	win.add(elements);
 		elements.add(text);
 		elements.add(text2);
 		elements.add(buttons);
 		buttons.add(menu);
-		buttons.add(share);
 		buttons.x = (game.width-buttons.width)/2;
 		elements.y = (game.height-elements.height)/2;
 	}
@@ -160,7 +140,6 @@ function addButton(y, text, fontSize, imageKey, length) {
 }
 
 Popup.openOptMenu = function () {
-	Promotion.showInterstitial();
 	Popup.clearAll();
 	var win = game.add.group();
 	var elements = win.elements = game.add.group();

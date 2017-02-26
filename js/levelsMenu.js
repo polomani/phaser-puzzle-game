@@ -95,15 +95,6 @@ Puzzle.LevelsMenu.prototype.create = function () {
         }
     });
 
-    if (Data.completedLevels >= 2) {
-      var share = this.game.add.sprite (0,0, Dimensions.getImageKey("btn_share"));
-      share.inputEnabled = true;
-      share.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/share.width));
-      share.events.onInputDown.add(function () {
-        Promotion.openShare();
-      });
-    }
-
     var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
     props.anchor.setTo(1, 0);
     props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));

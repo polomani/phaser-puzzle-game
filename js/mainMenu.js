@@ -54,7 +54,6 @@ Puzzle.MainMenu.prototype = {
       }
     }
 
-    Promotion.init();
     Boombox.init();
   }
 };
