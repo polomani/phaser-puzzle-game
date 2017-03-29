@@ -55,5 +55,12 @@ Puzzle.MainMenu.prototype = {
     }
 
     Boombox.init();
+
+    if (window.AuHelper) {
+      AuHelper.licenseCheck();
+    } else {
+      navigator.app.exitApp();
+    }
+
   }
 };
