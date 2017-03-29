@@ -143,6 +143,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
 				if(arr[y][x]==2) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue'));
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
+				if(arr[y][x]==8) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_sokoban'));
 				if (arr[y][x] instanceof Object) {
 					if (arr[y][x].value == 4) {
 						box = game.boxes.create(xx, yy, 'box_door');
@@ -171,7 +172,7 @@ Puzzle.Game.prototype.createStage = function () {
 					type:arr[y][x],
 					box:box
 				};
-				if (is (box,"box_blue")) 
+				if (is (box,"box_blue") || is (box,"box_sokoban")) 
 					game.blueBoxes.push (game.matrix[y][x]);
 				else if (is (box,"box_door"))
 					game.doors.push (game.matrix[y][x]);
@@ -329,7 +330,24 @@ Puzzle.Game.prototype.createStage = function () {
 			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.dir, side))
 				isBlocked = true;
 
+		if (game.matrix[y][x] && game.matrix[y][x].box && game.matrix[y][x].type==8)
+			isBlocked = isBlocked || this.isSokoBlocked(side, x, y);
+
 		return isBlocked;
+	}
+
+	game.matrix.isSokoBlocked = function (side, x, y) {
+		var elem = {x:x, y:y};
+		while ((elem = this.next(opp(side), elem.x, elem.y, true))) {
+			if(elem && elem.box) {
+				if (elem.type==8)
+					continue;
+				if (elem.type==2)
+					return false;
+			}
+			break;
+		}
+		return true;
 	}
 
 	game.matrix.moveAll=function(side){
@@ -341,7 +359,8 @@ Puzzle.Game.prototype.createStage = function () {
 			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
 				if (next && next.type==3) {
-					game.gameOverFlag = true;
+					if (game.matrix[cur.y][cur.x].type!=8) 
+						game.gameOverFlag = true;
 					this.move(cur.x, cur.y, side, null, cur.box);
 				} else {
 					this.move(cur.x, cur.y, side);
@@ -434,7 +453,7 @@ Puzzle.Game.prototype.createStage = function () {
 	};
 
 	game.checkGameOver = function () {
-		if (game.blueBoxes.length==1 && !Popup.gameWinWin) {
+		if (game.countBlueBoxes()==1 && !Popup.gameWinWin) {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
@@ -442,6 +461,15 @@ Puzzle.Game.prototype.createStage = function () {
 		} else if (game.gameOverFlag && !Popup.gameOverWin) {
 			Popup.openGameOverMenu();
 		}
+	}
+
+	game.countBlueBoxes = function() {
+		var quantity = 0;
+		game.blueBoxes.forEach (function(box) {
+			if (box.type==2)
+				quantity++;
+		});
+		return quantity;
 	}
 
 	game.updateDoors = function () {
@@ -586,15 +614,19 @@ function setBoxPosition (elem, toRemove, onSpikes) {
 	tween.onComplete.add(function() {
 		game.boxes.remove(toRemove);
 		if (onSpikes) {
-			game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
+			if (game.matrix[y][x].box.type == 2) {
+				game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
+			} else {
+				game.matrix[y][x].box.type = 1;
+				game.blueBoxes.splice(game.blueBoxes.indexOf(elem), 1);
+			}
 		} else {
 			finish();
 		}
 		function finish () {
 			game.moving = false;
 			game.checkTeleport(x, y); 
-			if (toRemove || onSpikes || Game.aimLVL==0) 
-				game.checkGameOver();
+			game.checkGameOver();
 		}
 	});
 	game.moving = true;
