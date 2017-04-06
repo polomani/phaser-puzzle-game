@@ -229,7 +229,7 @@ Puzzle.Game.prototype.createStage = function () {
 		game.matrix[y][x].x=x;
 		game.matrix[y][x].box.indexX = x;
 		game.matrix[y][x].box.indexY = y;
-		setBoxPosition(game.matrix[y][x], toRemove, onSpikes);
+		setBoxPosition(game.matrix[y][x], {toRemove:toRemove, onSpikes:onSpikes});
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -496,7 +496,7 @@ Puzzle.Game.prototype.createStage = function () {
 					game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
 					game.matrix[elem.y][elem.x].x = elem.x;
 					game.matrix[elem.y][elem.x].y = elem.y;
-					setBoxPosition (game.matrix[elem.y][elem.x]);
+					setBoxPosition (game.matrix[elem.y][elem.x], {port:true, portX:x, portY:y});
 				}
 			} 
 		}
@@ -622,7 +622,9 @@ function getDirFromAngle(angle) {
 	}
 }
 
-function setBoxPosition (elem, toRemove, onSpikes) {
+function setBoxPosition (elem, params) {
+	var toRemove = params.toRemove;
+	var onSpikes = params.onSpikes;
 	var x = elem.x;
 	var y = elem.y;
 	var xx,yy;
@@ -633,7 +635,16 @@ function setBoxPosition (elem, toRemove, onSpikes) {
 		xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - y*BSIZE - BSIZE/2;
 		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
 	}
-	tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
+	if (params.port) {
+		tween = game.add.tween(game.matrix[y][x].box).to( { alpha:0.3, width:0, height:0 }, 50, "Linear", true);
+		tween.onComplete.add(function() {
+			game.matrix[y][x].box.x = xx;
+			game.matrix[y][x].box.y = yy;
+			tween = game.add.tween(game.matrix[y][x].box).to( { alpha:1, width:BSIZE, height:BSIZE }, 50, "Linear", true);
+		});
+	} else {
+		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
+	}
 	tween.onComplete.add(function() {
 		game.boxes.remove(toRemove);
 		if (onSpikes) {
