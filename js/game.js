@@ -517,7 +517,7 @@ Puzzle.Game.prototype.createStage = function () {
 		game.robots.forEach (function(elem){
 			if (!elem.path && !elem.nocycle) {
 				elem.path = elem.type.path;
-				elem.nocycle = true;
+				elem.nocycle = !isPathCycled(elem.path);
 			}
 			var side = parseInt(elem.path.charAt(0));
 			if (!game.matrix.isBlocked(side, elem.x, elem.y)) {
@@ -526,6 +526,15 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 		});	
 	}
+
+	function isPathCycled(path) {
+		var total = {n1:0, n2:0, n3:0, n4:0};
+		for (var i = 0; i < path.length; i++) {
+			total["n"+path.charAt(i)]++;
+		}
+		return total.n1==total.n2 && total.n3==total.n4;
+	}
+
 	game.spinArrows = function () {
 		game.arrows.forEach (function(elem){
 			if (elem.type.spin=="cw") {
