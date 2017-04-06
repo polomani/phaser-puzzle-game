@@ -153,6 +153,10 @@ Puzzle.Game.prototype.createStage = function () {
 						box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 						box.dir = arr[y][x].dir;
+						if (arr[y][x].spin) 
+						{
+							box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
+						}
 					}
 					if (arr[y][x].value == 6) {
 						box = game.boxes.create(xx, yy, 'box_port');
@@ -217,16 +221,6 @@ Puzzle.Game.prototype.createStage = function () {
 		var prev = (game.matrix[y][x] && game.matrix[y][x].box) ? game.matrix[y][x] : false;
 		game.matrix[y][x] = temp;
 		game.matrix[y][x].prev = prev;
-		if (prev && prev.type.value==5) {
-			game.matrix[y][x].box.frame = 1;
-			if (!game.invert) {
-				game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
-			} else {
-				game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
-			}
-		} else {
-			game.matrix[y][x].box.frame = 0;
-		}
 
 		if (game.matrix[y][x].box.teleported)
 			game.matrix[y][x].box.teleported = false;
@@ -532,6 +526,34 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 		});	
 	}
+	game.spinArrows = function () {
+		game.arrows.forEach (function(elem){
+			if (elem.type.spin=="cw") {
+				elem.box.angle += 90;
+			} else if (elem.type.spin=="ccw") {
+				elem.box.angle -= 90;
+			}
+			elem.box.dir = elem.dir = getDirFromAngle (elem.box.angle);
+		});	
+
+		game.blueBoxes.forEach(function(elem) {
+			var x = elem.box.indexX;
+			var y = elem.box.indexY;
+			var aim = game.matrix[y][x];
+			var prev = aim.prev;
+
+			if (prev && prev.type.value==5) {
+				game.matrix[y][x].box.frame = 1;
+				if (!game.invert) {
+					game.matrix[y][x].box.angle = o_getAngleFromDir(prev.box.dir);
+				} else {
+					game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.box.dir);
+				}
+			} else {
+				game.matrix[y][x].box.frame = 0;
+			}
+		});
+	}
 };
 
 Puzzle.Game.prototype.update = function() {};
@@ -566,6 +588,7 @@ function step (key)
 				game.matrix.right();
 		}
 	game.moveRobots();
+	game.spinArrows();
 }
 
 Puzzle.Game.prototype.render = function() {

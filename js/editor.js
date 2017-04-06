@@ -83,7 +83,7 @@ function mouseClicked (obj) {
 			changeCursor (type);
 		}
 		else
-			changeCursor (o.NINE);
+			changeCursor (o.ZERO);
 	}
 	reindexBoxes();
 	saveLevel ();
@@ -192,6 +192,23 @@ function changeCursor (key) {
 			o.cursor.btype = 8;
 			break;
 		case o.NINE:
+			o.cursor = o.boxes.create (x, y, 'box_arr_small');
+			o.cursor.btype = {
+				value:5,
+				spin:"cw"
+			};
+			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==5 && prevcur.btype.spin) {	
+				o.cursor.angle = prevcur.angle + 90;
+				if (o.cursor.angle==0) {
+					o.cursor.btype.spin = oppClock(prevcur.btype.spin);
+				} else {
+					o.cursor.btype.spin = prevcur.btype.spin;
+				}
+			}
+			o.cursor.frame = (o.cursor.btype.spin=="cw") ? 1 : 2;
+			o.cursor.btype.dir = o_getDirFromAngle(o.cursor.angle);
+			break;
+		case o.ZERO:
 			break;
 	}
 	if (key!=o.SEVEN) {
@@ -209,6 +226,11 @@ function changeCursor (key) {
 		o.cursor.anchor.setTo(0.5, 0.5);
 		o.cursor.type = key;
 		o.cursor.scale.setTo (o.BSIZE/100, o.BSIZE/100);
+	}
+	function oppClock(current) {
+		if (current=="cw")
+			return "ccw";
+		return "cw";
 	}
 }
 
@@ -230,6 +252,7 @@ Puzzle.Editor.prototype.create = function () {
 	o.SEVEN = o.input.keyboard.addKey(Phaser.Keyboard.SEVEN);
 	o.EIGHT = o.input.keyboard.addKey(Phaser.Keyboard.EIGHT);
 	o.NINE = o.input.keyboard.addKey(Phaser.Keyboard.NINE);
+	o.ZERO = o.input.keyboard.addKey(Phaser.Keyboard.ZERO);
 	o.keyS = o.input.keyboard.addKey(Phaser.Keyboard.S);
 	o.keyPlus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_ADD);
 	o.keyMinus = o.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_SUBTRACT);
@@ -243,6 +266,7 @@ Puzzle.Editor.prototype.create = function () {
 	o.SEVEN.onDown.add(changeCursor);
 	o.EIGHT.onDown.add(changeCursor);
 	o.NINE.onDown.add(changeCursor);
+	o.ZERO.onDown.add(changeCursor);
 	o.keyS.onDown.add(commitLevel);
 	o.keyMinus.onDown.add(function() {o_zoom(false);});
 	o.keyPlus.onDown.add(function() {o_zoom(true);});
@@ -265,6 +289,7 @@ Puzzle.Editor.prototype.create = function () {
 					}
 					if (arr[y][x].value==5) {
 						box = game.boxes.create(xx, yy, 'box_arr_small');
+						box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 					}
 					if (arr[y][x].value==6) {
@@ -304,7 +329,7 @@ Puzzle.Editor.prototype.addMenu = function () {
 	var play_label = game.add.text(0, 20, 'F1 - Play', { font: '24px Arial', fill: '#FFFFFF' });
 	play_label.inputEnabled = true;
 	play_label.events.onInputDown.add(function () {
-		changeCursor (o.NINE);
+		changeCursor (o.ZERO);
 		this.game.state.start('Game');
 	});
 
@@ -317,8 +342,9 @@ Puzzle.Editor.prototype.addMenu = function () {
 	game.telebutton = game.add.text(0, 225, '6 = teleport', { font: '18px Arial', fill: '#FFFFFF' });
 	game.redbutton = game.add.text(0, 250, '7 = red box', { font: '18px Arial', fill: '#FFFFFF' });
 	game.sokobutton = game.add.text(0, 275, '8 = sokoban', { font: '18px Arial', fill: '#FFFFFF' });
-	game.plusbutton = game.add.text(0, 300, '[zoom in +]', { font: '18px Arial', fill: '#FFFFFF' });
-	game.minusbutton = game.add.text(0, 325, '[zoom out -]', { font: '18px Arial', fill: '#FFFFFF' });
+	game.spinbutton = game.add.text(0, 300, '9 = spin arr', { font: '18px Arial', fill: '#FFFFFF' });
+	game.plusbutton = game.add.text(0, 325, '[zoom in +]', { font: '18px Arial', fill: '#FFFFFF' });
+	game.minusbutton = game.add.text(0, 350, '[zoom out -]', { font: '18px Arial', fill: '#FFFFFF' });
 	game.savebutton = game.add.text(0, 0, 'S = save lvl', { font: '18px Arial', fill: '#FFFFFF' });
 	game.cursorbutton.inputEnabled = true;
 	game.blackbutton.inputEnabled = true;
@@ -329,10 +355,11 @@ Puzzle.Editor.prototype.addMenu = function () {
 	game.telebutton.inputEnabled = true;
 	game.redbutton.inputEnabled = true;
 	game.sokobutton.inputEnabled = true;
+	game.spinbutton.inputEnabled = true;
 	game.plusbutton.inputEnabled = true;
 	game.minusbutton.inputEnabled = true;
 	game.savebutton.inputEnabled = true;
-	game.cursorbutton.events.onInputDown.add(function () {changeCursor(o.NINE)});
+	game.cursorbutton.events.onInputDown.add(function () {changeCursor(o.ZERO)});
     game.blackbutton.events.onInputDown.add(function () {changeCursor(o.ONE)});
     game.bluebutton.events.onInputDown.add(function () {changeCursor(o.TWO)});
     game.gapbutton.events.onInputDown.add(function () {changeCursor(o.THREE)});
@@ -341,6 +368,7 @@ Puzzle.Editor.prototype.addMenu = function () {
     game.telebutton.events.onInputDown.add(function () {changeCursor(o.SIX)});
     game.redbutton.events.onInputDown.add(function () {changeCursor(o.SEVEN)});
     game.sokobutton.events.onInputDown.add(function () {changeCursor(o.EIGHT)});
+    game.spinbutton.events.onInputDown.add(function () {changeCursor(o.NINE)});
     game.plusbutton.events.onInputDown.add(function () {o_zoom(true);});
     game.minusbutton.events.onInputDown.add(function () {o_zoom(false);});
     game.savebutton.events.onInputDown.add(commitLevel);
@@ -429,7 +457,10 @@ function levelToString (arr) {
 					if (arr[y][x].value==4)
 						string += "{ value:4, state:" + arr[y][x].state + " },";
 					if (arr[y][x].value==5)
-						string += "{ value:5, dir:" + arr[y][x].dir + " },";
+						if (arr[y][x].spin) 
+							string += "{ value:5, dir:" + arr[y][x].dir + ", spin:'" + arr[y][x].spin + "' },";
+						else
+							string += "{ value:5, dir:" + arr[y][x].dir + " },";
 					if (arr[y][x].value==6)
 						string += "{ value:6, id:" + arr[y][x].id + " },";
 					if (arr[y][x].value==7)
