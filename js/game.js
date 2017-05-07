@@ -141,7 +141,7 @@ Puzzle.Game.prototype.createStage = function () {
 				var box;
 				var xx = 0, yy = 0;
 				if(arr[y][x]==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
-				if(arr[y][x]==2) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue'));
+				if(isBlueBox(arr[y][x])) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue_'+getBlueBoxColor(arr[y][x])));
 				if(arr[y][x]==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
 				if(arr[y][x]==8) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_sokoban'));
 				if (arr[y][x] instanceof Object) {
@@ -336,12 +336,19 @@ Puzzle.Game.prototype.createStage = function () {
 			if(elem && elem.box) {
 				if (elem.type==8)
 					continue;
-				if (elem.type==2)
+				if (isBlueBox(elem.type))
 					return false;
 			}
 			break;
 		}
 		return true;
+	}
+
+	function isSameBlueBox(b1, b2) {
+		if (isBlueBox(b1) && isBlueBox(b2)) {
+			return b1==b2;
+		}
+		return false;
 	}
 
 	game.matrix.moveAll=function(side){
@@ -360,7 +367,7 @@ Puzzle.Game.prototype.createStage = function () {
 					this.move(cur.x, cur.y, side);
 				}
 			} else {
-				if (next && next.type==2 && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
+				if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
 					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.box.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
@@ -447,23 +454,28 @@ Puzzle.Game.prototype.createStage = function () {
 	};
 
 	game.checkGameOver = function () {
-		if (game.countBlueBoxes()==1 && !Popup.gameWinWin) {
+		if (game.countBlueBoxes()==1 && !Popup.gameWinWin && !Popup.gameOverWin) {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
 			Data.setCompletedLevels(Game.aimLVL+1);
-		} else if (game.gameOverFlag && !Popup.gameOverWin) {
+		} else if (game.gameOverFlag && !Popup.gameOverWin && !Popup.gameWinWin) {
 			Popup.openGameOverMenu();
 		}
 	}
 
 	game.countBlueBoxes = function() {
-		var quantity = 0;
+		var q1 = 0;
+		var q2 = 0;
+		var q3 = 0;
 		game.blueBoxes.forEach (function(box) {
-			if (box.type==2)
-				quantity++;
+			if (isBlueBox(box.type)) {
+				if (box.type==2 || box.type==20) q1++;
+				if (box.type==21) q2++;
+				if (box.type==22) q3++;
+			}
 		});
-		return quantity;
+		return Math.max(q1, Math.max(q2, q3));
 	}
 
 	game.updateDoors = function () {
@@ -516,8 +528,13 @@ Puzzle.Game.prototype.createStage = function () {
 	game.moveRobots = function () {
 		game.robots.forEach (function(elem){
 			if (!elem.path && !elem.nocycle) {
+				if (elem.startX) {
+					elem.startX = elem.indexX;
+					elem.startY = elem.indexY;
+				} else {
+					elem.nocycle = !(elem.startX==elem.indexX && elem.startY==elem.indexY);
+				}
 				elem.path = elem.type.path;
-				elem.nocycle = !isPathCycled(elem.path);
 			}
 			var side = parseInt(elem.path.charAt(0));
 			if (!game.matrix.isBlocked(side, elem.x, elem.y)) {

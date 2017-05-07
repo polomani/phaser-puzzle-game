@@ -122,6 +122,15 @@ function mouseMove (pointer, x, y) {
 	}
 }
 
+function isBlueBox (id) {
+	return (typeof id === 'number') && (id==2 || Math.floor(id/10)==2);
+}
+
+function getBlueBoxColor (id) {
+	if (id==2) return 0;
+	return id % 20;
+}
+
 function changeCursor (key) {
 	if (o.cursor) {
 		var prevcur = o.cursor;
@@ -136,8 +145,15 @@ function changeCursor (key) {
 			o.cursor.btype = 1;
 			break;
 		case o.TWO :
-			o.cursor = o.boxes.create (x, y, 'box_blue_small');
-			o.cursor.btype = 2;
+			var btype;
+			if (prevcur && isBlueBox(prevcur.btype)) {
+				btype = prevcur.btype + 1;
+				if (btype>22) btype = 20;
+			} else {
+				btype = 20;
+			}
+			o.cursor = o.boxes.create (x, y, 'box_blue_'+getBlueBoxColor(btype)+'_small');	
+			o.cursor.btype = btype;
 			break;
 		case o.THREE :
 			o.cursor = o.boxes.create (x, y, 'box_gap_small');
@@ -301,7 +317,7 @@ Puzzle.Editor.prototype.create = function () {
 					}
 				} else {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black_small');
-					if (arr[y][x] == 2) box = o.boxes.create(xx, yy, 'box_blue_small');
+					if (isBlueBox(arr[y][x])) box = o.boxes.create(xx, yy, 'box_blue_'+getBlueBoxColor(arr[y][x])+'_small');
 					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap_small');
 					if (arr[y][x] == 8) box = o.boxes.create(xx, yy, 'box_sokoban');
 				}

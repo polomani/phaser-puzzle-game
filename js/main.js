@@ -71,7 +71,7 @@ $(document).ready (function () {
 	}
 
 	exports.getBoxSize = function () {
-		return game.cache.getImage(exports.getImageKey("box_blue")).height;
+		return game.cache.getImage(exports.getImageKey("box_black")).height;
 	}
 
 	exports.getFontSize = function () {
