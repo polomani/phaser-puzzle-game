@@ -128,6 +128,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.ports = [];
 	game.robots = [];
 	game.arrows = [];
+	game.gaps = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		game.matrix[y]=[];
@@ -186,6 +187,8 @@ Puzzle.Game.prototype.createStage = function () {
 					game.robots.push (game.matrix[y][x]);
 				else if (is (box,"box_arr"))
 					game.arrows.push (game.matrix[y][x]);
+				else if (is (box,"box_gap"))
+					game.gaps.push (game.matrix[y][x]);
 
 				function is (box, key) {
 					if (box.key.lastIndexOf(key)!=-1) {
@@ -360,8 +363,6 @@ Puzzle.Game.prototype.createStage = function () {
 			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
 				if (next && next.type==3) {
-					if (game.matrix[cur.y][cur.x].type!=8) 
-						game.gameOverFlag = true;
 					this.move(cur.x, cur.y, side, null, cur.box);
 				} else {
 					this.move(cur.x, cur.y, side);
@@ -453,13 +454,28 @@ Puzzle.Game.prototype.createStage = function () {
 		this.moveAll(Phaser.DOWN);
 	};
 
-	game.checkGameOver = function () {
-		if (game.countBlueBoxes()==1 && !Popup.gameWinWin && !Popup.gameOverWin) {
+	game.isAnyBoxOnGap = function () {
+		var res = false;
+		game.blueBoxes.forEach (function(box1) {
+			if (isBlueBox(box1.type)) {
+				game.gaps.forEach (function(box2) {
+					if(box1.box.indexX==box2.box.indexX && box1.box.indexY==box2.box.indexY) {
+						res=true;
+					}
+				});
+			}
+		});
+		return res;
+	}
+
+	game.checkGameOver = function (params) {
+		if (!game.isAnyBoxOnGap() && game.countBlueBoxes()==1 && !Popup.gameWinWin) {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
 			Data.setCompletedLevels(Game.aimLVL+1);
-		} else if (game.gameOverFlag && !Popup.gameOverWin && !Popup.gameWinWin) {
+		}
+		if (params && params.onSpikes && !Popup.gameOverWin) {
 			Popup.openGameOverMenu();
 		}
 	}
@@ -674,7 +690,8 @@ function setBoxPosition (elem, params) {
 	tween.onComplete.add(function() {
 		game.boxes.remove(toRemove);
 		if (onSpikes) {
-			if (game.matrix[y][x].box.type == 2) {
+			if (isBlueBox(game.matrix[y][x].type)) {
+				game.gameOverFlag = true;
 				game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
 			} else {
 				game.matrix[y][x].box.type = 1;
@@ -686,7 +703,7 @@ function setBoxPosition (elem, params) {
 		function finish () {
 			game.moving = false;
 			game.checkTeleport(x, y); 
-			game.checkGameOver();
+			game.checkGameOver({onSpikes:onSpikes});
 		}
 	});
 	game.moving = true;
