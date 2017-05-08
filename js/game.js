@@ -337,10 +337,18 @@ Puzzle.Game.prototype.createStage = function () {
 		var elem = {x:x, y:y};
 		while ((elem = this.next(opp(side), elem.x, elem.y, true))) {
 			if(elem && elem.box) {
-				if (elem.type==8)
-					continue;
-				if (isBlueBox(elem.type))
-					return false;
+				if (isBlueBox(elem.type) || elem.type==8) {
+					var blue = game.matrix[elem.y][elem.x];
+					if (blue.prev && blue.prev.type && blue.prev.type.value==5) {
+						if (!game.canGoFromDirection(blue.prev.box.dir, side))
+							return true;
+					}
+					if (elem.type==8) {
+						continue;
+					} else {
+						return false;
+					}
+				}		
 			}
 			break;
 		}
@@ -469,7 +477,7 @@ Puzzle.Game.prototype.createStage = function () {
 	}
 
 	game.checkGameOver = function (params) {
-		if (!game.isAnyBoxOnGap() && game.countBlueBoxes()==1 && !Popup.gameWinWin) {
+		if (game.countBlueBoxes()==1 && !game.isAnyBoxOnGap() && !Popup.gameWinWin) {
 			game.gameOverFlag = true;
 			Popup.openWinMenu();
 			saveSolutionToFirebase();
