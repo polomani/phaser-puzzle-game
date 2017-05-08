@@ -153,7 +153,6 @@ Puzzle.Game.prototype.createStage = function () {
 					if (arr[y][x].value == 5) {
 						box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
-						box.dir = arr[y][x].dir;
 						if (arr[y][x].spin) 
 						{
 							box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
@@ -313,7 +312,7 @@ Puzzle.Game.prototype.createStage = function () {
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
 			if(!elem || !elem.box || elem.type==3 ||
 				(elem.type.value==4 && elem.box.frame==0) ||
-				(elem.type.value==5 && game.canGoOnDirection(elem.box.dir, side)) ||
+				(elem.type.value==5 && game.canGoOnDirection(elem.type.dir, side)) ||
 				 elem.type.value==6) {
 				break;
 			}
@@ -321,7 +320,7 @@ Puzzle.Game.prototype.createStage = function () {
 			break;
 		}
 		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type)
-			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.box.dir, side))
+			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.type.dir, side))
 				isBlocked = true;
 
 		if (game.matrix[y][x] && game.matrix[y][x].box && game.matrix[y][x].type==8)
@@ -337,7 +336,7 @@ Puzzle.Game.prototype.createStage = function () {
 				if (isBlueBox(elem.type) || elem.type==8) {
 					var blue = game.matrix[elem.y][elem.x];
 					if (blue.prev && blue.prev.type && blue.prev.type.value==5) {
-						if (!game.canGoFromDirection(blue.prev.box.dir, side))
+						if (!game.canGoFromDirection(blue.prev.type.dir, side))
 							return true;
 					}
 					if (elem.type==8) {
@@ -373,8 +372,8 @@ Puzzle.Game.prototype.createStage = function () {
 					this.move(cur.x, cur.y, side);
 				}
 			} else {
-				if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.box.dir, side))) {
-					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.box.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
+				if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.type.dir, side))) {
+					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.type.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
 						this.move(cur.x, cur.y, side, next.box);
@@ -579,11 +578,11 @@ Puzzle.Game.prototype.createStage = function () {
 	game.spinArrows = function () {
 		game.arrows.forEach (function(elem){
 			if (elem.type.spin=="cw") {
-				elem.box.angle += 90;
+				elem.type.dir = getDirCW (elem.type.dir);
 			} else if (elem.type.spin=="ccw") {
-				elem.box.angle -= 90;
+				elem.type.dir = getDirCCW (elem.type.dir);
 			}
-			elem.box.dir = elem.dir = getDirFromAngle (elem.box.angle);
+			elem.box.angle = o_getAngleFromDir(elem.type.dir);	
 		});	
 
 		game.blueBoxes.forEach(function(elem) {
@@ -595,9 +594,9 @@ Puzzle.Game.prototype.createStage = function () {
 			if (prev && prev.type.value==5) {
 				game.matrix[y][x].box.frame = 1;
 				if (!game.invert) {
-					game.matrix[y][x].box.angle = o_getAngleFromDir(prev.box.dir);
+					game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
 				} else {
-					game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.box.dir);
+					game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
 				}
 			} else {
 				game.matrix[y][x].box.frame = 0;
@@ -656,6 +655,32 @@ function opp(side) {
 			return Phaser.DOWN;
 		case Phaser.DOWN:
 			return Phaser.UP;
+	}
+}
+
+function getDirCW (dir) {
+	switch (dir) {
+		case Phaser.UP:
+			return Phaser.RIGHT;
+		case Phaser.RIGHT:
+			return Phaser.DOWN;
+		case Phaser.DOWN:
+			return Phaser.LEFT;
+		case Phaser.LEFT:
+			return Phaser.UP;
+	}
+}
+
+function getDirCCW (dir) {
+	switch (dir) {
+		case Phaser.DOWN:
+			return Phaser.RIGHT;
+		case Phaser.RIGHT:
+			return Phaser.UP;
+		case Phaser.UP:
+			return Phaser.LEFT;
+		case Phaser.LEFT:
+			return Phaser.DOWN;
 	}
 }
 
@@ -732,9 +757,9 @@ function saveSolutionToFirebase() {
 Puzzle.Game.rotateArrows = function() {
 	game.arrows.forEach(function(elem){
 		if (!game.invert) {
-			elem.box.angle = o_getAngleFromDir(elem.box.dir);
+			elem.box.angle = o_getAngleFromDir(elem.type.dir);
 		} else {
-			elem.box.angle = Puzzle.Game.getInvertedAngleFromDir(elem.box.dir);
+			elem.box.angle = Puzzle.Game.getInvertedAngleFromDir(elem.type.dir);
 		}
 	});
 };
