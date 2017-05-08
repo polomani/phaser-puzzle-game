@@ -45,14 +45,14 @@ onGameResized =  function (full) {
 		var newscale = BSIZE/Dimensions.getBoxSize();
 		box.scale.setTo (newscale, newscale);
 
-		var xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
-		var yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + box.indexY*BSIZE + BSIZE/2;
+		var xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + box.matrix.x*BSIZE + BSIZE/2;
+		var yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + box.matrix.y*BSIZE + BSIZE/2;
 
 		game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 
 		if (game.invert) {
-			xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - box.indexY*BSIZE - BSIZE/2;
-			yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + box.indexX*BSIZE + BSIZE/2;
+			xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - box.matrix.y*BSIZE - BSIZE/2;
+			yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + box.matrix.x*BSIZE + BSIZE/2;
 		}
 
 		box.x = xx;
@@ -169,14 +169,13 @@ Puzzle.Game.prototype.createStage = function () {
 				}
 				if (arr[y][x]==0 || arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
 				box.anchor.setTo(0.5, 0.5);
-				box.indexX = x;
-				box.indexY = y;
 				game.matrix[y][x] = {
 					x:x,
 					y:y,
 					type:arr[y][x],
 					box:box
 				};
+				box.matrix = game.matrix[y][x];
 				if (is (box,"box_blue") || is (box,"box_sokoban")) 
 					game.blueBoxes.push (game.matrix[y][x]);
 				else if (is (box,"box_door"))
@@ -230,8 +229,6 @@ Puzzle.Game.prototype.createStage = function () {
 
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
-		game.matrix[y][x].box.indexX = x;
-		game.matrix[y][x].box.indexY = y;
 		setBoxPosition(game.matrix[y][x], {toRemove:toRemove, onSpikes:onSpikes});
 	};
 
@@ -467,7 +464,7 @@ Puzzle.Game.prototype.createStage = function () {
 		game.blueBoxes.forEach (function(box1) {
 			if (isBlueBox(box1.type)) {
 				game.gaps.forEach (function(box2) {
-					if(box1.box.indexX==box2.box.indexX && box1.box.indexY==box2.box.indexY) {
+					if(box1.x==box2.x && box1.y==box2.y) {
 						res=true;
 					}
 				});
@@ -551,15 +548,18 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.moveRobots = function () {
 		game.robots.forEach (function(elem){
-			if (!elem.path && !elem.nocycle) {
-				if (elem.startX) {
-					elem.startX = elem.indexX;
-					elem.startY = elem.indexY;
-				} else {
-					elem.nocycle = !(elem.startX==elem.indexX && elem.startY==elem.indexY);
-				}
+			if (!elem.startX) {
+				elem.startX = elem.x;
+				elem.startY = elem.y;
+				elem.path = elem.type.path;
+			} else {
+				elem.cycle = elem.startX==elem.x && elem.startY==elem.y;
+			}
+
+			if (!elem.path && elem.cycle) {				
 				elem.path = elem.type.path;
 			}
+
 			var side = parseInt(elem.path.charAt(0));
 			if (!game.matrix.isBlocked(side, elem.x, elem.y)) {
 				game.matrix.move(elem.x, elem.y, side);
@@ -587,8 +587,8 @@ Puzzle.Game.prototype.createStage = function () {
 		});	
 
 		game.blueBoxes.forEach(function(elem) {
-			var x = elem.box.indexX;
-			var y = elem.box.indexY;
+			var x = elem.x;
+			var y = elem.y;
 			var aim = game.matrix[y][x];
 			var prev = aim.prev;
 
