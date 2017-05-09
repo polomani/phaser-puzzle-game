@@ -18,7 +18,7 @@ Puzzle.Game.prototype.preload = function () {
 Puzzle.Game.prototype.create = function () {
 	console.log(Dimensions.getSize());
 	console.log(game.width + "x" + game.height);
-	game.gameOverFlag = false;
+	game.gameOver = game.gameWin = false;
 	game.levelWidth = LEVELS[Game.aimLVL][0].length;
 	game.levelHeight = LEVELS[Game.aimLVL].length;
 	game.levelArr = LEVELS[Game.aimLVL];
@@ -393,17 +393,20 @@ Puzzle.Game.prototype.createStage = function () {
 		while (game.blueBoxes.indexOf("deleted")!=-1)
 			game.blueBoxes.splice(game.blueBoxes.indexOf("deleted"), 1);
 
-		//!
-		for (var y = 0; y < arr.length; y++) {
-			var s = "";
-			for (var x = 0; x < arr[y].length; x++) {
-				if (game.matrix[y][x]) 
-					s+= (game.matrix[y][x].type.value ? game.matrix[y][x].type.value : (game.matrix[y][x].type>=20) ? Math.round(game.matrix[y][x].type/10) : game.matrix[y][x].type) + ' ';
-				else
-					s+='  ';
-			}
-			console.log(s);
-		}
+		game.updateDoors();
+		game.moveRobots();
+		game.spinArrows();
+
+		// for (var y = 0; y < arr.length; y++) {
+		// 	var s = "";
+		// 	for (var x = 0; x < arr[y].length; x++) {
+		// 		if (game.matrix[y][x]) 
+		// 			s+= (game.matrix[y][x].type.value ? game.matrix[y][x].type.value : (game.matrix[y][x].type>=20) ? Math.round(game.matrix[y][x].type/10) : game.matrix[y][x].type) + ' ';
+		// 		else
+		// 			s+='  ';
+		// 	}
+		// 	console.log(s);
+		// }
 	}
 
 	game.matrix.sortFunction = function (side) {
@@ -481,16 +484,10 @@ Puzzle.Game.prototype.createStage = function () {
 		return res;
 	}
 
-	game.checkGameOver = function (params) {
-		if (game.countBlueBoxes()==1 && !game.isAnyBoxOnGap() && !Popup.gameWinWin) {
-			game.gameOverFlag = true;
-			Popup.openWinMenu();
-			saveSolutionToFirebase();
-			Data.setCompletedLevels(Game.aimLVL+1);
-		}
-		if (params && params.onSpikes && !Popup.gameOverWin) {
-			Popup.openGameOverMenu();
-		}
+	game.checkGameOver = function () {
+		var fail = game.isAnyBoxOnGap();
+		var win = !fail && game.countBlueBoxes()==1;
+		return {win:win, fail:fail};
 	}
 
 	game.countBlueBoxes = function() {
@@ -586,24 +583,6 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 			elem.box.angle = o_getAngleFromDir(elem.type.dir);	
 		});	
-
-		game.blueBoxes.forEach(function(elem) {
-			var x = elem.x;
-			var y = elem.y;
-			var aim = game.matrix[y][x];
-			var prev = aim.prev;
-
-			if (prev && prev.type.value==5) {
-				game.matrix[y][x].box.frame = 1;
-				if (!game.invert) {
-					game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
-				} else {
-					game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
-				}
-			} else {
-				game.matrix[y][x].box.frame = 0;
-			}
-		});
 	}
 
 	game.visualize = function () {
@@ -617,6 +596,8 @@ Puzzle.Game.prototype.createStage = function () {
 			var ttask = getTeleportTask(box.matrix);
 			moveBox(box.matrix, ttask);
 		});
+
+		spinBoxArrows();
 
 		function finishTeleport() { finish("teleports"); };
 		function finishSpike() { finish("spikes"); };
@@ -638,6 +619,12 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 			if (counter.moving==0 && counter.spikes==0 && counter.teleports==0) {
 				game.moving = false;
+				if (game.gameWin) {
+					Popup.openWinMenu();
+				}
+				if (game.gameOver) {
+					Popup.openGameOverMenu();
+				}
 			}
 		}
 
@@ -683,6 +670,26 @@ Puzzle.Game.prototype.createStage = function () {
 			});
 		}
 
+		function spinBoxArrows() {
+			game.blueBoxes.forEach(function(elem) {
+				var x = elem.x;
+				var y = elem.y;
+				var aim = game.matrix[y][x];
+				var prev = aim.prev;
+
+				if (prev && prev.type.value==5) {
+					game.matrix[y][x].box.frame = 1;
+					if (!game.invert) {
+						game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
+					} else {
+						game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
+					}
+				} else {
+					game.matrix[y][x].box.frame = 0;
+				}
+			});
+		}
+
 		function teleportBox (teletask) {
 			counter.teleports++;
 			var elem = teletask.elem;
@@ -699,10 +706,6 @@ Puzzle.Game.prototype.createStage = function () {
 				tween = game.add.tween(elem.box).to( { alpha:1, width:BSIZE, height:BSIZE }, 50, "Linear", true);
 				tween.onComplete.add(finishTeleport);
 			});
-
-			//!
-			// 	game.gameOverFlag = true;
-			// 	game.checkGameOver({onSpikes:onSpikes});
 		}
 	}
 };
@@ -711,7 +714,7 @@ Puzzle.Game.prototype.update = function() {};
 
 function step (key)
 {
-	if (game.moving || game.gameOverFlag) 
+	if (game.moving || game.gameOver || game.gameWin) 
 		return;
 	game.moving = true;
 	
@@ -740,9 +743,15 @@ function step (key)
 				game.matrix.right();
 		}
 
-	game.updateDoors();
-	game.moveRobots();
-	game.spinArrows();
+	var result = game.checkGameOver();
+	if (result.win) {
+		game.gameWin = true;
+		saveSolutionToFirebase();
+		Data.setCompletedLevels(Game.aimLVL+1);
+	}
+	if (result.fail) {
+		game.gameOver = true;
+	}
 	game.visualize();
 }
 
