@@ -202,7 +202,8 @@ Puzzle.Game.prototype.createStage = function () {
 	Tutorial.open(Game.aimLVL);
 	onGameResized();
 
-	game.matrix.move=function(x, y, side, toRemove, onSpikes) {
+	game.matrix.move=function(x, y, side, params) {
+		params = params || {};
 		var temp = game.matrix[y][x];
 		game.matrix.del(x, y);
 		switch (side) {
@@ -219,16 +220,16 @@ Puzzle.Game.prototype.createStage = function () {
 				++y;
 			break;
 		}
-		var prev = (game.matrix[y][x] && game.matrix[y][x].box) ? game.matrix[y][x] : false;
+		var prev = game.matrix[y][x];
 		game.matrix[y][x] = temp;
 		game.matrix[y][x].prev = prev;
 
-		if (game.matrix[y][x].box.teleported)
-			game.matrix[y][x].box.teleported = false;
+		if (game.matrix[y][x].teleported)
+			game.matrix[y][x].teleported = false;
 
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
-		setBoxPosition(game.matrix[y][x], {toRemove:toRemove, onSpikes:onSpikes});
+		setBoxPosition(game.matrix[y][x], params);
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -310,7 +311,7 @@ Puzzle.Game.prototype.createStage = function () {
 		var elem = {x:x, y:y};
 		var isBlocked = false;
 		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || !elem.box || elem.type==3 ||
+			if(!elem || elem.type==3 ||
 				(elem.type.value==4 && elem.box.frame==0) ||
 				(elem.type.value==5 && game.canGoOnDirection(elem.type.dir, side)) ||
 				 elem.type.value==6) {
@@ -323,7 +324,7 @@ Puzzle.Game.prototype.createStage = function () {
 			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.type.dir, side))
 				isBlocked = true;
 
-		if (game.matrix[y][x] && game.matrix[y][x].box && game.matrix[y][x].type==8)
+		if (game.matrix[y][x] && game.matrix[y][x].type==8)
 			isBlocked = isBlocked || this.isSokoBlocked(side, x, y);
 
 		return isBlocked;
@@ -367,7 +368,8 @@ Puzzle.Game.prototype.createStage = function () {
 			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
 				if (next && next.type==3) {
-					this.move(cur.x, cur.y, side, null, cur.box);
+					//!
+					this.move(cur.x, cur.y, side, {onSpikes:cur.box});
 				} else {
 					this.move(cur.x, cur.y, side);
 				}
@@ -376,7 +378,8 @@ Puzzle.Game.prototype.createStage = function () {
 					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.type.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
-						this.move(cur.x, cur.y, side, next.box);
+						//!
+						this.move(cur.x, cur.y, side, {toRemove:next.box});
 						deleted=true;
 					}
 				}
@@ -500,7 +503,8 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.updateDoors = function () {
 		game.doors.forEach(function(box){
-			box.box.frame=(box.box.frame+1)%2;
+			box.type.state = (box.type.state+1)%2;
+			box.box.frame=box.type.state;
 		});
 	}
 
@@ -518,10 +522,10 @@ Puzzle.Game.prototype.createStage = function () {
 
 	game.checkTeleport = function (x, y) {
 		if (game.matrix[y][x].prev && game.matrix[y][x].prev.type.value==6) {
-			if (!game.matrix[y][x].box.teleported) {	
+			if (!game.matrix[y][x].teleported) {	
 				var elem = this.findTeleport(x, y);
 				if (elem) {
-					game.matrix[y][x].box.teleported = true;
+					game.matrix[y][x].teleported = true;
 					var tempSecondTeleport = game.matrix[elem.y][elem.x];
 					game.matrix[elem.y][elem.x] = game.matrix[y][x];
 					game.matrix[y][x] = game.matrix[y][x].prev;
@@ -565,14 +569,6 @@ Puzzle.Game.prototype.createStage = function () {
 				elem.path = elem.path.substring(1);
 			}
 		});	
-	}
-
-	function isPathCycled(path) {
-		var total = {n1:0, n2:0, n3:0, n4:0};
-		for (var i = 0; i < path.length; i++) {
-			total["n"+path.charAt(i)]++;
-		}
-		return total.n1==total.n2 && total.n3==total.n4;
 	}
 
 	game.spinArrows = function () {
@@ -727,7 +723,7 @@ function setBoxPosition (elem, params) {
 				game.gameOverFlag = true;
 				game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
 			} else {
-				game.matrix[y][x].box.type = 1;
+				game.matrix[y][x].type = 1;
 				game.blueBoxes.splice(game.blueBoxes.indexOf(elem), 1);
 			}
 		} else {
