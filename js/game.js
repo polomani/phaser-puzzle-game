@@ -123,6 +123,11 @@ Puzzle.Game.prototype.createStage = function () {
 	});
 
 	game.matrix = [];
+	game.matrix.visual = {
+		toRemove:[],
+		onSpikes:[],
+		toTeleport:[]
+	};
 	game.blueBoxes = [];
 	game.doors = [];
 	game.ports = [];
@@ -202,8 +207,7 @@ Puzzle.Game.prototype.createStage = function () {
 	Tutorial.open(Game.aimLVL);
 	onGameResized();
 
-	game.matrix.move=function(x, y, side, params) {
-		params = params || {};
+	game.matrix.move=function(x, y, side) {
 		var temp = game.matrix[y][x];
 		game.matrix.del(x, y);
 		switch (side) {
@@ -229,7 +233,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 		game.matrix[y][x].y=y;
 		game.matrix[y][x].x=x;
-		setBoxPosition(game.matrix[y][x], params);
+		game.checkTeleport(x, y);
 	};
 
 	game.matrix.next = function (side, x, y, line) {
@@ -362,42 +366,44 @@ Puzzle.Game.prototype.createStage = function () {
 	game.matrix.moveAll=function(side){
 		game.solution += side;
 		game.blueBoxes.sort(game.matrix.sortFunction(side));
-		var deleted = false;
 		for (var i = 0; i < game.blueBoxes.length; ++i) {
 			var cur = game.blueBoxes[i];
 			var next = this.next(side, cur.x, cur.y);
 			if (!this.isBlocked(side, cur.x, cur.y)) {
 				if (next && next.type==3) {
-					//!
-					this.move(cur.x, cur.y, side, {onSpikes:cur.box});
-				} else {
-					this.move(cur.x, cur.y, side);
+					if (isBlueBox(cur.type)) {
+						this.visual.onSpikes.push(cur);
+					} else {
+						cur.type = 1;
+						game.blueBoxes[i] = "deleted";
+					}
 				}
+				this.move(cur.x, cur.y, side);
 			} else {
 				if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.type.dir, side))) {
 					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.type.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
 						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
 						game.matrix.del(next.x, next.y);
-						//!
-						this.move(cur.x, cur.y, side, {toRemove:next.box});
-						deleted=true;
+						this.visual.toRemove.push(next);
+						this.move(cur.x, cur.y, side);
 					}
 				}
 			}
 		}
-		while (deleted && game.blueBoxes.indexOf("deleted")!=-1)
+		while (game.blueBoxes.indexOf("deleted")!=-1)
 			game.blueBoxes.splice(game.blueBoxes.indexOf("deleted"), 1);
 
-		// for (var y = 0; y < arr.length; y++) {
-		// 	var s = "";
-		// 	for (var x = 0; x < arr[y].length; x++) {
-		// 		if (game.matrix[y][x]) 
-		// 			s+=game.matrix[y][x].type + ' ';
-		// 		else
-		// 			s+='  ';
-		// 	}
-		// 	console.log(s);
-		//}
+		//!
+		for (var y = 0; y < arr.length; y++) {
+			var s = "";
+			for (var x = 0; x < arr[y].length; x++) {
+				if (game.matrix[y][x]) 
+					s+= (game.matrix[y][x].type.value ? game.matrix[y][x].type.value : (game.matrix[y][x].type>=20) ? Math.round(game.matrix[y][x].type/10) : game.matrix[y][x].type) + ' ';
+				else
+					s+='  ';
+			}
+			console.log(s);
+		}
 	}
 
 	game.matrix.sortFunction = function (side) {
@@ -532,7 +538,7 @@ Puzzle.Game.prototype.createStage = function () {
 					game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
 					game.matrix[elem.y][elem.x].x = elem.x;
 					game.matrix[elem.y][elem.x].y = elem.y;
-					setBoxPosition (game.matrix[elem.y][elem.x], {port:true, portX:x, portY:y});
+					game.matrix.visual.toTeleport.push({from: {x:x, y:y}, elem:game.matrix[elem.y][elem.x]});
 				}
 			} 
 		}
@@ -599,6 +605,106 @@ Puzzle.Game.prototype.createStage = function () {
 			}
 		});
 	}
+
+	game.visualize = function () {
+		var counter = {
+			moving:0,
+			teleports:0,
+			spikes:0 
+		};
+
+		game.boxes.forEach (function(box) {
+			var ttask = getTeleportTask(box.matrix);
+			moveBox(box.matrix, ttask);
+		});
+
+		function finishTeleport() { finish("teleports"); };
+		function finishSpike() { finish("spikes"); };
+		function finishMoving() { finish("moving"); };
+
+		function finish (type) {
+			counter[type]--;
+			if (counter.moving==0) {
+				game.matrix.visual.toRemove.forEach (function(elem) {
+					game.boxes.remove(elem.box);
+				});
+				game.matrix.visual.onSpikes.forEach (function(elem) {
+					game.add.tween(elem.box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finishSpike);
+					counter.spikes++;
+				});
+				game.matrix.visual.toRemove = [];
+				game.matrix.visual.onSpikes = [];
+				game.matrix.visual.toTeleport = [];
+			}
+			if (counter.moving==0 && counter.spikes==0 && counter.teleports==0) {
+				game.moving = false;
+			}
+		}
+
+		function getTeleportTask (aim) {
+			var result;
+			game.matrix.visual.toTeleport.forEach (function (elem) {
+				if (aim == elem.elem) {
+					result = elem;
+				}
+			});
+			return result;
+		}
+
+		function getNewCoords(x, y) {
+			var xx, yy;
+			if (!game.invert) {
+				xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+				yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
+			} else {
+				xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - y*BSIZE - BSIZE/2;
+				yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
+			}
+			return {x:xx, y:yy};
+		}
+
+		function moveBox (elem, teletask) {
+			var x = elem.x;
+			var y = elem.y;
+
+			if (teletask) {
+				x = teletask.from.x;
+				y = teletask.from.y;
+			}
+
+			var coords = getNewCoords (x, y);
+			var xx=coords.x, yy=coords.y;
+			
+			counter.moving++;
+			var tween = game.add.tween(elem.box).to( { x: xx, y: yy }, 100, "Linear", true);
+			tween.onComplete.add(function () {
+				if (teletask) teleportBox (teletask);
+				finishMoving ();
+			});
+		}
+
+		function teleportBox (teletask) {
+			counter.teleports++;
+			var elem = teletask.elem;
+			var x = elem.x;
+			var y = elem.y;
+			
+			var coords = getNewCoords (x, y);
+			var xx=coords.x, yy=coords.y;
+			
+			var tween = game.add.tween(elem.box).to( { alpha:0.3, width:0, height:0 }, 50, "Linear", true);
+			tween.onComplete.add(function() {
+				elem.box.x = xx;
+				elem.box.y = yy;
+				tween = game.add.tween(elem.box).to( { alpha:1, width:BSIZE, height:BSIZE }, 50, "Linear", true);
+				tween.onComplete.add(finishTeleport);
+			});
+
+			//!
+			// 	game.gameOverFlag = true;
+			// 	game.checkGameOver({onSpikes:onSpikes});
+		}
+	}
 };
 
 Puzzle.Game.prototype.update = function() {};
@@ -607,7 +713,8 @@ function step (key)
 {
 	if (game.moving || game.gameOverFlag) 
 		return;
-	game.updateDoors();
+	game.moving = true;
+	
 	if (key == game.keyUP) {
 			if (game.invert)
 				game.matrix.left();
@@ -632,8 +739,11 @@ function step (key)
 			else
 				game.matrix.right();
 		}
+
+	game.updateDoors();
 	game.moveRobots();
 	game.spinArrows();
+	game.visualize();
 }
 
 Puzzle.Game.prototype.render = function() {
@@ -691,51 +801,6 @@ function getDirFromAngle(angle) {
 		case -90:
 			return Phaser.UP;
 	}
-}
-
-function setBoxPosition (elem, params) {
-	var toRemove = params.toRemove;
-	var onSpikes = params.onSpikes;
-	var x = elem.x;
-	var y = elem.y;
-	var xx,yy;
-	if (!game.invert) {
-		xx = Math.floor ((game.width - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
-		yy = Math.floor ((game.height - game.levelHeight*BSIZE)/2) + y*BSIZE + BSIZE/2;	
-	} else {
-		xx =  game.width - Math.floor ((game.width - game.levelHeight*BSIZE)/2) - y*BSIZE - BSIZE/2;
-		yy =  Math.floor ((game.height - game.levelWidth*BSIZE)/2) + x*BSIZE + BSIZE/2;
-	}
-	if (params.port) {
-		tween = game.add.tween(game.matrix[y][x].box).to( { alpha:0.3, width:0, height:0 }, 50, "Linear", true);
-		tween.onComplete.add(function() {
-			game.matrix[y][x].box.x = xx;
-			game.matrix[y][x].box.y = yy;
-			tween = game.add.tween(game.matrix[y][x].box).to( { alpha:1, width:BSIZE, height:BSIZE }, 50, "Linear", true);
-		});
-	} else {
-		tween = game.add.tween(game.matrix[y][x].box).to( { x: xx, y: yy }, 100, "Linear", true);
-	}
-	tween.onComplete.add(function() {
-		game.boxes.remove(toRemove);
-		if (onSpikes) {
-			if (isBlueBox(game.matrix[y][x].type)) {
-				game.gameOverFlag = true;
-				game.add.tween(game.matrix[y][x].box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finish);
-			} else {
-				game.matrix[y][x].type = 1;
-				game.blueBoxes.splice(game.blueBoxes.indexOf(elem), 1);
-			}
-		} else {
-			finish();
-		}
-		function finish () {
-			game.moving = false;
-			game.checkTeleport(x, y); 
-			game.checkGameOver({onSpikes:onSpikes});
-		}
-	});
-	game.moving = true;
 }
 
 function saveSolutionToFirebase() {
