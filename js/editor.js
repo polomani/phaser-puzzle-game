@@ -122,10 +122,6 @@ function mouseMove (pointer, x, y) {
 	}
 }
 
-function isBlueBox (id) {
-	return (typeof id === 'number') && (id==2 || Math.floor(id/10)==2);
-}
-
 function getBlueBoxColor (id) {
 	if (id==2) return 0;
 	return id % 20;
@@ -177,7 +173,7 @@ function changeCursor (key) {
 			};
 			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==5)
 				o.cursor.angle = prevcur.angle + 90;
-			o.cursor.btype.dir = o_getDirFromAngle(o.cursor.angle);
+			o.cursor.btype.dir = getDirFromAngle(o.cursor.angle);
 			break;
 		case o.SIX:
 			o.cursor = o.boxes.create (x, y, 'box_port');
@@ -222,7 +218,7 @@ function changeCursor (key) {
 				}
 			}
 			o.cursor.frame = (o.cursor.btype.spin=="cw") ? 1 : 2;
-			o.cursor.btype.dir = o_getDirFromAngle(o.cursor.angle);
+			o.cursor.btype.dir = getDirFromAngle(o.cursor.angle);
 			break;
 		case o.ZERO:
 			break;
@@ -631,36 +627,6 @@ o_updateNet = function () {
 		o.net.ctx.lineTo(j*o.BSIZE, o.world.height);
 	}
 	o.net.ctx.stroke();
-}
-
-function o_getDirFromAngle(angle) {
-	switch (angle) {
-		case 0:
-			return Phaser.RIGHT;
-		case 90:
-			return Phaser.DOWN;
-		case -180:
-			return Phaser.LEFT;
-		case -90:
-			return Phaser.UP;
-		default :
-			return Phaser.RIGHT;
-	}
-}
-
-function o_getAngleFromDir(dir) {
-	switch (dir) {
-		case Phaser.RIGHT:
-			return 0;
-		case Phaser.DOWN:
-			return 90;
-		case Phaser.LEFT:
-			return  -180;
-		case Phaser.UP:
-			return -90;
-		default :
-			return 0;
-	}
 }
 
 function createPathForBox(box) {

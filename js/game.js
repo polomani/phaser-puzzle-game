@@ -122,26 +122,26 @@ Puzzle.Game.prototype.createStage = function () {
 		this.game.state.start('Editor');
 	});
 
-	game.matrix = [];
-	game.matrix.visual = {
+	var matrix = game.matrix = [];
+	matrix.visual = {
 		toRemove:[],
 		onSpikes:[],
 		toTeleport:[]
 	};
-	game.blueBoxes = [];
-	game.doors = [];
-	game.ports = [];
-	game.robots = [];
-	game.arrows = [];
-	game.gaps = [];
+	matrix.blueBoxes = [];
+	matrix.doors = [];
+	matrix.ports = [];
+	matrix.robots = [];
+	matrix.arrows = [];
+	matrix.gaps = [];
 	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
-		game.matrix[y]=[];
+		matrix[y]=[];
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
 				if(arr[y][x]==0 && !arr[y][x]) {
-					game.matrix[y][x] = undefined;
+					matrix[y][x] = undefined;
 					continue;
 				}
 				var box;
@@ -173,25 +173,25 @@ Puzzle.Game.prototype.createStage = function () {
 				}
 				if (arr[y][x]==0 || arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
 				box.anchor.setTo(0.5, 0.5);
-				game.matrix[y][x] = {
+				matrix[y][x] = {
 					x:x,
 					y:y,
 					type:arr[y][x],
 					box:box
 				};
-				box.matrix = game.matrix[y][x];
+				box.matrix = matrix[y][x];
 				if (is (box,"box_blue") || is (box,"box_sokoban")) 
-					game.blueBoxes.push (game.matrix[y][x]);
+					matrix.blueBoxes.push (matrix[y][x]);
 				else if (is (box,"box_door"))
-					game.doors.push (game.matrix[y][x]);
+					matrix.doors.push (matrix[y][x]);
 				else if (is (box,"box_port"))
-					game.ports.push (game.matrix[y][x]);
+					matrix.ports.push (matrix[y][x]);
 				else if (is (box,"box_red"))
-					game.robots.push (game.matrix[y][x]);
+					matrix.robots.push (matrix[y][x]);
 				else if (is (box,"box_arr"))
-					game.arrows.push (game.matrix[y][x]);
+					matrix.arrows.push (matrix[y][x]);
 				else if (is (box,"box_gap"))
-					game.gaps.push (game.matrix[y][x]);
+					matrix.gaps.push (matrix[y][x]);
 
 				function is (box, key) {
 					if (box.key.lastIndexOf(key)!=-1) {
@@ -207,385 +207,8 @@ Puzzle.Game.prototype.createStage = function () {
 	Tutorial.open(Game.aimLVL);
 	onGameResized();
 
-	game.matrix.move=function(x, y, side) {
-		var temp = game.matrix[y][x];
-		game.matrix.del(x, y);
-		switch (side) {
-			case Phaser.LEFT:
-				--x;
-			break;
-			case Phaser.RIGHT:
-				++x;
-			break;
-			case Phaser.UP:
-				--y;
-			break;
-			case Phaser.DOWN:
-				++y;
-			break;
-		}
-		var prev = game.matrix[y][x];
-		game.matrix[y][x] = temp;
-		game.matrix[y][x].prev = prev;
-
-		if (game.matrix[y][x].teleported)
-			game.matrix[y][x].teleported = false;
-
-		game.matrix[y][x].y=y;
-		game.matrix[y][x].x=x;
-		game.checkTeleport(x, y);
-	};
-
-	game.matrix.next = function (side, x, y, line) {
-		if (x == undefined) {
-			switch (side) {
-				case Phaser.LEFT:
-					x = game.matrix[0].length-1;
-					y = 0;
-				break;
-				case Phaser.RIGHT:
-					x = 0;
-					y = 0;
-				break;
-				case Phaser.UP:
-					x = 0;
-					y = game.matrix.length-1;
-				break;
-				case Phaser.DOWN:
-					x = 0;
-					y = 0;
-				break;
-			}
-		}
-		switch (side) {
-			case Phaser.LEFT:
-				--x;
-				if (x < 0) {
-					if (line) {
-						return false;
-					}
-					++y;
-					x = game.matrix[0].length-1;
-				}
-				if (y >= game.matrix.length)
-					return false;
-			break;
-			case Phaser.RIGHT:
-				++x;
-				if (x >= game.matrix[0].length) {
-					if (line) {
-						return false;
-					}
-					++y;
-					x = 0;
-				}
-				if (y >= game.matrix.length)
-					return false;
-			break;
-			case Phaser.UP:
-				--y;
-				if (y < 0) {
-					if (line) {
-						return false;
-					}
-					++x;
-					y = game.matrix.length-1;
-				}
-				if (x >= game.matrix[0].length)
-					return false;
-			break;
-			case Phaser.DOWN:
-				++y;
-				if (y >= game.matrix.length) {
-					if (line) {
-						return false;
-					}
-					++x;
-					y = 0;
-				}
-				if (x >= game.matrix[0].length)
-					return false;
-			break;
-		}
-		
-		return game.matrix[y][x];
-	};
-
-	game.matrix.isBlocked = function (side, x, y) {
-		var elem = {x:x, y:y};
-		var isBlocked = false;
-		while ((elem = this.next(side, elem.x, elem.y, true))) {
-			if(!elem || elem.type==3 ||
-				(elem.type.value==4 && elem.box.frame==0) ||
-				(elem.type.value==5 && game.canGoOnDirection(elem.type.dir, side)) ||
-				 elem.type.value==6) {
-				break;
-			}
-			isBlocked = true;
-			break;
-		}
-		if (game.matrix[y][x] && game.matrix[y][x].prev && game.matrix[y][x].prev.type)
-			if (game.matrix[y][x].prev.type.value==5 && !game.canGoFromDirection(game.matrix[y][x].prev.type.dir, side))
-				isBlocked = true;
-
-		if (game.matrix[y][x] && game.matrix[y][x].type==8)
-			isBlocked = isBlocked || this.isSokoBlocked(side, x, y);
-
-		return isBlocked;
-	}
-
-	game.matrix.isSokoBlocked = function (side, x, y) {
-		var elem = {x:x, y:y};
-		while ((elem = this.next(opp(side), elem.x, elem.y, true))) {
-			if(elem && elem.box) {
-				if (isBlueBox(elem.type) || elem.type==8) {
-					var blue = game.matrix[elem.y][elem.x];
-					if (blue.prev && blue.prev.type && blue.prev.type.value==5) {
-						if (!game.canGoFromDirection(blue.prev.type.dir, side))
-							return true;
-					}
-					if (elem.type==8) {
-						continue;
-					} else {
-						return false;
-					}
-				}		
-			}
-			break;
-		}
-		return true;
-	}
-
-	function isSameBlueBox(b1, b2) {
-		if (isBlueBox(b1) && isBlueBox(b2)) {
-			return b1==b2;
-		}
-		return false;
-	}
-
-	game.matrix.moveAll=function(side){
-		game.solution += side;
-		game.blueBoxes.sort(game.matrix.sortFunction(side));
-		for (var i = 0; i < game.blueBoxes.length; ++i) {
-			var cur = game.blueBoxes[i];
-			var next = this.next(side, cur.x, cur.y);
-			if (!this.isBlocked(side, cur.x, cur.y)) {
-				if (next && next.type==3) {
-					if (isBlueBox(cur.type)) {
-						this.visual.onSpikes.push(cur);
-					} else {
-						cur.type = 1;
-						game.blueBoxes[i] = "deleted";
-					}
-				}
-				this.move(cur.x, cur.y, side);
-			} else {
-				if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !game.canGoOnDirection(next.prev.type.dir, side))) {
-					if (((!cur.prev || cur.prev.type.value!=5) || game.canGoFromDirection(cur.prev.type.dir, side)) && this.isBlocked(side, next.x, next.y)) {				
-						game.blueBoxes[game.blueBoxes.indexOf(next)]="deleted";
-						game.matrix.del(next.x, next.y);
-						this.visual.toRemove.push(next);
-						this.move(cur.x, cur.y, side);
-					}
-				}
-			}
-		}
-		while (game.blueBoxes.indexOf("deleted")!=-1)
-			game.blueBoxes.splice(game.blueBoxes.indexOf("deleted"), 1);
-
-		game.updateDoors();
-		game.moveRobots();
-		game.spinArrows();
-
-		// for (var y = 0; y < arr.length; y++) {
-		// 	var s = "";
-		// 	for (var x = 0; x < arr[y].length; x++) {
-		// 		if (game.matrix[y][x]) 
-		// 			s+= (game.matrix[y][x].type.value ? game.matrix[y][x].type.value : (game.matrix[y][x].type>=20) ? Math.round(game.matrix[y][x].type/10) : game.matrix[y][x].type) + ' ';
-		// 		else
-		// 			s+='  ';
-		// 	}
-		// 	console.log(s);
-		// }
-	}
-
-	game.matrix.sortFunction = function (side) {
-		switch (side) {
-			case Phaser.LEFT:
-				return game.matrix.sortFunctionLeft;
-			case Phaser.RIGHT:
-				return game.matrix.sortFunctionRight;
-			case Phaser.UP:
-				return game.matrix.sortFunctionUp;
-			case Phaser.DOWN:
-				return game.matrix.sortFunctionDown;
-		}
-	}
-	game.matrix.sortFunctionUp=function(a, b) {
-		var c = a.x-b.x;
-		if (c==0)
-			c =  a.y-b.y;
-		return c;
-	}
-	game.matrix.sortFunctionDown=function(a, b) {
-		var c = a.x-b.x;
-		if (c==0)
-			c = b.y-a.y;
-		return c;
-	}
-	game.matrix.sortFunctionLeft=function(a, b) {
-		var c = a.y-b.y;
-		if (c==0)
-			c = a.x-b.x;
-		return c;
-	}
-	game.matrix.sortFunctionRight=function(a, b) {
-		var c = a.y-b.y;
-		if (c==0)
-			c = b.x-a.x;
-		return c;
-	}
-
-	game.matrix.del=function(x, y){
-		if (game.matrix[y][x].prev) {
-			game.matrix[y][x] = game.matrix[y][x].prev;
-		} else {
-			game.matrix[y][x] = undefined;
-		}
-	};
-
-	game.matrix.left=function(){
-		this.moveAll(Phaser.LEFT);
-	};
-
-	game.matrix.right=function(){
-		this.moveAll(Phaser.RIGHT);
-	};
-
-	game.matrix.up=function(){
-		this.moveAll(Phaser.UP);
-	};
-
-	game.matrix.down=function(){
-		this.moveAll(Phaser.DOWN);
-	};
-
-	game.isAnyBoxOnGap = function () {
-		var res = false;
-		game.blueBoxes.forEach (function(box1) {
-			if (isBlueBox(box1.type)) {
-				game.gaps.forEach (function(box2) {
-					if(box1.x==box2.x && box1.y==box2.y) {
-						res=true;
-					}
-				});
-			}
-		});
-		return res;
-	}
-
-	game.checkGameOver = function () {
-		var fail = game.isAnyBoxOnGap();
-		var win = !fail && game.countBlueBoxes()==1;
-		return {win:win, fail:fail};
-	}
-
-	game.countBlueBoxes = function() {
-		var q1 = 0;
-		var q2 = 0;
-		var q3 = 0;
-		game.blueBoxes.forEach (function(box) {
-			if (isBlueBox(box.type)) {
-				if (box.type==2 || box.type==20) q1++;
-				if (box.type==21) q2++;
-				if (box.type==22) q3++;
-			}
-		});
-		return Math.max(q1, Math.max(q2, q3));
-	}
-
-	game.updateDoors = function () {
-		game.doors.forEach(function(box){
-			box.type.state = (box.type.state+1)%2;
-			box.box.frame=box.type.state;
-		});
-	}
-
-	game.canGoFromDirection = function (dirArr, dir) {
-		if (dirArr==dir)
-			return true;
-		return false;
-	}
-
-	game.canGoOnDirection = function (dirArr, dir) {
-		if (opp(dirArr)==dir)
-			return false;
-		return true;
-	}
-
-	game.checkTeleport = function (x, y) {
-		if (game.matrix[y][x].prev && game.matrix[y][x].prev.type.value==6) {
-			if (!game.matrix[y][x].teleported) {	
-				var elem = this.findTeleport(x, y);
-				if (elem) {
-					game.matrix[y][x].teleported = true;
-					var tempSecondTeleport = game.matrix[elem.y][elem.x];
-					game.matrix[elem.y][elem.x] = game.matrix[y][x];
-					game.matrix[y][x] = game.matrix[y][x].prev;
-					game.matrix[elem.y][elem.x].prev = tempSecondTeleport;
-					game.matrix[elem.y][elem.x].x = elem.x;
-					game.matrix[elem.y][elem.x].y = elem.y;
-					game.matrix.visual.toTeleport.push({from: {x:x, y:y}, elem:game.matrix[elem.y][elem.x]});
-				}
-			} 
-		}
-	}
-
-	game.findTeleport = function (x, y) {
-		var box = game.matrix[y][x].prev;
-		var res;
-		game.ports.forEach (function(elem){
-			if (box.type.id==elem.type.id && box!=elem)
-				if(game.matrix[elem.y][elem.x]==elem)
-					res =  elem;
-		});
-		return res;
-	}
-
-	game.moveRobots = function () {
-		game.robots.forEach (function(elem){
-			if (!elem.startX) {
-				elem.startX = elem.x;
-				elem.startY = elem.y;
-				elem.path = elem.type.path;
-			} else {
-				elem.cycle = elem.startX==elem.x && elem.startY==elem.y;
-			}
-
-			if (!elem.path && elem.cycle) {				
-				elem.path = elem.type.path;
-			}
-
-			var side = parseInt(elem.path.charAt(0));
-			if (!game.matrix.isBlocked(side, elem.x, elem.y)) {
-				game.matrix.move(elem.x, elem.y, side);
-				elem.path = elem.path.substring(1);
-			}
-		});	
-	}
-
-	game.spinArrows = function () {
-		game.arrows.forEach (function(elem){
-			if (elem.type.spin=="cw") {
-				elem.type.dir = getDirCW (elem.type.dir);
-			} else if (elem.type.spin=="ccw") {
-				elem.type.dir = getDirCCW (elem.type.dir);
-			}
-			elem.box.angle = o_getAngleFromDir(elem.type.dir);	
-		});	
-	}
-
-	game.visualize = function () {
+	game.visualize = function() {
+		var matrix = game.matrix;
 		var counter = {
 			moving:0,
 			teleports:0,
@@ -606,16 +229,16 @@ Puzzle.Game.prototype.createStage = function () {
 		function finish (type) {
 			counter[type]--;
 			if (counter.moving==0) {
-				game.matrix.visual.toRemove.forEach (function(elem) {
+				matrix.visual.toRemove.forEach (function(elem) {
 					game.boxes.remove(elem.box);
 				});
-				game.matrix.visual.onSpikes.forEach (function(elem) {
+				matrix.visual.onSpikes.forEach (function(elem) {
 					game.add.tween(elem.box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finishSpike);
 					counter.spikes++;
 				});
-				game.matrix.visual.toRemove = [];
-				game.matrix.visual.onSpikes = [];
-				game.matrix.visual.toTeleport = [];
+				matrix.visual.toRemove = [];
+				matrix.visual.onSpikes = [];
+				matrix.visual.toTeleport = [];
 			}
 			if (counter.moving==0 && counter.spikes==0 && counter.teleports==0) {
 				game.moving = false;
@@ -630,7 +253,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 		function getTeleportTask (aim) {
 			var result;
-			game.matrix.visual.toTeleport.forEach (function (elem) {
+			matrix.visual.toTeleport.forEach (function (elem) {
 				if (aim == elem.elem) {
 					result = elem;
 				}
@@ -671,21 +294,21 @@ Puzzle.Game.prototype.createStage = function () {
 		}
 
 		function spinBoxArrows() {
-			game.blueBoxes.forEach(function(elem) {
+			matrix.blueBoxes.forEach(function(elem) {
 				var x = elem.x;
 				var y = elem.y;
-				var aim = game.matrix[y][x];
+				var aim = matrix[y][x];
 				var prev = aim.prev;
 
 				if (prev && prev.type.value==5) {
-					game.matrix[y][x].box.frame = 1;
+					matrix[y][x].box.frame = 1;
 					if (!game.invert) {
-						game.matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
+						matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
 					} else {
-						game.matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
+						matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
 					}
 				} else {
-					game.matrix[y][x].box.frame = 0;
+					matrix[y][x].box.frame = 0;
 				}
 			});
 		}
@@ -714,36 +337,37 @@ Puzzle.Game.prototype.update = function() {};
 
 function step (key)
 {
+	var matrix = game.matrix;
 	if (game.moving || game.gameOver || game.gameWin) 
 		return;
 	game.moving = true;
 	
 	if (key == game.keyUP) {
 			if (game.invert)
-				game.matrix.left();
+				matrixLeft(matrix);
 			else
-				game.matrix.up();
+				matrixUp(matrix);
 		}
 		if (key == game.keyDOWN) {
 			if (game.invert)
-				game.matrix.right();
+				matrixRight(matrix);
 			else
-				game.matrix.down();
+				matrixDown(matrix);
 		}
 		if (key == game.keyLEFT) {
 			if (game.invert)
-				game.matrix.down();
+				matrixDown(matrix);
 			else
-				game.matrix.left();
+				matrixLeft(matrix);
 		}
 		if (key == game.keyRIGHT) {
 			if (game.invert)
-				game.matrix.up();
+				matrixUp(matrix);
 			else
-				game.matrix.right();
+				matrixRight(matrix);
 		}
 
-	var result = game.checkGameOver();
+	var result = checkGameOver();
 	if (result.win) {
 		game.gameWin = true;
 		saveSolutionToFirebase();
@@ -760,72 +384,11 @@ Puzzle.Game.prototype.render = function() {
 	//this.game.debug.text(this.time.fps, 2, 14, "#00ff00");
 };
 
-function opp(side) {
-	switch (side) {
-		case Phaser.LEFT:
-			return Phaser.RIGHT;
-		case Phaser.RIGHT:
-			return Phaser.LEFT;
-		case Phaser.UP:
-			return Phaser.DOWN;
-		case Phaser.DOWN:
-			return Phaser.UP;
-	}
-}
 
-function getDirCW (dir) {
-	switch (dir) {
-		case Phaser.UP:
-			return Phaser.RIGHT;
-		case Phaser.RIGHT:
-			return Phaser.DOWN;
-		case Phaser.DOWN:
-			return Phaser.LEFT;
-		case Phaser.LEFT:
-			return Phaser.UP;
-	}
-}
-
-function getDirCCW (dir) {
-	switch (dir) {
-		case Phaser.DOWN:
-			return Phaser.RIGHT;
-		case Phaser.RIGHT:
-			return Phaser.UP;
-		case Phaser.UP:
-			return Phaser.LEFT;
-		case Phaser.LEFT:
-			return Phaser.DOWN;
-	}
-}
-
-function getDirFromAngle(angle) {
-	switch (angle) {
-		case 0:
-			return Phaser.RIGHT;
-		case 90:
-			return Phaser.DOWN;
-		case -180:
-			return Phaser.LEFT;
-		case -90:
-			return Phaser.UP;
-	}
-}
-
-function saveSolutionToFirebase() {
-	return;
-	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
-	var data = {};
-	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
-	game.solution = game.solution.replace (new RegExp(Phaser.DOWN, 'g'), "d-");
-	game.solution = game.solution.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
-	game.solution = game.solution.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
-	data[game.solution] = new Date().toUTCString().slice(5, 25) + " =" + game.solution.length/2;
-	firebase.update(data);
-}
 
 Puzzle.Game.rotateArrows = function() {
-	game.arrows.forEach(function(elem){
+	var matrix = game.matrix;
+	matrix.arrows.forEach(function(elem){
 		if (!game.invert) {
 			elem.box.angle = o_getAngleFromDir(elem.type.dir);
 		} else {
@@ -834,17 +397,301 @@ Puzzle.Game.rotateArrows = function() {
 	});
 };
 
-Puzzle.Game.getInvertedAngleFromDir = function (dir) {
-	switch (dir) {
-		case Phaser.RIGHT:
-			return o_getAngleFromDir(Phaser.DOWN);
-		case Phaser.DOWN:
-			return o_getAngleFromDir(Phaser.LEFT);
+function matrixMove(matrix, x, y, side) {
+	var temp = matrix[y][x];
+	matrixDel(matrix, x, y);
+	switch (side) {
 		case Phaser.LEFT:
-			return  o_getAngleFromDir(Phaser.UP);
+			--x;
+		break;
+		case Phaser.RIGHT:
+			++x;
+		break;
 		case Phaser.UP:
-			return o_getAngleFromDir(Phaser.RIGHT);
-		default :
-			return 0;
+			--y;
+		break;
+		case Phaser.DOWN:
+			++y;
+		break;
 	}
+	var prev = matrix[y][x];
+	matrix[y][x] = temp;
+	matrix[y][x].prev = prev;
+
+	if (matrix[y][x].teleported)
+		matrix[y][x].teleported = false;
+
+	matrix[y][x].y=y;
+	matrix[y][x].x=x;
+	checkTeleport(matrix, x, y);
 };
+
+function matrixNext (matrix, side, x, y, line) {
+	if (x == undefined) {
+		switch (side) {
+			case Phaser.LEFT:
+				x = matrix[0].length-1;
+				y = 0;
+			break;
+			case Phaser.RIGHT:
+				x = 0;
+				y = 0;
+			break;
+			case Phaser.UP:
+				x = 0;
+				y = matrix.length-1;
+			break;
+			case Phaser.DOWN:
+				x = 0;
+				y = 0;
+			break;
+		}
+	}
+	switch (side) {
+		case Phaser.LEFT:
+			--x;
+			if (x < 0) {
+				if (line) {
+					return false;
+				}
+				++y;
+				x = matrix[0].length-1;
+			}
+			if (y >= matrix.length)
+				return false;
+		break;
+		case Phaser.RIGHT:
+			++x;
+			if (x >= matrix[0].length) {
+				if (line) {
+					return false;
+				}
+				++y;
+				x = 0;
+			}
+			if (y >= matrix.length)
+				return false;
+		break;
+		case Phaser.UP:
+			--y;
+			if (y < 0) {
+				if (line) {
+					return false;
+				}
+				++x;
+				y = matrix.length-1;
+			}
+			if (x >= matrix[0].length)
+				return false;
+		break;
+		case Phaser.DOWN:
+			++y;
+			if (y >= matrix.length) {
+				if (line) {
+					return false;
+				}
+				++x;
+				y = 0;
+			}
+			if (x >= matrix[0].length)
+				return false;
+		break;
+	}
+	
+	return matrix[y][x];
+};
+
+function matrixIsBlocked (matrix, side, x, y) {
+	var elem = {x:x, y:y};
+	var isBlocked = false
+	while ((elem = matrixNext(matrix, side, elem.x, elem.y, true))) {
+		if(!elem || elem.type==3 ||
+			(elem.type.value==4 && elem.box.frame==0) ||
+			(elem.type.value==5 && canGoOnDirection(elem.type.dir, side)) ||
+			 elem.type.value==6) {
+			break;
+		}
+		isBlocked = true;
+		break;
+	}
+	if (matrix[y][x] && matrix[y][x].prev && matrix[y][x].prev.type)
+		if (matrix[y][x].prev.type.value==5 && !canGoFromDirection(matrix[y][x].prev.type.dir, side))
+			isBlocked = true;
+
+	if (matrix[y][x] && matrix[y][x].type==8)
+		isBlocked = isBlocked || matrixIsSokoBlocked(matrix, side, x, y);
+
+	return isBlocked;
+}
+
+function matrixIsSokoBlocked(matrix, side, x, y) {
+	var elem = {x:x, y:y}
+	while ((elem = matrixNext(matrix, opp(side), elem.x, elem.y, true))) {
+		if(elem && elem.box) {
+			if (isBlueBox(elem.type) || elem.type==8) {
+				var blue = matrix[elem.y][elem.x];
+				if (blue.prev && blue.prev.type && blue.prev.type.value==5) {
+					if (!canGoFromDirection(blue.prev.type.dir, side))
+						return true;
+				}
+				if (elem.type==8) {
+					continue;
+				} else {
+					return false;
+				}
+			}		
+		}
+		break;
+	}
+	return true;
+}
+
+function matrixMoveAll(matrix, side){
+	game.solution += side;
+	matrix.blueBoxes.sort(matrixSortFunction(side));
+	for (var i = 0; i < matrix.blueBoxes.length; ++i) {
+		var cur = matrix.blueBoxes[i];
+		var next = matrixNext(matrix, side, cur.x, cur.y);
+		if (!matrixIsBlocked(matrix, side, cur.x, cur.y)) {
+			if (next && next.type==3) {
+				if (isBlueBox(cur.type)) {
+					matrix.visual.onSpikes.push(cur);
+				} else {
+					cur.type = 1;
+					matrix.blueBoxes[i] = "deleted";
+				}
+			}
+			matrixMove(matrix, cur.x, cur.y, side);
+		} else {
+			if (next && isSameBlueBox(next.type, cur.type) && !(next.prev && next.prev.type.value==5 && !canGoOnDirection(next.prev.type.dir, side))) {
+				if (((!cur.prev || cur.prev.type.value!=5) || canGoFromDirection(cur.prev.type.dir, side)) && matrixIsBlocked(matrix, side, next.x, next.y)) {				
+					matrix.blueBoxes[matrix.blueBoxes.indexOf(next)]="deleted";
+					matrixDel(matrix, next.x, next.y);
+					matrix.visual.toRemove.push(next);
+					matrixMove(matrix, cur.x, cur.y, side);
+				}
+			}
+		}
+	}
+	while (matrix.blueBoxes.indexOf("deleted")!=-1)
+		matrix.blueBoxes.splice(matrix.blueBoxes.indexOf("deleted"), 1);
+
+	updateDoors(matrix);
+	moveRobots(matrix);
+	spinArrows(matrix);
+
+	// for (var y = 0; y < arr.length; y++) {
+	// 	var s = "";
+	// 	for (var x = 0; x < arr[y].length; x++) {
+	// 		if (matrix[y][x]) 
+	// 			s+= (matrix[y][x].type.value ? matrix[y][x].type.value : (matrix[y][x].type>=20) ? Math.round(matrix[y][x].type/10) : matrix[y][x].type) + ' ';
+	// 		else
+	// 			s+='  ';
+	// 	}
+	// 	console.log(s);
+	// }
+}
+
+function isAnyBoxOnGap (matrix) {
+	var res = false;
+	matrix.blueBoxes.forEach (function(box1) {
+		if (isBlueBox(box1.type)) {
+			matrix.gaps.forEach (function(box2) {
+				if(box1.x==box2.x && box1.y==box2.y) {
+					res=true;
+				}
+			});
+		}
+	});
+	return res;
+}
+
+function checkGameOver () {
+	var fail = isAnyBoxOnGap(game.matrix);
+	var win = !fail && countBlueBoxes(game.matrix)==1;
+	return {win:win, fail:fail};
+}
+
+function countBlueBoxes(matrix)  {
+	var q1 = 0;
+	var q2 = 0;
+	var q3 = 0;
+	matrix.blueBoxes.forEach (function(box) {
+		if (isBlueBox(box.type)) {
+			if (box.type==2 || box.type==20) q1++;
+			if (box.type==21) q2++;
+			if (box.type==22) q3++;
+		}
+	});
+	return Math.max(q1, Math.max(q2, q3));
+}
+
+function updateDoors(matrix) {
+	matrix.doors.forEach(function(box){
+		box.type.state = (box.type.state+1)%2;
+		box.box.frame=box.type.state;
+	});
+}
+
+function checkTeleport(matrix, x, y) {
+	if (matrix[y][x].prev && matrix[y][x].prev.type.value==6) {
+		if (!matrix[y][x].teleported) {	
+			var elem = findTeleport(matrix, x, y);
+			if (elem) {
+				matrix[y][x].teleported = true;
+				var tempSecondTeleport = matrix[elem.y][elem.x];
+				matrix[elem.y][elem.x] = matrix[y][x];
+				matrix[y][x] = matrix[y][x].prev;
+				matrix[elem.y][elem.x].prev = tempSecondTeleport;
+				matrix[elem.y][elem.x].x = elem.x;
+				matrix[elem.y][elem.x].y = elem.y;
+				matrix.visual.toTeleport.push({from: {x:x, y:y}, elem:matrix[elem.y][elem.x]});
+			}
+		} 
+	}
+}
+
+function findTeleport(matrix, x, y) {
+	var box = matrix[y][x].prev;
+	var res;
+	matrix.ports.forEach (function(elem){
+		if (box.type.id==elem.type.id && box!=elem)
+			if(matrix[elem.y][elem.x]==elem)
+				res =  elem;
+	});
+	return res;
+}
+
+function moveRobots(matrix) {
+	matrix.robots.forEach (function(elem){
+		if (!elem.startX) {
+			elem.startX = elem.x;
+			elem.startY = elem.y;
+			elem.path = elem.type.path;
+		} else {
+			elem.cycle = elem.startX==elem.x && elem.startY==elem.y;
+		}
+
+		if (!elem.path && elem.cycle) {				
+			elem.path = elem.type.path;
+		}
+
+		var side = parseInt(elem.path.charAt(0));
+		if (!matrixIsBlocked(matrix, side, elem.x, elem.y)) {
+			matrixMove(matrix, elem.x, elem.y, side);
+			elem.path = elem.path.substring(1);
+		}
+	});	
+}
+
+function spinArrows(matrix) {
+	matrix.arrows.forEach (function(elem){
+		if (elem.type.spin=="cw") {
+			elem.type.dir = getDirCW (elem.type.dir);
+		} else if (elem.type.spin=="ccw") {
+			elem.type.dir = getDirCCW (elem.type.dir);
+		}
+		elem.box.angle = o_getAngleFromDir(elem.type.dir);	
+	});	
+}
+
