@@ -1,3 +1,17 @@
+function matrixToString (matrix) {
+	var s = "";
+	for (var y = 0; y < matrix.length; y++) {
+		for (var x = 0; x < matrix[y].length; x++) {
+			if (matrix[y][x]) 
+				s+= (matrix[y][x].type.value ? matrix[y][x].type.value : (matrix[y][x].type>=20) ? Math.round(matrix[y][x].type/10) : matrix[y][x].type) + ' ';
+			else
+				s+='  ';
+		}
+		s+='\n';
+	}
+	return s;
+}
+
 function matrixDel(matrix, x, y){
 	if (matrix[y][x].prev) {
 		matrix[y][x] = matrix[y][x].prev;
@@ -172,10 +186,15 @@ function saveSolutionToFirebase() {
 	return;
 	var firebase = new Firebase("https://puzzle-lvl-editor-dev.firebaseio.com/levels-solutions").child(Number(Game.aimLVL)+1);
 	var data = {};
-	game.solution = game.solution.replace (new RegExp(Phaser.UP, 'g'), "u-");
-	game.solution = game.solution.replace (new RegExp(Phaser.DOWN, 'g'), "d-");
-	game.solution = game.solution.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
-	game.solution = game.solution.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
+	game.solution = readableSolution (game.solution);
 	data[game.solution] = new Date().toUTCString().slice(5, 25) + " =" + game.solution.length/2;
 	firebase.update(data);
+}
+
+function readableSolution(s) {
+	s = s.replace (new RegExp(Phaser.UP, 'g'), "u-");
+	s = s.replace (new RegExp(Phaser.DOWN, 'g'), "d-");
+	s = s.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
+	s = s.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
+	return s;
 }

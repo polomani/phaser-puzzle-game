@@ -113,11 +113,16 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	game.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	game.keyUP.onDown.add(step, this);
 	game.keyDOWN.onDown.add(step, this);
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
+	game.keyQ.onDown.add(function () {
+		var s = AI.findSolution (game.matrix);
+		alert(s);
+	});
 	game.keyF1.onDown.add(function () {
 		this.game.state.start('Editor');
 	});
@@ -294,6 +299,10 @@ Puzzle.Game.prototype.createStage = function () {
 		}
 
 		function spinBoxArrows() {
+			matrix.arrows.forEach (function(elem){
+				elem.box.angle = o_getAngleFromDir(elem.type.dir);
+			});
+
 			matrix.blueBoxes.forEach(function(elem) {
 				var x = elem.x;
 				var y = elem.y;
@@ -399,6 +408,8 @@ Puzzle.Game.rotateArrows = function() {
 
 function matrixMove(matrix, x, y, side) {
 	var temp = matrix[y][x];
+	if (!temp) 
+		temp;
 	matrixDel(matrix, x, y);
 	switch (side) {
 		case Phaser.LEFT:
@@ -555,7 +566,7 @@ function matrixMoveAll(matrix, side){
 		if (!matrixIsBlocked(matrix, side, cur.x, cur.y)) {
 			if (next && next.type==3) {
 				if (isBlueBox(cur.type)) {
-					matrix.visual.onSpikes.push(cur);
+					if (matrix.visual) matrix.visual.onSpikes.push(cur);
 				} else {
 					cur.type = 1;
 					matrix.blueBoxes[i] = "deleted";
@@ -567,7 +578,7 @@ function matrixMoveAll(matrix, side){
 				if (((!cur.prev || cur.prev.type.value!=5) || canGoFromDirection(cur.prev.type.dir, side)) && matrixIsBlocked(matrix, side, next.x, next.y)) {				
 					matrix.blueBoxes[matrix.blueBoxes.indexOf(next)]="deleted";
 					matrixDel(matrix, next.x, next.y);
-					matrix.visual.toRemove.push(next);
+					if (matrix.visual) matrix.visual.toRemove.push(next);
 					matrixMove(matrix, cur.x, cur.y, side);
 				}
 			}
@@ -579,17 +590,6 @@ function matrixMoveAll(matrix, side){
 	updateDoors(matrix);
 	moveRobots(matrix);
 	spinArrows(matrix);
-
-	// for (var y = 0; y < arr.length; y++) {
-	// 	var s = "";
-	// 	for (var x = 0; x < arr[y].length; x++) {
-	// 		if (matrix[y][x]) 
-	// 			s+= (matrix[y][x].type.value ? matrix[y][x].type.value : (matrix[y][x].type>=20) ? Math.round(matrix[y][x].type/10) : matrix[y][x].type) + ' ';
-	// 		else
-	// 			s+='  ';
-	// 	}
-	// 	console.log(s);
-	// }
 }
 
 function isAnyBoxOnGap (matrix) {
@@ -606,24 +606,69 @@ function isAnyBoxOnGap (matrix) {
 	return res;
 }
 
-function checkGameOver () {
-	var fail = isAnyBoxOnGap(game.matrix);
-	var win = !fail && countBlueBoxes(game.matrix)==1;
-	return {win:win, fail:fail};
+function checkGameOver (matrix) {
+	matrix = matrix || game.matrix;
+	var fail = isAnyBoxOnGap(matrix);
+	var win = false;
+	var frozen = false;
+	if (!fail) {
+		var blue = countBlueBoxes(matrix);
+		win = blue.max==1;
+		frozen = blue.frozen;
+	}
+	if (frozen) alert (frozen);
+	return {win:win, fail:fail, frozen:frozen};
 }
 
 function countBlueBoxes(matrix)  {
 	var q1 = 0;
 	var q2 = 0;
 	var q3 = 0;
+	var f1 = 0;
+	var f2 = 0;
+	var f3 = 0;
 	matrix.blueBoxes.forEach (function(box) {
 		if (isBlueBox(box.type)) {
-			if (box.type==2 || box.type==20) q1++;
-			if (box.type==21) q2++;
-			if (box.type==22) q3++;
+			if (box.type==2 || box.type==20) {
+				q1++;
+				if (isFrozen(matrix, box)) {
+					f1++;
+				}
+			}
+			if (box.type==21) {
+				q2++;
+				if (isFrozen(matrix, box)) {
+					f2++;
+				}
+			}
+			if (box.type==22) {
+				q3++;
+				if (isFrozen(matrix, box)) {
+					f3++;
+				}
+			}
 		}
 	});
-	return Math.max(q1, Math.max(q2, q3));
+	var max = Math.max(q1, Math.max(q2, q3));
+	var frozen = (q1>1 && q1==f1) || (q2>1 && q2==f2) || (q3>1 && q3==f3);
+	return {max:max, frozen:frozen};
+}
+
+function isFrozen (matrix, elem) {
+	function isFrosenSide(side) {
+		if (canGoFromDirection(elem.prev.type.dir, side)) {
+			return matrixIsBlocked (matrix, side, elem.x, elem.y);
+		}
+		return true;
+	}
+
+	if (elem.prev && elem.prev.type.value==5) {
+		return  isFrosenSide (Phaser.LEFT) && 
+				isFrosenSide (Phaser.RIGHT) &&
+				isFrosenSide (Phaser.DOWN) &&
+				isFrosenSide (Phaser.UP);
+	}
+	return false;
 }
 
 function updateDoors(matrix) {
@@ -645,7 +690,7 @@ function checkTeleport(matrix, x, y) {
 				matrix[elem.y][elem.x].prev = tempSecondTeleport;
 				matrix[elem.y][elem.x].x = elem.x;
 				matrix[elem.y][elem.x].y = elem.y;
-				matrix.visual.toTeleport.push({from: {x:x, y:y}, elem:matrix[elem.y][elem.x]});
+				if (matrix.visual)  matrix.visual.toTeleport.push({from: {x:x, y:y}, elem:matrix[elem.y][elem.x]});
 			}
 		} 
 	}
@@ -691,7 +736,6 @@ function spinArrows(matrix) {
 		} else if (elem.type.spin=="ccw") {
 			elem.type.dir = getDirCCW (elem.type.dir);
 		}
-		elem.box.angle = o_getAngleFromDir(elem.type.dir);	
 	});	
 }
 
