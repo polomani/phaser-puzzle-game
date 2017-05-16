@@ -1,15 +1,19 @@
 (function (exports) {
-
+    
 	exports.findSolution = function (matrix) {
 		matrix = prepareMatrix(matrix);
 		var checked = [];
-		var queue = [];
+		var queue = new PriorityQueue({ comparator: function(a, b) { return a.h - b.h; }});
+        //var queue = [];
 
-		queue.push (matrix);
+		queue.queue (matrix);
+        //queue.push (matrix);
 		var aim;
 		while (queue.length > 0) {
-			aim = queue.shift();
-			var result = checkGameOver(aim);
+			aim = queue.dequeue();
+            //aim = queue.shift();
+            checked.push(aim);
+			var result = checkGameOver(aim); 
 			if (result.win) {
 				break;
 			} else if (!result.fail && !result.frozen) {
@@ -23,7 +27,7 @@
 	}
 
 	function prepareMatrix (matrix) {
-		res = deepClone(matrix);
+		var res = deepClone(matrix);
 
 		for (var x = 0; x < matrix.length; x++) {
 			deleteBoxesInArray (res[x]);
@@ -31,6 +35,7 @@
 
 		delete res.visual;
 		res.solution = "";
+        res.h = heuristic(matrix);
 
 		return res;
 	}
@@ -48,7 +53,9 @@
 
 		if (!contains(matrix, checked)) {
 			matrix.solution += '' + side;
-			queue.push(matrix);
+            matrix.h = heuristic(matrix);
+			queue.queue(matrix);
+            //queue.push(matrix);
 		}
 	}
 
@@ -59,6 +66,20 @@
 		}
 		return false;
 	}
+    
+    function heuristic (matrix) {
+        function dist (a, b) {
+            return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y); 
+        }
+        var res = 0;
+        var blues = matrix.blueBoxes
+        for (var i = 0; i < blues.length; i++) {
+            for (var j = i+1; j < blues.length; j++) {
+                res+= dist(blues[i], blues[j]);
+            }
+        }
+        return res;
+    }
 
 	function deepClone(obj) {
 	    var visitedNodes = [];
@@ -120,12 +141,13 @@
 	}
 
 	compareElements = function (a, b) {
+        if (!a || !b) return a===b;
 		a = a.type;
 		b = b.type;
 		if (a instanceof Object) {
 			return JSON.stringify(a) === JSON.stringify(b);
 		} else {
-			return a==b;
+			return a===b;
 		}
 	}
 

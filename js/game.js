@@ -314,7 +314,7 @@ Puzzle.Game.prototype.createStage = function () {
 					if (!game.invert) {
 						matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
 					} else {
-						matrix[y][x].box.angle = Puzzle.Game.getInvertedAngleFromDir(prev.type.dir);
+						matrix[y][x].box.angle = getInvertedAngleFromDir(prev.type.dir);
 					}
 				} else {
 					matrix[y][x].box.frame = 0;
@@ -401,7 +401,7 @@ Puzzle.Game.rotateArrows = function() {
 		if (!game.invert) {
 			elem.box.angle = o_getAngleFromDir(elem.type.dir);
 		} else {
-			elem.box.angle = Puzzle.Game.getInvertedAngleFromDir(elem.type.dir);
+			elem.box.angle = getInvertedAngleFromDir(elem.type.dir);
 		}
 	});
 };
@@ -616,7 +616,6 @@ function checkGameOver (matrix) {
 		win = blue.max==1;
 		frozen = blue.frozen;
 	}
-	if (frozen) alert (frozen);
 	return {win:win, fail:fail, frozen:frozen};
 }
 
