@@ -1,21 +1,23 @@
 (function (exports) {
     
-	exports.findSolution = function (matrix) {
+	exports.findSolution = function (matrix, best) {
 		matrix = prepareMatrix(matrix);
 		var checked = [];
 		var queue = new PriorityQueue({ comparator: function(a, b) { return a.h - b.h; }});
-        //var queue = [];
+        if (best) {
+            queue = [];
+            queue.queue = queue.push;
+            queue.dequeue = queue.shift;
+        }
 
 		queue.queue (matrix);
-        //queue.push (matrix);
 		var aim;
 		while (queue.length > 0) {
 			aim = queue.dequeue();
-            //aim = queue.shift();
             checked.push(aim);
 			var result = checkGameOver(aim); 
 			if (result.win) {
-				break;
+                return aim.solution;  
 			} else if (!result.fail && !result.frozen) {
 				addSolution (aim, Phaser.RIGHT, checked, queue);
 				addSolution (aim, Phaser.LEFT, checked, queue);
@@ -23,7 +25,7 @@
 				addSolution (aim, Phaser.DOWN, checked, queue);
 			}
 		}
-		return readableSolution(aim.solution);
+        return "";
 	}
 
 	function prepareMatrix (matrix) {
@@ -55,7 +57,6 @@
 			matrix.solution += '' + side;
             matrix.h = heuristic(matrix);
 			queue.queue(matrix);
-            //queue.push(matrix);
 		}
 	}
 

@@ -16,8 +16,8 @@ Puzzle.Game.prototype.preload = function () {
 };
 
 Puzzle.Game.prototype.create = function () {
-	console.log(Dimensions.getSize());
-	console.log(game.width + "x" + game.height);
+	//console.log(Dimensions.getSize());
+	//console.log(game.width + "x" + game.height);
 	game.gameOver = game.gameWin = false;
 	game.levelWidth = LEVELS[Game.aimLVL][0].length;
 	game.levelHeight = LEVELS[Game.aimLVL].length;
@@ -113,15 +113,22 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	game.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+	game.keyOB = game.input.keyboard.addKey(Phaser.Keyboard.OPEN_BRACKET);
+    game.keyBS = game.input.keyboard.addKey(Phaser.Keyboard.BACKWARD_SLASH);
 	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	game.keyUP.onDown.add(step, this);
 	game.keyDOWN.onDown.add(step, this);
 	game.keyLEFT.onDown.add(step, this);
 	game.keyRIGHT.onDown.add(step, this);
-	game.keyQ.onDown.add(function () {
-		var s = AI.findSolution (game.matrix);
-		alert(s);
+	game.keyOB.onDown.add(function () {
+        var s = AI.findSolution (game.matrix, false);
+		autopilot (s);
+        console.log("any solution: "+readableSolution(s) + " [" + s.length + "] steps");
+	});
+    game.keyBS.onDown.add(function () {
+		var s = AI.findSolution (game.matrix, true);
+		autopilot (s);
+        console.log("best solution: "+readableSolution(s) + " [" + s.length + "] steps");
 	});
 	game.keyF1.onDown.add(function () {
 		this.game.state.start('Editor');
@@ -736,5 +743,34 @@ function spinArrows(matrix) {
 			elem.type.dir = getDirCCW (elem.type.dir);
 		}
 	});	
+}
+
+function autopilot (path, matrix)
+{
+    matrix = game.matrix || matrix;  
+    autostep();
+    
+    function autostep () {
+        var side = parseInt(path.charAt(0));
+        path = path.substring(1);
+
+        switch (side) {
+            case Phaser.LEFT:
+                matrixLeft(matrix);
+            break;
+            case Phaser.RIGHT:
+                matrixRight(matrix);
+            break;
+            case Phaser.UP:
+                matrixUp(matrix);
+            break;
+            case Phaser.DOWN:
+                matrixDown(matrix);
+            break;
+        }
+        
+        game.visualize();
+        game.time.events.add(400, autostep);
+    } 
 }
 
