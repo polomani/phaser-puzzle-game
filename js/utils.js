@@ -164,6 +164,11 @@ function getDirFromAngle(angle) {
 	}
 }
 
+function getNormalOrInvertedAngleFromDir (dir, invert) {
+    if (!invert) return o_getAngleFromDir (dir);
+    return getInvertedAngleFromDir(dir);
+}
+
 function o_getAngleFromDir(dir) {
 	switch (dir) {
 		case Phaser.RIGHT:

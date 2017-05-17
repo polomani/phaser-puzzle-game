@@ -180,7 +180,7 @@ Puzzle.Game.prototype.createStage = function () {
 					}
 					if (arr[y][x].value == 5) {
 						box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
-						box.angle = o_getAngleFromDir(arr[y][x].dir);
+						box.angle = getNormalOrInvertedAngleFromDir(arr[y][x].dir, game.invert);
 						if (arr[y][x].spin) 
 						{
 							box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
@@ -318,7 +318,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 		function spinBoxArrows() {
 			matrix.arrows.forEach (function(elem){
-				elem.box.angle = o_getAngleFromDir(elem.type.dir);
+				elem.box.angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert);
 			});
 
 			matrix.blueBoxes.forEach(function(elem) {
@@ -329,11 +329,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 				if (prev && prev.type.value==5) {
 					matrix[y][x].box.frame = 1;
-					if (!game.invert) {
-						matrix[y][x].box.angle = o_getAngleFromDir(prev.type.dir);
-					} else {
-						matrix[y][x].box.angle = getInvertedAngleFromDir(prev.type.dir);
-					}
+				    matrix[y][x].box.angle = getNormalOrInvertedAngleFromDir(prev.type.dir, game.invert);
 				} else {
 					matrix[y][x].box.frame = 0;
 				}
@@ -417,11 +413,7 @@ Puzzle.Game.prototype.render = function() {
 Puzzle.Game.rotateArrows = function() {
 	var matrix = game.matrix;
 	matrix.arrows.forEach(function(elem){
-		if (!game.invert) {
-			elem.box.angle = o_getAngleFromDir(elem.type.dir);
-		} else {
-			elem.box.angle = getInvertedAngleFromDir(elem.type.dir);
-		}
+        elem.box.angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert);
 	});
 };
 
