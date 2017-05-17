@@ -82,51 +82,6 @@
         return res;
     }
 
-	function deepClone(obj) {
-	    var visitedNodes = [];
-	    var clonedCopy = [];
-	    function clone(item) {
-	        if (typeof item === "object" && !Array.isArray(item)) {
-	            if (visitedNodes.indexOf(item) === -1) {
-	                visitedNodes.push(item);
-	                var cloneObject = {};
-	                clonedCopy.push(cloneObject);
-	                for (var i in item) {
-	                    if (item.hasOwnProperty(i)) {
-	                        cloneObject[i] = clone(item[i]);
-	                    }
-	                }
-	                return cloneObject;
-	            } else {
-	                return clonedCopy[visitedNodes.indexOf(item)];
-	            }
-	        }
-	        else if (typeof item === "object" && Array.isArray(item)) {
-	            if (visitedNodes.indexOf(item) === -1) {
-	                var cloneArray = [];
-	                visitedNodes.push(item);
-	                clonedCopy.push(cloneArray);
-	                // for (var j = 0; j < item.length; j++) {
-	                //     cloneArray[j] = clone(item[j]);
-	                // }
-	                //kkkostil
-	                for (var i in item) {
-	                    if (item.hasOwnProperty(i)) {
-	                        cloneArray[i] = clone(item[i]);
-	                    }
-	                }
-	                return cloneArray;
-	            } else {
-	                return clonedCopy[visitedNodes.indexOf(item)];
-	            }
-	        }
-
-	        return item;
-	    }
-	    return clone(obj);
-	}
-
-
 	compareMatrices = function (a, b) {
 		if (a.length!=b.length || a[0].length !=b[0].length)
 			return false;

@@ -20,6 +20,8 @@ Puzzle.Preload.prototype = {
 		this.load.image('btn_props_large', 'assets/images/prop_icon_large.png');
 		this.load.image('btn_replay_small', 'assets/images/replay_small.png');
 		this.load.image('btn_replay_large', 'assets/images/replay_large.png');
+        this.load.image('btn_undo_small', 'assets/images/undo_small.png');
+		this.load.image('btn_undo_large', 'assets/images/undo_large.png');
 		this.load.image('logo_small', 'assets/images/logo_small.png');
 		this.load.image('logo_large', 'assets/images/logo_large.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');

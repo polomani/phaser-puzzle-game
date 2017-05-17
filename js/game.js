@@ -82,6 +82,17 @@ Puzzle.Game.prototype.addMenu = function () {
       		Popup.openPropsMenu();
       	}
     });
+    
+    var undo = this.game.add.sprite (0,this.game.height, Dimensions.getImageKey("btn_undo"));
+    undo.anchor.setTo(0, 1);
+    undo.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/undo.width));
+    undo.inputEnabled = true;
+    undo.events.onInputDown.add(function () {
+      if (!(Popup.anyWinOpened())) {
+            Puzzle.undo = true;
+            this.game.state.start("Game");
+        }
+    });
 
     if (Game.aimLVL > 6) {
 	    var replay = this.game.add.sprite (this.game.width,this.game.height, Dimensions.getImageKey("btn_replay"));
@@ -146,7 +157,7 @@ Puzzle.Game.prototype.createStage = function () {
 	matrix.robots = [];
 	matrix.arrows = [];
 	matrix.gaps = [];
-	var arr = game.levelArr;
+	var arr = getStory() || game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		matrix[y]=[];
 		for (var x = 0; x < arr[y].length; x++) {
@@ -357,6 +368,7 @@ function step (key)
 	if (game.moving || game.gameOver || game.gameWin) 
 		return;
 	game.moving = true;
+    addStory(matrix);
 	
 	if (key == game.keyUP) {
 			if (game.invert)
@@ -774,3 +786,19 @@ function autopilot (path, matrix)
     } 
 }
 
+function addStory (matrix) {
+    if (!Puzzle.story) Puzzle.story = [];
+    Puzzle.story.push(matrixToLevel(matrix));
+}
+
+function getStory () {
+    if (Puzzle.undo) {
+        Puzzle.undo = false;
+        if (Puzzle.story && Puzzle.story.length>0) {
+            return Puzzle.story.pop();
+        }
+    } else {
+        Puzzle.story = [];
+    }
+    return null;
+}

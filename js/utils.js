@@ -1,3 +1,15 @@
+function matrixToLevel (matrix) {
+    var lvl = [];
+    for (var y = 0; y < matrix.length; y++) {
+        lvl[y]=[];
+		for (var x = 0; x < matrix[y].length; x++) {
+			if (matrix[y][x]) lvl[y][x] = deepClone(matrix[y][x].type);
+            else lvl[y][x]=0;
+		}
+	}
+    return lvl;
+}
+
 function matrixToString (matrix) {
 	var s = "";
 	for (var y = 0; y < matrix.length; y++) {
@@ -197,4 +209,48 @@ function readableSolution(s) {
 	s = s.replace (new RegExp(Phaser.LEFT, 'g'), "l-");
 	s = s.replace (new RegExp(Phaser.RIGHT, 'g'), "r-");
 	return s;
+}
+
+function deepClone(obj) {
+    var visitedNodes = [];
+    var clonedCopy = [];
+    function clone(item) {
+        if (typeof item === "object" && !Array.isArray(item)) {
+            if (visitedNodes.indexOf(item) === -1) {
+                visitedNodes.push(item);
+                var cloneObject = {};
+                clonedCopy.push(cloneObject);
+                for (var i in item) {
+                    if (item.hasOwnProperty(i)) {
+                        cloneObject[i] = clone(item[i]);
+                    }
+                }
+                return cloneObject;
+            } else {
+                return clonedCopy[visitedNodes.indexOf(item)];
+            }
+        }
+        else if (typeof item === "object" && Array.isArray(item)) {
+            if (visitedNodes.indexOf(item) === -1) {
+                var cloneArray = [];
+                visitedNodes.push(item);
+                clonedCopy.push(cloneArray);
+                // for (var j = 0; j < item.length; j++) {
+                //     cloneArray[j] = clone(item[j]);
+                // }
+                //kkkostil
+                for (var i in item) {
+                    if (item.hasOwnProperty(i)) {
+                        cloneArray[i] = clone(item[i]);
+                    }
+                }
+                return cloneArray;
+            } else {
+                return clonedCopy[visitedNodes.indexOf(item)];
+            }
+        }
+
+        return item;
+    }
+    return clone(obj);
 }
