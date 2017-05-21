@@ -5,10 +5,8 @@ Puzzle.Game = function(){};
 var game;
 
 Puzzle.Game.prototype.preload = function () {
-	this.time.advancedTiming = true;
-	this.time.desiredFps = 30;
+	//this.time.advancedTiming = true;
 	this.game.renderer.renderSession.roundPixels = true;
-	this.game.stage.smoothed = false;
 	game = this.game;
 
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -19,9 +17,10 @@ Puzzle.Game.prototype.create = function () {
 	//console.log(Dimensions.getSize());
 	//console.log(game.width + "x" + game.height);
 	game.gameOver = game.gameWin = false;
-	game.levelWidth = LEVELS[Game.aimLVL][0].length;
-	game.levelHeight = LEVELS[Game.aimLVL].length;
-	game.levelArr = LEVELS[Game.aimLVL];
+    game.levelArr = getStory() || LEVELS[Game.aimLVL];
+	game.levelWidth = game.levelArr[0].length;
+	game.levelHeight = game.levelArr.length;
+	
 	BSIZE = Math.floor (Math.min(Math.max(game.width, game.height) / Math.max(game.levelWidth, game.levelHeight),
 		Math.min(game.width, game.height) / Math.min(game.levelWidth, game.levelHeight)));
 
@@ -88,7 +87,7 @@ Puzzle.Game.prototype.addMenu = function () {
     undo.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/undo.width));
     undo.inputEnabled = true;
     undo.events.onInputDown.add(function () {
-      if (!(Popup.anyWinOpened())) {
+      if (!Popup.anyWinOpened() && Puzzle.story && Puzzle.story.length>0) {
             Puzzle.undo = true;
             this.game.state.start("Game");
         }
@@ -124,7 +123,7 @@ Puzzle.Game.prototype.createStage = function () {
 	game.keyDOWN = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	game.keyLEFT = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	game.keyRIGHT = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	game.keyOB = game.input.keyboard.addKey(Phaser.Keyboard.OPEN_BRACKET);
+	game.keyOB = game.input.keyboard.addKey(Phaser.Keyboard.Q);
     game.keyBS = game.input.keyboard.addKey(Phaser.Keyboard.BACKWARD_SLASH);
 	game.keyF1 = game.input.keyboard.addKey(Phaser.Keyboard.F1);
 	game.keyUP.onDown.add(step, this);
@@ -157,7 +156,7 @@ Puzzle.Game.prototype.createStage = function () {
 	matrix.robots = [];
 	matrix.arrows = [];
 	matrix.gaps = [];
-	var arr = getStory() || game.levelArr;
+	var arr = game.levelArr;
 	for (var y = 0; y < arr.length; y++) {
 		matrix[y]=[];
 		for (var x = 0; x < arr[y].length; x++) {
@@ -199,7 +198,7 @@ Puzzle.Game.prototype.createStage = function () {
 				matrix[y][x] = {
 					x:x,
 					y:y,
-					type:arr[y][x],
+					type: deepClone (arr[y][x]),
 					box:box
 				};
 				box.matrix = matrix[y][x];
@@ -784,13 +783,14 @@ function addStory (matrix) {
 }
 
 function getStory () {
+    var res = null;
     if (Puzzle.undo) {
         Puzzle.undo = false;
         if (Puzzle.story && Puzzle.story.length>0) {
-            return Puzzle.story.pop();
+            res = Puzzle.story.pop();
         }
     } else {
         Puzzle.story = [];
     }
-    return null;
+    return res;
 }
