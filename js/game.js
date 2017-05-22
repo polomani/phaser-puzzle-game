@@ -190,7 +190,7 @@ Puzzle.Game.prototype.createStage = function () {
 						box.frame = arr[y][x].id;
 					}
 					if (arr[y][x].value == 7) {
-						box = game.boxes.create(xx, yy, 'box_red');
+						box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_gap'));
 					}
 				}
 				if (arr[y][x]==0 || arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
@@ -208,11 +208,11 @@ Puzzle.Game.prototype.createStage = function () {
 					matrix.doors.push (matrix[y][x]);
 				else if (is (box,"box_port"))
 					matrix.ports.push (matrix[y][x]);
-				else if (is (box,"box_red"))
+				else if (isRoboBox(arr[y][x]))
 					matrix.robots.push (matrix[y][x]);
 				else if (is (box,"box_arr"))
 					matrix.arrows.push (matrix[y][x]);
-				else if (is (box,"box_gap"))
+				if (isSpikes(arr[y][x]))
 					matrix.gaps.push (matrix[y][x]);
 
 				function is (box, key) {
@@ -529,7 +529,7 @@ function matrixIsBlocked (matrix, side, x, y) {
 		if(!elem || elem.type==3 ||
 			(elem.type.value==4 && elem.box.frame==0) ||
 			(elem.type.value==5 && canGoOnDirection(elem.type.dir, side)) ||
-			 elem.type.value==6) {
+			 elem.type.value==6 || elem.type.value==7) {
 			break;
 		}
 		isBlocked = true;
@@ -569,12 +569,13 @@ function matrixIsSokoBlocked(matrix, side, x, y) {
 
 function matrixMoveAll(matrix, side){
 	game.solution += side;
+    moveRobots(matrix);
 	matrix.blueBoxes.sort(matrixSortFunction(side));
 	for (var i = 0; i < matrix.blueBoxes.length; ++i) {
 		var cur = matrix.blueBoxes[i];
 		var next = matrixNext(matrix, side, cur.x, cur.y);
 		if (!matrixIsBlocked(matrix, side, cur.x, cur.y)) {
-			if (next && next.type==3) {
+			if (next && isSpikes (next.type)) {
 				if (isBlueBox(cur.type)) {
 					if (matrix.visual) matrix.visual.onSpikes.push(cur);
 				} else {
@@ -598,7 +599,6 @@ function matrixMoveAll(matrix, side){
 		matrix.blueBoxes.splice(matrix.blueBoxes.indexOf("deleted"), 1);
 
 	updateDoors(matrix);
-	moveRobots(matrix);
 	spinArrows(matrix);
 }
 
@@ -717,6 +717,7 @@ function findTeleport(matrix, x, y) {
 }
 
 function moveRobots(matrix) {
+    var newRobots = [];
 	matrix.robots.forEach (function(elem){
 		if (!elem.startX) {
 			elem.startX = elem.x;
@@ -731,11 +732,17 @@ function moveRobots(matrix) {
 		}
 
 		var side = parseInt(elem.path.charAt(0));
-		if (!matrixIsBlocked(matrix, side, elem.x, elem.y)) {
-			matrixMove(matrix, elem.x, elem.y, side);
-			elem.path = elem.path.substring(1);
-		}
+        matrixMove(matrix, elem.x, elem.y, side);
+        swapDeepElement (matrix, elem.x, elem.y);
+        if (matrix[elem.y][elem.x].type === 8) {
+            matrix[elem.y][elem.x].type = 1;
+            matrix.blueBoxes.splice(matrix.blueBoxes.indexOf(matrix[elem.y][elem.x]), 1);
+        } else {
+            newRobots.push(elem);
+        }
+        elem.path = elem.path.substring(1);
 	});	
+    matrix.robots = newRobots;
 }
 
 function spinArrows(matrix) {

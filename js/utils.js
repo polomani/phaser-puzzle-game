@@ -1,3 +1,12 @@
+function swapDeepElement(matrix, x, y) {
+    var cell = matrix[y][x];
+    if (cell.prev) {
+        matrix[y][x] = cell.prev;
+        matrix[y][x].prev = cell;
+        delete matrix[y][x].prev.prev;
+    }
+}
+
 function matrixToLevel (matrix) {
     var lvl = [];
     for (var y = 0; y < matrix.length; y++) {
@@ -91,6 +100,14 @@ function matrixSortFunctionRight(a, b) {
 
 function isBlueBox (id) {
 	return (typeof id === 'number') && (id==2 || Math.floor(id/10)==2);
+}
+
+function isRoboBox (type) {
+	return type && type.value===7 && type.path;
+}
+
+function isSpikes (type) {
+    return type===3 || isRoboBox (type);
 }
 
 function isSameBlueBox(b1, b2) {
