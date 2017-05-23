@@ -162,68 +162,83 @@ Puzzle.Game.prototype.createStage = function () {
 		for (var x = 0; x < arr[y].length; x++) {
 			if (arr[y]) 
 			{
-				if(arr[y][x]==0 && !arr[y][x]) {
-					matrix[y][x] = undefined;
-					continue;
-				}
-				var box;
-				var xx = 0, yy = 0;
-				if(arr[y][x]==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
-				if(isBlueBox(arr[y][x])) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue_'+getBlueBoxColor(arr[y][x])));
-				if(arr[y][x]==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
-				if(arr[y][x]==8) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_sokoban'));
-				if (arr[y][x] instanceof Object) {
-					if (arr[y][x].value == 4) {
-						box = game.boxes.create(xx, yy, 'box_door');
-						box.frame = arr[y][x].state;
-					}
-					if (arr[y][x].value == 5) {
-						box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
-						box.angle = getNormalOrInvertedAngleFromDir(arr[y][x].dir, game.invert);
-						if (arr[y][x].spin) 
-						{
-							box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
-						}
-					}
-					if (arr[y][x].value == 6) {
-						box = game.boxes.create(xx, yy, 'box_port');
-						box.frame = arr[y][x].id;
-					}
-					if (arr[y][x].value == 7) {
-						box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_gap'));
-					}
-				}
-				if (arr[y][x]==0 || arr[y][x]==3 || arr[y][x] instanceof Object) game.boxes.setChildIndex(box, 0);
-				box.anchor.setTo(0.5, 0.5);
-				matrix[y][x] = {
-					x:x,
-					y:y,
-					type: deepClone (arr[y][x]),
-					box:box
-				};
-				box.matrix = matrix[y][x];
-				if (is (box,"box_blue") || is (box,"box_sokoban")) 
-					matrix.blueBoxes.push (matrix[y][x]);
-				else if (is (box,"box_door"))
-					matrix.doors.push (matrix[y][x]);
-				else if (is (box,"box_port"))
-					matrix.ports.push (matrix[y][x]);
-				else if (isRoboBox(arr[y][x]))
-					matrix.robots.push (matrix[y][x]);
-				else if (is (box,"box_arr"))
-					matrix.arrows.push (matrix[y][x]);
-				if (isSpikes(arr[y][x]))
-					matrix.gaps.push (matrix[y][x]);
-
-				function is (box, key) {
-					if (box.key.lastIndexOf(key)!=-1) {
-						return true;
-					}
-					return false;
-				}
+                if (arr[y][x].deep) {
+                    addElement(x, y, arr[y][x].type);
+                    addElement(x, y, arr[y][x].prev, true);
+                } else {
+                    addElement(x, y, arr[y][x]);
+                }
 			}
 		}
 	}
+    
+    function addElement (x, y, aim_type, deep) {
+        var box;
+        var xx = 0, yy = 0;
+        if(aim_type==0 || !aim_type) {
+            matrix[y][x] = undefined;
+            return;
+        }
+        if(aim_type==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
+        if(isBlueBox(aim_type)) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue_'+getBlueBoxColor(aim_type)));
+        if(aim_type==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
+        if(aim_type==8) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_sokoban'));
+        if (aim_type instanceof Object) {
+            if (aim_type.value == 4) {
+                box = game.boxes.create(xx, yy, 'box_door');
+                box.frame = aim_type.state;
+            }
+            if (aim_type.value == 5) {
+                box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
+                box.angle = getNormalOrInvertedAngleFromDir(aim_type.dir, game.invert);
+                if (aim_type.spin) 
+                {
+                    box.frame = (aim_type.spin=="cw") ? 1 : 2;
+                }
+            }
+            if (aim_type.value == 6) {
+                box = game.boxes.create(xx, yy, 'box_port');
+                box.frame = aim_type.id;
+            }
+            if (aim_type.value == 7) {
+                box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_gap'));
+            }
+        }
+        if (aim_type==0 || aim_type==3 || aim_type instanceof Object) game.boxes.setChildIndex(box, 0);
+        box.anchor.setTo(0.5, 0.5);
+        var new_element = {
+            x:x,
+            y:y,
+            type: deepClone (aim_type),
+            box:box
+        };
+        if (!deep) {
+            matrix[y][x] = new_element;
+        } else {
+            matrix[y][x].prev = new_element;
+        }
+        box.matrix = new_element;
+        if (is (box,"box_blue") || is (box,"box_sokoban")) 
+            matrix.blueBoxes.push (new_element);
+        else if (is (box,"box_door"))
+            matrix.doors.push (new_element);
+        else if (is (box,"box_port"))
+            matrix.ports.push (new_element);
+        else if (isRoboBox(aim_type))
+            matrix.robots.push (new_element);
+        else if (is (box,"box_arr"))
+            matrix.arrows.push (new_element);
+        if (isSpikes(aim_type))
+            matrix.gaps.push (new_element);
+
+        function is (box, key) {
+            if (box.key.lastIndexOf(key)!=-1) {
+                return true;
+            }
+            return false;
+        }
+    }
+    
 	game.inputEnabled = true;
 	game.input.onDown.addOnce(beginSwipe, game);
 	Tutorial.open(Game.aimLVL);
@@ -435,6 +450,9 @@ function matrixMove(matrix, x, y, side) {
 			++y;
 		break;
 	}
+    if (!matrix[y]) {
+        return;
+    }
 	var prev = matrix[y][x];
 	matrix[y][x] = temp;
 	matrix[y][x].prev = prev;

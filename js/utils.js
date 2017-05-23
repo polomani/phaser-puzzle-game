@@ -12,8 +12,14 @@ function matrixToLevel (matrix) {
     for (var y = 0; y < matrix.length; y++) {
         lvl[y]=[];
 		for (var x = 0; x < matrix[y].length; x++) {
-			if (matrix[y][x]) lvl[y][x] = deepClone(matrix[y][x].type);
-            else lvl[y][x]=0;
+			if (matrix[y][x]) {
+                lvl[y][x] = deepClone(matrix[y][x].type);
+                if (matrix[y][x].prev) {
+                    lvl[y][x] = { deep:true, type:lvl[y][x], prev:deepClone (matrix[y][x].prev.type) };
+                }
+            } else {
+                lvl[y][x]=0; 
+            }
 		}
 	}
     return lvl;
