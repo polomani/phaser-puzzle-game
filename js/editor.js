@@ -176,7 +176,7 @@ function changeCursor (key) {
 			o.cursor.btype.dir = getDirFromAngle(o.cursor.angle);
 			break;
 		case o.SIX:
-			o.cursor = o.boxes.create (x, y, 'box_port');
+			o.cursor = o.boxes.create (x, y, 'box_port_small');
 			if (prevcur && prevcur.btype instanceof Object && prevcur.btype.value==6)
 				o.cursor.frame = (prevcur.btype.id+1)% o.cursor.animations.frameTotal;
 			o.cursor.btype = {
@@ -200,7 +200,7 @@ function changeCursor (key) {
 			}
 			break;
 		case o.EIGHT:
-			o.cursor = o.boxes.create (x, y, 'box_sokoban');
+			o.cursor = o.boxes.create (x, y, 'box_sokoban_small');
 			o.cursor.btype = 8;
 			break;
 		case o.NINE:
@@ -305,7 +305,7 @@ Puzzle.Editor.prototype.create = function () {
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 					}
 					if (arr[y][x].value==6) {
-						box = game.boxes.create(xx, yy, 'box_port');
+						box = game.boxes.create(xx, yy, 'box_port_small');
 						box.frame = arr[y][x].id;
 					}
 					if (arr[y][x].value==7) {
@@ -315,7 +315,7 @@ Puzzle.Editor.prototype.create = function () {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black_small');
 					if (isBlueBox(arr[y][x])) box = o.boxes.create(xx, yy, 'box_blue_'+getBlueBoxColor(arr[y][x])+'_small');
 					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap_small');
-					if (arr[y][x] == 8) box = o.boxes.create(xx, yy, 'box_sokoban');
+					if (arr[y][x] == 8) box = o.boxes.create(xx, yy, 'box_sokoban_small');
 				}
 				box.btype = arr[y][x];
 				box.indexX = x;

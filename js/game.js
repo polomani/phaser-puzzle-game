@@ -197,14 +197,14 @@ Puzzle.Game.prototype.createStage = function () {
                 }
             }
             if (aim_type.value == 6) {
-                box = game.boxes.create(xx, yy, 'box_port');
+                box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_port_small'));
                 box.frame = aim_type.id;
             }
             if (aim_type.value == 7) {
                 box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_gap'));
             }
         }
-        if (aim_type==0 || aim_type==3 || aim_type instanceof Object) game.boxes.setChildIndex(box, 0);
+        if (aim_type==0 || aim_type==3 || (aim_type.value && aim_type.value!=5)) game.boxes.setChildIndex(box, 0);
         box.anchor.setTo(0.5, 0.5);
         var new_element = {
             x:x,
@@ -252,12 +252,12 @@ Puzzle.Game.prototype.createStage = function () {
 			spikes:0 
 		};
 
+        spinBoxArrows();
+        
 		game.boxes.forEach (function(box) {
 			var ttask = getTeleportTask(box.matrix);
 			moveBox(box.matrix, ttask);
-		});
-
-		spinBoxArrows();
+		});	
 
 		function finishTeleport() { finish("teleports"); };
 		function finishSpike() { finish("spikes"); };
@@ -332,21 +332,14 @@ Puzzle.Game.prototype.createStage = function () {
 
 		function spinBoxArrows() {
 			matrix.arrows.forEach (function(elem){
-				elem.box.angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert);
-			});
-
-			matrix.blueBoxes.forEach(function(elem) {
-				var x = elem.x;
-				var y = elem.y;
-				var aim = matrix[y][x];
-				var prev = aim.prev;
-
-				if (prev && prev.type.value==5) {
-					matrix[y][x].box.frame = 1;
-				    matrix[y][x].box.angle = getNormalOrInvertedAngleFromDir(prev.type.dir, game.invert);
-				} else {
-					matrix[y][x].box.frame = 0;
-				}
+                counter.moving++;
+                
+                var angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert) - elem.box.angle;
+                if (angle > 180) angle = angle - 360;
+                else if (angle < -180) angle = 360 + angle;
+                var tween = game.add.tween(elem.box).to( { angle:angle+"" }, 100, "Linear", true);
+                
+                tween.onComplete.add(finishMoving);
 			});
 		}
 
@@ -421,8 +414,6 @@ Puzzle.Game.prototype.render = function() {
 	//if (!game.device.desktop) return;
 	//this.game.debug.text(this.time.fps, 2, 14, "#00ff00");
 };
-
-
 
 Puzzle.Game.rotateArrows = function() {
 	var matrix = game.matrix;
