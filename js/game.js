@@ -587,7 +587,6 @@ function matrixIsSokoBlocked(matrix, side, x, y) {
 
 function matrixMoveAll(matrix, side){
 	game.solution += side;
-    moveRobots(matrix);
 	matrix.blueBoxes.sort(matrixSortFunction(side));
 	for (var i = 0; i < matrix.blueBoxes.length; ++i) {
 		var cur = matrix.blueBoxes[i];
@@ -616,6 +615,7 @@ function matrixMoveAll(matrix, side){
 	while (matrix.blueBoxes.indexOf("deleted")!=-1)
 		matrix.blueBoxes.splice(matrix.blueBoxes.indexOf("deleted"), 1);
 
+    moveRobots(matrix);
 	updateDoors(matrix);
 	spinArrows(matrix);
 }
@@ -750,6 +750,8 @@ function moveRobots(matrix) {
 		}
 
 		var side = parseInt(elem.path.charAt(0));
+        //if (matrix[elem.y][elem.x].prev) return; 
+        swapDeepElement (matrix, elem.x, elem.y);
         matrixMove(matrix, elem.x, elem.y, side);
         swapDeepElement (matrix, elem.x, elem.y);
         if (matrix[elem.y][elem.x].type === 8) {
