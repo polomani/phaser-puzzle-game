@@ -104,8 +104,16 @@ function matrixSortFunctionRight(a, b) {
 	return c;
 }
 
+function isWall (id) {
+	return id===1;
+}
+
 function isBlueBox (id) {
 	return (typeof id === 'number') && (id==2 || Math.floor(id/10)==2);
+}
+
+function isSokoBox (id) {
+	return id===8;
 }
 
 function isRoboBox (type) {

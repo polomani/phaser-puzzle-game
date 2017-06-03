@@ -252,13 +252,22 @@ Puzzle.Game.prototype.createStage = function () {
 			spikes:0 
 		};
 
+        game.boxes.forEach (function(box) {
+            var box = box.matrix;
+		    if (isBlueBox(box.type) || isWall (box.type)) {
+			if (box.prev && isSpikes(box.prev.type)) {
+                if (matrix.visual) matrix.visual.onSpikes.push(box);
+            }
+		}
+	   });
+        
         spinBoxArrows();
         
 		game.boxes.forEach (function(box) {
 			var ttask = getTeleportTask(box.matrix);
 			moveBox(box.matrix, ttask);
-		});	
-
+		});   
+        
 		function finishTeleport() { finish("teleports"); };
 		function finishSpike() { finish("spikes"); };
 		function finishMoving() { finish("moving"); };
@@ -270,8 +279,12 @@ Puzzle.Game.prototype.createStage = function () {
 					game.boxes.remove(elem.box);
 				});
 				matrix.visual.onSpikes.forEach (function(elem) {
-					game.add.tween(elem.box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finishSpike);
-					counter.spikes++;
+					if (elem.type===1) {
+                        elem.box.frame = 1;
+                    } else {
+                        game.add.tween(elem.box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finishSpike);
+					   counter.spikes++;
+                    }
 				});
 				matrix.visual.toRemove = [];
 				matrix.visual.onSpikes = [];
@@ -584,9 +597,7 @@ function matrixMoveAll(matrix, side){
 		var next = matrixNext(matrix, side, cur.x, cur.y);
 		if (!matrixIsBlocked(matrix, side, cur.x, cur.y)) {
 			if (next && isSpikes (next.type)) {
-				if (isBlueBox(cur.type)) {
-					if (matrix.visual) matrix.visual.onSpikes.push(cur);
-				} else {
+				if (isSokoBox(cur.type)) {
 					cur.type = 1;
 					matrix.blueBoxes[i] = "deleted";
 				}
@@ -606,7 +617,7 @@ function matrixMoveAll(matrix, side){
 	while (matrix.blueBoxes.indexOf("deleted")!=-1)
 		matrix.blueBoxes.splice(matrix.blueBoxes.indexOf("deleted"), 1);
 
-    moveRobots(matrix);
+    moveRobots(matrix, side);
 	updateDoors(matrix);
 	spinArrows(matrix);
 }
@@ -615,11 +626,9 @@ function isAnyBoxOnGap (matrix) {
 	var res = false;
 	matrix.blueBoxes.forEach (function(box1) {
 		if (isBlueBox(box1.type)) {
-			matrix.gaps.forEach (function(box2) {
-				if(box1.x==box2.x && box1.y==box2.y) {
-					res=true;
-				}
-			});
+            if (box1.prev && isSpikes(box1.prev.type)) {
+                res=true;
+            }
 		}
 	});
 	return res;
@@ -725,7 +734,7 @@ function findTeleport(matrix, x, y) {
 	return res;
 }
 
-function moveRobots(matrix) {
+function moveRobots(matrix, moveSide) {
     var newRobots = [];
 	matrix.robots.forEach (function(elem){
 		if (!elem.startX) {
@@ -741,7 +750,7 @@ function moveRobots(matrix) {
 		}
 
 		var side = parseInt(elem.path.charAt(0));
-        //if (matrix[elem.y][elem.x].prev) return; 
+        if (matrix[elem.y][elem.x].prev && isSpikes(matrix[elem.y][elem.x].prev.type) && opp(side)==moveSide) return;
         swapDeepElement (matrix, elem.x, elem.y);
         matrixMove(matrix, elem.x, elem.y, side);
         swapDeepElement (matrix, elem.x, elem.y);
