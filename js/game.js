@@ -203,7 +203,9 @@ Puzzle.Game.prototype.createStage = function () {
                 box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_robo'));
             }
         }
-        if (aim_type==0 || aim_type==3 || (aim_type.value && aim_type.value!=5)) game.boxes.setChildIndex(box, 0);
+        box.priorityIndex = 0;
+        if (isSokoBox(aim_type) || isBlueBox(aim_type)) box.priorityIndex = 1;
+        if (isArrow(aim_type)) box.priorityIndex = 2;
         box.anchor.setTo(0.5, 0.5);
         var new_element = {
             x:x,
@@ -238,6 +240,7 @@ Puzzle.Game.prototype.createStage = function () {
         }
     }
     
+    game.boxes.sort('priorityIndex', Phaser.Group.SORT_ASCENDING);
 	game.inputEnabled = true;
 	game.input.onDown.addOnce(beginSwipe, game);
 	Tutorial.open(Game.aimLVL);
@@ -358,8 +361,15 @@ Puzzle.Game.prototype.createStage = function () {
                 
                 var angle = getAngleToAnimate (elem.box.angle, elem.type.dir, game.invert);
                 var tween = game.add.tween(elem.box).to( { angle:angle+"" }, 100, "Linear", true);
-                
                 tween.onComplete.add(finishMoving);
+                tween.onComplete.add(function() {
+                    var _elem = matrix[elem.y][elem.x];
+                    if (_elem!=elem && isSokoBox(_elem.type)) {
+                        elem.box.frame = elem.box.frame % 3 + 3;
+                    } else {
+                        elem.box.frame = elem.box.frame % 3;
+                    }
+                });
 			});
 		}
 
@@ -814,7 +824,7 @@ function autopilot (path, matrix)
         }
         
         game.visualize();
-        game.time.events.add(400, autostep);
+        game.time.events.add(500, autostep);
     } 
 }
 

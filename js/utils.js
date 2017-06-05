@@ -111,6 +111,10 @@ function matrixSortFunctionRight(a, b) {
 	return c;
 }
 
+function isArrow (id) {
+	return id && id.value===5;
+}
+
 function isWall (id) {
 	return id===1;
 }
