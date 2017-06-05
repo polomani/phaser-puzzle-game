@@ -1,3 +1,10 @@
+function getAngleToAnimate (cur_angle, dir, invert) {
+    var angle = getNormalOrInvertedAngleFromDir(dir, invert) - cur_angle;
+    if (angle > 180) angle = angle - 360;
+    else if (angle < -180) angle = 360 + angle;
+    return angle;
+}
+
 function swapDeepElement(matrix, x, y) {
     var cell = matrix[y][x];
     if (cell.prev) {

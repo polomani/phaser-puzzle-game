@@ -190,7 +190,6 @@ Puzzle.Game.prototype.createStage = function () {
             }
             if (aim_type.value == 5) {
                 box = game.boxes.create(xx, yy, Dimensions.getImageKey('box_arr'));
-                box.angle = getNormalOrInvertedAngleFromDir(aim_type.dir, game.invert);
                 if (aim_type.spin) 
                 {
                     box.frame = (aim_type.spin=="cw") ? 1 : 2;
@@ -201,7 +200,7 @@ Puzzle.Game.prototype.createStage = function () {
                 box.frame = aim_type.id;
             }
             if (aim_type.value == 7) {
-                box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_gap'));
+                box = game.boxes.create(xx, yy,  Dimensions.getImageKey('box_robo'));
             }
         }
         if (aim_type==0 || aim_type==3 || (aim_type.value && aim_type.value!=5)) game.boxes.setChildIndex(box, 0);
@@ -274,7 +273,7 @@ Puzzle.Game.prototype.createStage = function () {
 
 		function finish (type) {
 			counter[type]--;
-			if (counter.moving==0) {
+			if (type=="moving" && counter.moving==0) {
 				matrix.visual.toRemove.forEach (function(elem) {
 					game.boxes.remove(elem.box);
 				});
@@ -283,9 +282,19 @@ Puzzle.Game.prototype.createStage = function () {
                         elem.box.frame = 1;
                     } else {
                         game.add.tween(elem.box).to( { alpha:0 }, 200, "Linear", true, 0, 1, true).onComplete.add(finishSpike);
-					   counter.spikes++;
+				        counter.spikes++;
                     }
 				});
+                matrix.robots.forEach (function (elem) {
+                    if (elem.path) {
+                        var dir = parseInt(elem.path.charAt(0));
+                        var angle = getAngleToAnimate (elem.box.angle, dir, game.invert);
+                        game.add.tween(elem.box).to( { angle:angle+"" }, 100, "Linear", true).onComplete.add(finishSpike);
+                        counter.spikes++;
+                    } else if (elem.box.key.lastIndexOf("box_gap")==-1){
+                        elem.box.loadTexture(Dimensions.getImageKey('box_gap'));
+                    }
+                });
 				matrix.visual.toRemove = [];
 				matrix.visual.onSpikes = [];
 				matrix.visual.toTeleport = [];
@@ -347,9 +356,7 @@ Puzzle.Game.prototype.createStage = function () {
 			matrix.arrows.forEach (function(elem){
                 counter.moving++;
                 
-                var angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert) - elem.box.angle;
-                if (angle > 180) angle = angle - 360;
-                else if (angle < -180) angle = 360 + angle;
+                var angle = getAngleToAnimate (elem.box.angle, elem.type.dir, game.invert);
                 var tween = game.add.tween(elem.box).to( { angle:angle+"" }, 100, "Linear", true);
                 
                 tween.onComplete.add(finishMoving);
@@ -433,6 +440,13 @@ Puzzle.Game.rotateArrows = function() {
 	matrix.arrows.forEach(function(elem){
         elem.box.angle = getNormalOrInvertedAngleFromDir(elem.type.dir, game.invert);
 	});
+    matrix.robots.forEach (function (elem) {
+        var path = elem.path || elem.type.path;
+        if (path) {
+            var dir = parseInt(path.charAt(0));
+            elem.box.angle = getNormalOrInvertedAngleFromDir(dir, game.invert);
+        }
+    });
 };
 
 function matrixMove(matrix, x, y, side) {
@@ -741,12 +755,6 @@ function moveRobots(matrix, moveSide) {
 			elem.startX = elem.x;
 			elem.startY = elem.y;
 			elem.path = elem.type.path;
-		} else {
-			elem.cycle = elem.startX==elem.x && elem.startY==elem.y;
-		}
-
-		if (!elem.path && elem.cycle) {				
-			elem.path = elem.type.path;
 		}
 
 		var side = parseInt(elem.path.charAt(0));
@@ -761,6 +769,12 @@ function moveRobots(matrix, moveSide) {
             newRobots.push(elem);
         }
         elem.path = elem.path.substring(1);
+
+        if (!elem.path) {
+            if (elem.startX==elem.x && elem.startY==elem.y) {
+                elem.path = elem.type.path;
+            }
+		}
 	});	
     matrix.robots = newRobots;
 }
