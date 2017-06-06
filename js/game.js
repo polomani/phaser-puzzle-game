@@ -180,7 +180,10 @@ Puzzle.Game.prototype.createStage = function () {
             return;
         }
         if(aim_type==1) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_black'));
-        if(isBlueBox(aim_type)) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue_'+getBlueBoxColor(aim_type)));
+        if(isBlueBox(aim_type)) {
+            box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_blue'));
+            box.frame = getBlueBoxFrame(aim_type);
+        }
         if(aim_type==3) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_gap'));
         if(aim_type==8) box = game.boxes.create (xx, yy, Dimensions.getImageKey('box_sokoban'));
         if (aim_type instanceof Object) {

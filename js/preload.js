@@ -25,14 +25,10 @@ Puzzle.Preload.prototype = {
 		this.load.image('logo_small', 'assets/images/logo_small.png');
 		this.load.image('logo_large', 'assets/images/logo_large.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');
-		this.load.spritesheet('box_blue_0_small', 'assets/images/box_blue_0_small.png', 100, 100);
-		this.load.spritesheet('box_blue_1_small', 'assets/images/box_blue_1_small.png', 100, 100);
-		this.load.spritesheet('box_blue_2_small', 'assets/images/box_blue_2_small.png', 100, 100);
+		this.load.spritesheet('box_blue_small', 'assets/images/box_blue_small.png', 100, 100);
+        this.load.spritesheet('box_blue_large', 'assets/images/box_blue_large.png', 200, 200);
 		this.load.image('box_gap_small', 'assets/images/box_gap_small.png');
 		this.load.image('box_black_large', 'assets/images/box_black_large.png');
-		this.load.spritesheet('box_blue_0_large', 'assets/images/box_blue_0_large.png', 200, 200);
-		this.load.spritesheet('box_blue_1_large', 'assets/images/box_blue_1_large.png', 200, 200);
-		this.load.spritesheet('box_blue_2_large', 'assets/images/box_blue_2_large.png', 200, 200);
 		this.load.image('box_gap_large', 'assets/images/box_gap_large.png');
 		this.load.spritesheet('box_door', 'assets/images/box_door.png', 100, 100);
 		this.load.spritesheet('box_arr_small', 'assets/images/box_arr_small.png', 100, 100);

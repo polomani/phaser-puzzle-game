@@ -1,3 +1,8 @@
+function getBlueBoxFrame (id) {
+	if (id==2) return 0;
+	return id % 20;
+}
+
 function getAngleToAnimate (cur_angle, dir, invert) {
     var angle = getNormalOrInvertedAngleFromDir(dir, invert) - cur_angle;
     if (angle > 180) angle = angle - 360;

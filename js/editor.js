@@ -122,11 +122,6 @@ function mouseMove (pointer, x, y) {
 	}
 }
 
-function getBlueBoxColor (id) {
-	if (id==2) return 0;
-	return id % 20;
-}
-
 function changeCursor (key) {
 	if (o.cursor) {
 		var prevcur = o.cursor;
@@ -148,7 +143,8 @@ function changeCursor (key) {
 			} else {
 				btype = 20;
 			}
-			o.cursor = o.boxes.create (x, y, 'box_blue_'+getBlueBoxColor(btype)+'_small');	
+			o.cursor = o.boxes.create (x, y, 'box_blue_small');	
+            o.cursor.frame = getBlueBoxFrame(btype);
 			o.cursor.btype = btype;
 			break;
 		case o.THREE :
@@ -301,7 +297,7 @@ Puzzle.Editor.prototype.create = function () {
 					}
 					if (arr[y][x].value==5) {
 						box = game.boxes.create(xx, yy, 'box_arr_small');
-						box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
+						if (arr[y][x].spin) box.frame = (arr[y][x].spin=="cw") ? 1 : 2;
 						box.angle = o_getAngleFromDir(arr[y][x].dir);
 					}
 					if (arr[y][x].value==6) {
@@ -313,7 +309,10 @@ Puzzle.Editor.prototype.create = function () {
 					}
 				} else {
 					if (arr[y][x] == 1) box = o.boxes.create(xx, yy, 'box_black_small');
-					if (isBlueBox(arr[y][x])) box = o.boxes.create(xx, yy, 'box_blue_'+getBlueBoxColor(arr[y][x])+'_small');
+					if (isBlueBox(arr[y][x])) {
+                        box = o.boxes.create(xx, yy, 'box_blue_small');
+                        box.frame = getBlueBoxFrame(arr[y][x]);
+                    }
 					if (arr[y][x] == 3) box = o.boxes.create(xx, yy, 'box_gap_small');
 					if (arr[y][x] == 8) box = o.boxes.create(xx, yy, 'box_sokoban_small');
 				}
