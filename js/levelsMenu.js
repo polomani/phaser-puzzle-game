@@ -14,7 +14,7 @@ Puzzle.LevelsMenu.prototype.create = function () {
   o.lvls = []; 
   o.pages = o.add.group(); 
 
-  for (var i = 0; i < 45; i++) {
+  for (var i = 0; i < 60; i++) {
         var lvl = o.add.group();
         var image = lvl.create(0,0, Dimensions.getImageKey('box_black'));
         image.anchor.setTo(0.5, 0.5);
@@ -23,7 +23,6 @@ Puzzle.LevelsMenu.prototype.create = function () {
         lvl.image = image;
         lvl.text = text;
         lvl.number = text.number = image.number = i+1;
-        //i > Data.completedLevels && 
         if (i > Data.completedLevels) {
           lvl.alpha = 0.5;
         } else {
