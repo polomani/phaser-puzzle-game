@@ -9,11 +9,13 @@ Popup.clearAll = function() {
 		Popup.optWin.destroy();
 	if (Popup.propsMenu)
 		Popup.propsMenu.destroy();
-	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = Popup.propsMenu = false;
+    if (Popup.noticeWin)
+		Popup.noticeWin.destroy();
+	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = Popup.propsMenu = Popup.noticeWin = false;
 }
 
 Popup.anyWinOpened = function() {
-	return Popup.gameWinWin || Popup.gameOverWin || Popup.optWin || Popup.propsMenu;
+	return Popup.gameWinWin || Popup.gameOverWin || Popup.optWin || Popup.propsMenu || Popup.noticeWin;
 }
 
 Popup.openGameOverMenu = function () {
@@ -266,6 +268,35 @@ Popup.openPropsMenu = function (_game, alpha) {
     }
 
     Popup.propsMenu = win;
+}
+
+Popup.openNotice = function (message, instantly) {
+	Popup.clearAll();
+	var win = game.add.group();
+	var elements = win.elements = game.add.group();
+	var back = win.back = win.create (0, 0, 'window');
+
+    var text = game.add.bitmapText(game.width/2, 0, "white", "", Dimensions.getFontSize()-10);
+    var wrapped = Helper.TextWrapper.wrapText(message, game.width*0.9, game.height, 'white', text.fontSize)[0];
+    text.setText(wrapped);
+    text.align = 'center';
+    text.anchor.set (0.5, 0);
+    win.add(elements);
+    elements.add(text);
+    elements.y = (game.height-elements.height)/2;
+
+    back.alpha = 0.9;
+	win.realWidth = win.width;
+	back.width = game.width;
+	back.height = game.height;
+	if (!instantly) {
+        var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+        tween.onComplete.add(function() { win.opened = true; });
+    } else {
+        win.opened = true;
+    }
+
+    Popup.noticeWin = win;
 }
 
 Popup.closeMenu = function (newState) {
