@@ -89,32 +89,44 @@ Puzzle.Game.prototype.addMenu = function () {
       	}
     });
     
-    var undo = this.game.add.sprite (0,this.game.height, Dimensions.getImageKey("btn_undo"));
-    undo.anchor.setTo(0, 1);
-    undo.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/undo.width));
-    undo.inputEnabled = true;
-    undo.events.onInputDown.add(function () {
-      if (!Popup.anyWinOpened() && Puzzle.story && Puzzle.story.length>0) {
+    var menu = this.game.add.group();
+    var lvls = addButton (0, 0, "lvls_icon", function () {
+        if (!(Popup.anyWinOpened())) {
+            this.game.state.start("LevelsMenu"); 
+        }
+    });
+    var hints = addButton (lvls.width, 0, "hints_icon", function () {
+        
+    });
+    var undo = addButton (hints.x+hints.width, 0, "undo_icon", function () {
+        if (!Popup.anyWinOpened() && Puzzle.story && Puzzle.story.length>0) {
             Puzzle.undo = true;
             this.game.state.start("Game");
         }
     });
-
-    if (Game.aimLVL > 6) {
-	    var replay = this.game.add.sprite (this.game.width,this.game.height, Dimensions.getImageKey("btn_replay"));
-	    replay.anchor.setTo(1, 1);
-	    replay.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/replay.width));
-	    replay.inputEnabled = true;
-	    replay.events.onInputUp.add(function () {
-	      replay.alpha = 1;
-	      if (!(Popup.anyWinOpened())) {
-	      		this.game.state.start("Game");
-	      	}
+    var replay = addButton (undo.x+undo.width, 0, "replay_icon", function () {
+        if (!(Popup.anyWinOpened())) {
+            this.game.state.start("Game");
+        }
+    });
+    
+    function addButton (x, y, name, callback) {
+        var btn = this.game.add.sprite (x, y, name);
+        btn.scale.setTo(Math.min(1, Dimensions.getMinDimension()/8/btn.width));
+        menu.add(btn);
+        btn.inputEnabled = true;
+	    btn.events.onInputUp.add(function () {
+	      btn.alpha = 1;
+          callback();
 	    });
-	    replay.events.onInputDown.add(function () {
-      		replay.alpha = 0.6;
+	    btn.events.onInputDown.add(function () {
+      		btn.alpha = 0.6;
     	});
-	}
+        return btn;
+    }
+    
+    menu.x = (this.game.width - menu.width)/2;
+    menu.y = this.game.height - menu.height;
 }
 
 Puzzle.Game.prototype.createStage = function () {
@@ -233,7 +245,7 @@ Puzzle.Game.prototype.createStage = function () {
     game.boxes.sort('priorityIndex', Phaser.Group.SORT_ASCENDING);
 	game.inputEnabled = true;
 	game.input.onDown.addOnce(beginSwipe, game);
-	Tutorial.open(Game.aimLVL);
+	//Tutorial.open(Game.aimLVL);
 	onGameResized();
 
 	game.visualize = function() {

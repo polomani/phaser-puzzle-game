@@ -9,6 +9,10 @@ Puzzle.Preload.prototype = {
 		this.load.onFileComplete.add(this.progress, this);
 		this.load.spritesheet('flag_large', 'assets/images/flag_large.png', 400, 400);
 		this.load.spritesheet('flag_small', 'assets/images/flag_small.png', 200, 200);
+        this.load.image('replay_icon', 'assets/images/replay_icon.png');
+        this.load.image('hints_icon', 'assets/images/hints_icon.png');
+        this.load.image('undo_icon', 'assets/images/undo_icon.png');
+        this.load.image('lvls_icon', 'assets/images/lvls_icon.png');
 		this.load.image('btn_next_large', 'assets/images/button_next_large.png');
 		this.load.image('btn_next_small', 'assets/images/button_next_small.png');
 		this.load.image('btn_lang_arr_small', 'assets/images/lang_arrow_small.png');
@@ -19,10 +23,6 @@ Puzzle.Preload.prototype = {
 		this.load.image('btn_pause_large', 'assets/images/pause_large.png');
 		this.load.image('btn_props_small', 'assets/images/prop_icon_small.png');
 		this.load.image('btn_props_large', 'assets/images/prop_icon_large.png');
-		this.load.image('btn_replay_small', 'assets/images/replay_small.png');
-		this.load.image('btn_replay_large', 'assets/images/replay_large.png');
-        this.load.image('btn_undo_small', 'assets/images/undo_small.png');
-		this.load.image('btn_undo_large', 'assets/images/undo_large.png');
 		this.load.image('logo_small', 'assets/images/logo_small.png');
 		this.load.image('logo_large', 'assets/images/logo_large.png');
 		this.load.image('box_black_small', 'assets/images/box_black_small.png');
