@@ -1,3 +1,18 @@
+function centerVertical (parent, element) {
+    if (element)
+    element.y = (parent.height-element.height)/2;
+}
+
+function centerHorizontal (parent, element) {
+    if (element)
+    element.x = (parent.width-element.width)/2;
+}
+
+function center (parent, element) {
+    centerHorizontal(parent, element);
+    centerVertical(parent, element);
+}
+
 function getBlueBoxFrame (id) {
 	if (id==2) return 0;
 	return id % 20;

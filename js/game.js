@@ -15,6 +15,7 @@ Puzzle.Game.prototype.preload = function () {
 Puzzle.Game.prototype.create = function () {
 	//console.log(Dimensions.getSize());
 	//console.log(game.width + "x" + game.height);
+    var undone = Puzzle.undo;
 	game.gameOver = game.gameWin = false;
     game.levelArr = getStory() || LEVELS[Game.aimLVL];
 	game.levelWidth = game.levelArr[0].length;
@@ -26,11 +27,11 @@ Puzzle.Game.prototype.create = function () {
 	game.scale.prevWidth = game.scale.prevHeight = false;
 	game.invert = (game.levelHeight > game.levelWidth) && (game.width > game.height) || (game.levelHeight < game.levelWidth) && (game.width < game.height);
 	game.solution = "";
-	Tutorial.clean();
 	Puzzle.Game.prototype.createStage();
 	onGameResized();
 
 	this.addMenu();
+    if (!undone) Popup.openTutorial(Game.aimLVL);
 };
 
 onGameResized =  function (full) {
@@ -57,7 +58,6 @@ onGameResized =  function (full) {
 		box.y = yy; 
 	}
 	Puzzle.Game.rotateArrows();
-	Tutorial.resize({bbounds:game.boxes.getLocalBounds()});
 }
 
 Puzzle.Game.prototype.addMenu = function () {
@@ -245,7 +245,6 @@ Puzzle.Game.prototype.createStage = function () {
     game.boxes.sort('priorityIndex', Phaser.Group.SORT_ASCENDING);
 	game.inputEnabled = true;
 	game.input.onDown.addOnce(beginSwipe, game);
-	//Tutorial.open(Game.aimLVL);
 	onGameResized();
 
 	game.visualize = function() {

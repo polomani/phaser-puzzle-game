@@ -11,11 +11,11 @@ Popup.clearAll = function() {
 		Popup.propsMenu.destroy();
     if (Popup.noticeWin)
 		Popup.noticeWin.destroy();
-	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = Popup.propsMenu = Popup.noticeWin = false;
+	Popup.gameWinWin = Popup.gameOverWin = Popup.optWin = Popup.propsMenu = Popup.noticeWin = Popup.tutorial = false;
 }
 
 Popup.anyWinOpened = function() {
-	return Popup.gameWinWin || Popup.gameOverWin || Popup.optWin || Popup.propsMenu || Popup.noticeWin;
+	return Popup.gameWinWin || Popup.gameOverWin || Popup.optWin || Popup.propsMenu || Popup.noticeWin || Popup.tutorial;
 }
 
 Popup.openGameOverMenu = function () {
@@ -263,7 +263,6 @@ Popup.openPropsMenu = function (_game, alpha) {
        	ok.text.setText(LOCALE.OK);
        	toggle.text.setText(LOCALE[toggle.state]);
        	music.setText(LOCALE.MUSIC);
-       	Tutorial.changeLocale();
        	if (_game) _game.changeLocale();
     }
 
@@ -299,6 +298,62 @@ Popup.openNotice = function (message, instantly) {
     Popup.noticeWin = win;
 }
 
+Popup.openTutorial = function (level) {
+    var key = Dimensions.getImageKey('tutorial_'+level);
+    if (!LOCALE["TUTORIAL_"+level] && !game.cache.checkImageKey(key)) return;
+    
+    Popup.clearAll();
+	var win = game.add.group();
+	var elements = win.elements = game.add.group();
+	var back = win.back = win.create (0, 0, 'window');
+    var animation;
+    
+    if (game.cache.checkImageKey(key)) {
+		animation = game.add.sprite(0, 0, key);
+	    animation.animations.add('play');
+	    animation.animations.play('play', 30, true);
+        animation.width = animation.height = Math.round(Math.min (Dimensions.getMinDimension()/4, animation.width));
+	    elements.add(animation);
+	}
+    
+    var message = LOCALE["TUTORIAL_"+level];
+    if (message) {
+        var texttable = game.add.group();
+        var text = game.add.bitmapText(0, 0, "blue", "", Dimensions.getFontSize());
+        var wrapped = Helper.TextWrapper.wrapText(message, game.width*0.8, game.height, 'white', text.fontSize)[0];
+        if (animation) text.y += animation.height + game.height*0.1;
+        text.setText(wrapped);
+        text.align = 'center';
+        texttable.add(text);
+        elements.add(texttable);
+    }
+    
+    var ok_y = message ? text.y + text.height : animation.y + animation.height;
+    var ok = addButton (ok_y, LOCALE.OK, Dimensions.getFontSize()-10, "short_btn", 5);
+    ok.y += ok.height/2 + game.height*0.1;
+    ok.onInputUp(function (){Popup.closeMenu();});
+    
+    win.add(elements); 
+    centerHorizontal(elements, animation);
+    centerHorizontal(elements, texttable);
+    ok.x = elements.width/2;
+    elements.add(ok);
+    
+    
+    
+    center(game, elements);
+    
+
+    back.alpha = 0.9;
+	win.realWidth = win.width;
+	back.width = game.width;
+	back.height = game.height;
+    var tween = game.add.tween(win).from( { alpha:0 }, 300, Phaser.Easing.Exponential.In, true);
+    tween.onComplete.add(function() { win.opened = true; });
+
+    Popup.tutorial = win;
+}
+
 Popup.closeMenu = function (newState) {
 	var _game = game || Popup.game;
 	var win = Popup.anyWinOpened();
@@ -307,7 +362,6 @@ Popup.closeMenu = function (newState) {
 		if (newState) {
 			var tween = _game.add.tween(win.back).to( { alpha:1 }, 300, Phaser.Easing.Exponential.Out, true);
 			_game.add.tween(win.elements).to( { alpha:0, x:0 }, 300, Phaser.Easing.Exponential.Out, true);
-			Tutorial.invise();
 			_game.boxes.visible = false;
 			tween.onComplete.add(function() { 
 				_game.state.start(newState); 
