@@ -30,7 +30,7 @@ Puzzle.Game.prototype.create = function () {
 	Puzzle.Game.prototype.createStage();
 	onGameResized();
 
-	this.addMenu();
+	addGameMenu(game);
     if (!undone) Popup.openTutorial(Game.aimLVL);
 };
 
@@ -58,81 +58,6 @@ onGameResized =  function (full) {
 		box.y = yy; 
 	}
 	Puzzle.Game.rotateArrows();
-}
-
-Puzzle.Game.prototype.addMenu = function () {
-
-	var pause = this.game.add.sprite (0,0, Dimensions.getImageKey("btn_pause"));
-    pause.inputEnabled = true;
-    pause.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/pause.width));
-    pause.events.onInputUp.add(function () {
-      pause.alpha = 1;
-      if (!(Popup.anyWinOpened())) {
-      		Popup.openOptMenu();
-      	}
-    });
-    pause.events.onInputDown.add(function () {
-      pause.alpha = 0.6;
-    });
-
-    var props = this.game.add.sprite (this.game.width,0, Dimensions.getImageKey("btn_props"));
-    props.anchor.setTo(1, 0);
-    props.scale.setTo(Math.min(1, Dimensions.getMinDimension()/11/props.width));
-    props.inputEnabled = true;
-    props.events.onInputDown.add(function () {
-      props.alpha = 0.6;
-    });
-    props.events.onInputUp.add(function () {
-      props.alpha = 1;
-      if (!(Popup.anyWinOpened())) {
-      		Popup.openPropsMenu();
-      	}
-    });
-    
-    var menu = this.game.add.group();
-    var lvls = addButton (0, 0, "lvls_icon", function () {
-        if (!(Popup.anyWinOpened())) {
-            this.game.state.start("LevelsMenu"); 
-        }
-    });
-    var hints = addButton (lvls.width, 0, "hints_icon", function () {
-        
-    });
-    var undo = game.undoButton = addButton (hints.x+hints.width, 0, "undo_icon", function () {
-        if (!Popup.anyWinOpened() && Puzzle.story && Puzzle.story.length>0) {
-            Puzzle.undo = true;
-            this.game.state.start("Game");
-        }
-    });
-    if (!Puzzle.story || Puzzle.story.length==0) 
-        deactivateButton (undo);
-    var replay = addButton (undo.x+undo.width, 0, "replay_icon", function () {
-        if (!(Popup.anyWinOpened())) {
-            this.game.state.start("Game");
-        }
-    });
-    
-    function addButton (x, y, name, callback) {
-        var btn = this.game.add.sprite (x, y, name);
-        btn.scale.setTo(Math.min(1, Dimensions.getMinDimension()/8/btn.width));
-        menu.add(btn);
-        btn.active = true;
-        btn.inputEnabled = true;
-	    btn.events.onInputUp.add(function () {
-            if (btn.active)
-            {
-                btn.alpha = 1;
-                callback();
-            }
-	    });
-	    btn.events.onInputDown.add(function () {
-      		btn.alpha = 0.6;
-    	});
-        return btn;
-    }
-    
-    menu.x = (this.game.width - menu.width)/2;
-    menu.y = this.game.height - menu.height;
 }
 
 Puzzle.Game.prototype.createStage = function () {
@@ -312,7 +237,7 @@ Puzzle.Game.prototype.createStage = function () {
 				matrix.visual.toTeleport = [];
 			}
 			if (counter.moving==0 && counter.spikes==0 && counter.teleports==0) {
-				game.moving = false;
+				if (!game.autopilot) game.moving = false;
 				if (game.gameWin) {
 					Popup.openWinMenu();
 				}
@@ -810,7 +735,8 @@ function spinArrows(matrix) {
 
 function autopilot (path, matrix)
 {
-    matrix = game.matrix || matrix;  
+    matrix = game.matrix || matrix; 
+    game.moving = game.autopilot = true;
     autostep();
     
     function autostep () {
@@ -832,8 +758,21 @@ function autopilot (path, matrix)
             break;
         }
         
+        var result = checkGameOver();
+        if (result.win) {
+            game.gameWin = true;
+            saveSolutionToFirebase();
+            Data.setCompletedLevels(Game.aimLVL+1);
+        }
+        if (result.fail) {
+            game.gameOver = true;
+        }
         game.visualize();
-        game.time.events.add(500, autostep);
+        if (path) {
+            game.time.events.add(500, autostep);
+        } else {
+            game.moving = game.autopilot = false;
+        }
     } 
 }
 
