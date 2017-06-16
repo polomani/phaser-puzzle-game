@@ -1,3 +1,13 @@
+function deactivateButton (btn) {
+    btn.alpha = 0.6;
+    btn.active = false;
+}
+
+function activateButton (btn) {
+    btn.alpha = 1;
+    btn.active = true;
+}
+
 function centerVertical (parent, element) {
     if (element)
     element.y = (parent.height-element.height)/2;

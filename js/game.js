@@ -98,12 +98,14 @@ Puzzle.Game.prototype.addMenu = function () {
     var hints = addButton (lvls.width, 0, "hints_icon", function () {
         
     });
-    var undo = addButton (hints.x+hints.width, 0, "undo_icon", function () {
+    var undo = game.undoButton = addButton (hints.x+hints.width, 0, "undo_icon", function () {
         if (!Popup.anyWinOpened() && Puzzle.story && Puzzle.story.length>0) {
             Puzzle.undo = true;
             this.game.state.start("Game");
         }
     });
+    if (!Puzzle.story || Puzzle.story.length==0) 
+        deactivateButton (undo);
     var replay = addButton (undo.x+undo.width, 0, "replay_icon", function () {
         if (!(Popup.anyWinOpened())) {
             this.game.state.start("Game");
@@ -114,10 +116,14 @@ Puzzle.Game.prototype.addMenu = function () {
         var btn = this.game.add.sprite (x, y, name);
         btn.scale.setTo(Math.min(1, Dimensions.getMinDimension()/8/btn.width));
         menu.add(btn);
+        btn.active = true;
         btn.inputEnabled = true;
 	    btn.events.onInputUp.add(function () {
-	      btn.alpha = 1;
-          callback();
+            if (btn.active)
+            {
+                btn.alpha = 1;
+                callback();
+            }
 	    });
 	    btn.events.onInputDown.add(function () {
       		btn.alpha = 0.6;
@@ -248,6 +254,8 @@ Puzzle.Game.prototype.createStage = function () {
 	onGameResized();
 
 	game.visualize = function() {
+        if (!game.undoButton.active) activateButton (game.undoButton);
+        
 		var matrix = game.matrix;
 		var counter = {
 			moving:0,
